@@ -71,6 +71,7 @@ paths:
 ## => Post
 ##############################
 ## excerpt
+excerpt_type: text
 excerpt_separator: <!--more-->
 
 ## license
@@ -96,8 +97,7 @@ chart: true # false (default), true
 ## => Paginate
 ##############################
 paginate: 8
-paginate_path: /page:num # don't change this unless for special need
-
+paginate_path: /:num # don't change this unless for special need
 
 ## => Sources
 ##############################
