@@ -1,5 +1,4 @@
 ---
-layout: article
 title: Spring Boot With BDD
 category: Java
 tags: [Java, SpringBoot, BDD]

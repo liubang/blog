@@ -1,5 +1,4 @@
 ---
-layout: article
 title: Java Native Interface（三）
 category: Java
 tags: [Java, JNI]

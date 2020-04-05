@@ -1,7 +1,6 @@
 ---
 layout: article
 title: 数据结构之hashtable
-author: liubang
 tags: [c, algorithm]
 category: c
 ---
