@@ -107,11 +107,11 @@ sources: bootcdn # bootcdn (default), unpkg
 ## => Sharing
 ##############################
 sharing:
-  provider: "addtoany" # false (default), "addtoany", "addthis", "custom"
+  provider: "addthis" # false (default), "addtoany", "addthis", "custom"
 
   ## AddThis
   addthis:
-    id: # AddThis pubid, e.g. ra-5xxxxxxxxxxx
+    id: "ra-5e89c5f05bb0c6ec" # AddThis pubid, e.g. ra-5xxxxxxxxxxx
 
 
 ## => Comments
@@ -119,7 +119,6 @@ sharing:
 comments:
   provider: "gitalk" # false (default), "disqus", "gitalk", "valine", "custom"
   ## Gitalk
-  # please refer to https://github.com/gitalk/gitalk for more info.
   gitalk:
     clientID    : "9762ad41a65db18f170b" # GitHub Application Client ID
     clientSecret: "be4ea1abba93e15b0ac0ba5c3e9a3e246adc7df7" # GitHub Application Client Secret
