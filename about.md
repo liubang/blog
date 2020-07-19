@@ -2,4 +2,8 @@
 layout: article
 ---
 
-## 这是我的博客
+## By me a coffee
+
+|                 wechat                  |                 alipay                  |
+| :-------------------------------------: | :-------------------------------------: |
+| ![Image](/assets/wechat.JPG){:.rounded} | ![Image](/assets/alipay.JPG){:.rounded} |
