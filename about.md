@@ -1,5 +1,7 @@
 ---
 layout: article
+comment: false
+show_title: false
 ---
 
 ## By me a coffee
