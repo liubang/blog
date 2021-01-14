@@ -38,7 +38,7 @@ category: storage
 void DBImpl::BackgroundCompaction() {
   mutex_.AssertHeld();
 
-	// 首先判断是否存在 immutable memtable，如果存在，则优先进行
+  // 首先判断是否存在 immutable memtable，如果存在，则优先进行
   // immutable memtable compaction
   if (imm_ != nullptr) {
     CompactMemTable();
@@ -49,7 +49,7 @@ void DBImpl::BackgroundCompaction() {
   bool is_manual = (manual_compaction_ != nullptr);
   InternalKey manual_end;
   if (is_manual) {
-	  // ...
+    // ...
   } else {
     // 然后通过PickCompaction选择size compaction还是seek compaction
     c = versions_->PickCompaction();
@@ -69,10 +69,10 @@ Compaction* VersionSet::PickCompaction() {
     // ...
   } else if (seek_compaction) {
     // ...
-	} else {
+  } else {
     return nullptr;
   }
-	// ...
+  // ...
 }
 ```
 
@@ -98,7 +98,7 @@ Status DBImpl::MakeRoomForWrite(bool force) {
       break;
     } else if (allow_delay && versions_->NumLevelFiles(0) >=
                                   config::kL0_SlowdownWritesTrigger) {
-			// ...
+      // ...
       mutex_.Unlock();
       env_->SleepForMicroseconds(1000);
       allow_delay = false;  // Do not delay a single write more than once
@@ -108,10 +108,10 @@ Status DBImpl::MakeRoomForWrite(bool force) {
       // There is room in current memtable
       break;
     } else if (imm_ != nullptr) {
-			// ...
+      // ...
       background_work_finished_signal_.Wait();
-		} else if (versions_->NumLevelFiles(0) >= config::kL0_StopWritesTrigger) {
-			// ...
+    } else if (versions_->NumLevelFiles(0) >= config::kL0_StopWritesTrigger) {
+      // ...
       background_work_finished_signal_.Wait();
     } else {
       // ...
@@ -123,7 +123,7 @@ Status DBImpl::MakeRoomForWrite(bool force) {
       MaybeScheduleCompaction();
     }
   }
-	return s;
+  return s;
 }
 ```
 
@@ -141,31 +141,35 @@ Immutable memtable compaction 的执行过程逻辑在`DBImpl::CompactMemTable` 
 // db_impl.cc
 Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
                                 Version* base) {
-	// ...
-	Status s;
-	{
-		mutex_Unlock();
-		s = BuildTable(dbname_, env_, options_, table_cache_, iter, &meta);
-		mutex_Lock();
-	}
   // ...
-	int level = 0;
-	if (s.ok() && meta.file_size > 0) {
-		const Slice min_user_key = meta.smallest.user_key();
-		const Slice max_user_key = meta.largest.user_key();
-		if (baze != nullptr) {
-			level = baze->PickLevelForMemTableOutput(min_user_key, max_user_key);
-		}
-		edit->AddFile(level, meta.number, meta.file_size, meta.smallest,
-									meta.largest);
-	}
-	// ...
+  Status s;
+  {
+    mutex_Unlock();
+    s = BuildTable(dbname_, env_, options_, table_cache_, iter, &meta);
+    mutex_Lock();
+  }
+  // ...
+  int level = 0;
+  if (s.ok() && meta.file_size > 0) {
+    const Slice min_user_key = meta.smallest.user_key();
+    const Slice max_user_key = meta.largest.user_key();
+    if (baze != nullptr) {
+      level = baze->PickLevelForMemTableOutput(min_user_key, max_user_key);
+    }
+    edit->AddFile(level, meta.number, meta.file_size, meta.smallest,
+                  meta.largest);
+  }
+  // ...
 }
 ```
 
 1. 调用`DBImpl::BuildTable`将 Immutable memtable 中的数据 dump 成 sstable 文件
-2. 调用`DBImpl::PickLevelForMemTableOutput`为这个新生成的 sstable 文件选择一个新的 Level
+2. 调用`VersionSet::PickLevelForMemTableOutput`为这个新生成的 sstable 文件选择一个新的 Level
 3. 调用`VersionEdit::AddFile`将这个新的 sstable 文件放到选出来的 Level 中
+
+下图是`VersionSet::PickLevelForMemTableOutput`的流程图
+
+![](/static/images/2021-01-12/PickLevelForMemTableOutput.jpg)
 
 # 4. Sstable Compaction
 
