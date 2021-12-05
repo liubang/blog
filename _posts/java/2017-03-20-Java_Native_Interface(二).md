@@ -1,7 +1,8 @@
 ---
+layout: article
 title: Java Native Interface（二）
-category: Java
 tags: [Java, JNI]
+
 ---
 
 # JNI 基础

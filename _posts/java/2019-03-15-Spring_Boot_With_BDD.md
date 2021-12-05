@@ -1,7 +1,9 @@
 ---
+layout: article
 title: Spring Boot With BDD
-category: Java
 tags: [Java, SpringBoot, BDD]
+published: false
+
 ---
 
 ## 什么是 BDD

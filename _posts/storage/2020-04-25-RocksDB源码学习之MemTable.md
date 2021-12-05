@@ -3,7 +3,7 @@ layout: article
 title: RocksDB源码学习之MemTable
 published: false
 tags: [c++, RocksDB]
-category: c++
+
 ---
 
 MemTable 是一种基于内存的数据结果，用来将数据暂存到内存当中。当 MemTable 设定的容量写满的时候，当前的 MemTable 就会变得不可写，然后创建一个新的 MemTable 来代替他。

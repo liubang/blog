@@ -2,7 +2,7 @@
 layout: article
 title: php扩展开发之打造一个简易的ArrayBuffer
 tags: [c, php]
-category: php
+
 ---
 
 ## ArrayBuffer 简介

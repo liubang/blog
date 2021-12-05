@@ -1,8 +1,8 @@
 ---
 layout: article
 title: 数据结构之hashtable
-tags: [c, algorithm]
-category: c
+tags: [ds, algorithm]
+
 ---
 
 ## hashtable

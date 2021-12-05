@@ -1,8 +1,9 @@
 ---
 layout: article
 title: 基于公司私有gitlab的go module实践
+published: false
 tags: [go]
-category: go
+
 ---
 
 ## 背景

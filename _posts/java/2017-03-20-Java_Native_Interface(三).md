@@ -1,7 +1,8 @@
 ---
+layout: article
 title: Java Native Interface（三）
-category: Java
 tags: [Java, JNI]
+
 ---
 
 前面系统研究了 JNI 的相关操作，下面就来小试牛刀，做一个实际的练习。

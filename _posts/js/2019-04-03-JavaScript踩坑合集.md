@@ -1,8 +1,9 @@
 ---
 layout: article
 title: JavaScript踩坑合集
-category: JavaScript
 tags: [JavaScript]
+published: false
+
 ---
 
 ## Bitwise shift operators

@@ -2,7 +2,7 @@
 layout: article
 title: php扩展开发之call_user_func原理和回调函数的实现
 tags: [c, php]
-category: php
+
 ---
 
 # 函数调用

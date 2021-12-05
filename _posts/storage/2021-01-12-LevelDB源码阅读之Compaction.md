@@ -1,8 +1,8 @@
 ---
 layout: article
 title: LevelDB 源码阅读之 Compaction
-tags: ["leveldb", "storage"]
-category: storage
+tags: [leveldb, storage]
+
 ---
 
 # 1. 概览
