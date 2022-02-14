@@ -95,9 +95,14 @@ int main(int argc, char* argv[])
 
 当我们使用`AddressSanitizer`工具来编译运行的时候，会报出`heap-use-after-free`的错误。
 这个例子中使用 string*view 作为返回类型，由于 string_view 只是创建了一个 string 的视图，它既不能对 string 进行修改，也没有明确的所有权。
-当我们调用`w.getName()`，返回的只是`w::name*`的一个视图，当我们调用`w.setName("hello")`后，`w::name*`替换成一个新构造的string对象， 由于`name`只是`w::name*`原来string对象的一个视图，它并不能延长原string对象的生命周期，因此原来的string对象被释放。当我们再使用`name`
+当我们调用`w.getName()`，返回的只是 `w::name*` 的一个视图，当我们调用`w.setName("hello");`后， `w::name*`替换成一个新构造的string对象， 由于`name`只是`w::name*`原来string对象的一个视图，它并不能延长原string对象的生命周期，因此原来的string对象被释放。当我们再使用`name`
 变量的时候，就会出现问题。
 
 ## 传值还是引用
+
+先说结论：按值传递 string_view 是管用的方式。下面来具体分析原因。
+
+在 C++中，所有的值默认都是通过值传递，当我们使用`Widget w`的时候，实际上我们得到的是一个全新的对象。
+但是拷贝大的对象是很昂贵的，
 
 ## 总结
