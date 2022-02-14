@@ -4,9 +4,9 @@ title: 安全的使用string_view
 tags: [c++, c++17]
 ---
 
-## `string_view`简介
+## string_view 简介
 
-`std::string_view`是c++17中新增的一种类型。其基本思想是，它可以让你在C++03风格的具体性和泛型编程之间找到一个很好的折衷点。在C++17之前，我们只能在不正确的欠约束模板和正确的但约束滑稽冗长的模板之间进行选择:
+`std::string_view`是 c++17 中新增的一种类型。其基本思想是，它可以让你在 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点。在 C++17 之前，我们只能在不正确的欠约束模板和正确的但约束滑稽冗长的模板之间进行选择:
 
 ```cpp
 // c++03 style
@@ -19,7 +19,7 @@ public:
     void setName(const std::string& new_name);
 };
 
-// 不正确的欠约束的模板 
+// 不正确的欠约束的模板
 class Widget
 {
     std::string name_;
@@ -39,7 +39,7 @@ public:
 };
 ```
 
-而有了string_view之后，这一切就变得相当简单了：
+而有了 string_view 之后，这一切就变得相当简单了：
 
 ```cpp
 class Widget
@@ -52,7 +52,7 @@ public:
 };
 ```
 
-string_view在替代`const std::string&`参数上取得了巨大的成功，但是有人坚持尝试在任何地方
+string_view 在替代`const std::string&`参数上取得了巨大的成功，但是有人坚持尝试在任何地方
 使用`std::string_view`来替代`const std::string&`，这是不对的，例如下面的例子：
 
 ```cpp
@@ -94,9 +94,8 @@ int main(int argc, char* argv[])
 ```
 
 当我们使用`AddressSanitizer`工具来编译运行的时候，会报出`heap-use-after-free`的错误。
-这个例子中使用string_view作为返回类型，由于string_view只是创建了一个string的视图，它既不能对string进行修改，也没有明确的所有权。
-当我们调用`w.getName()`，返回的只是`w::name_`的一个视图，当我们调用`w.setName("hello")`后，`w::name_`替换成一个新构造的string对象，
-由于`name`只是`w::name_`原来string对象的一个视图，它并不能延长原string对象的生命周期，因此原来的string对象被释放。当我们再使用`name`
+这个例子中使用 string*view 作为返回类型，由于 string_view 只是创建了一个 string 的视图，它既不能对 string 进行修改，也没有明确的所有权。
+当我们调用`w.getName()`，返回的只是`w::name*`的一个视图，当我们调用`w.setName("hello")`后，`w::name*`替换成一个新构造的string对象， 由于`name`只是`w::name*`原来string对象的一个视图，它并不能延长原string对象的生命周期，因此原来的string对象被释放。当我们再使用`name`
 变量的时候，就会出现问题。
 
 ## 传值还是引用
