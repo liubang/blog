@@ -2,7 +2,6 @@
 layout: article
 title: php扩展开发之call_user_func原理和回调函数的实现
 tags: [c, php]
-
 ---
 
 # 函数调用
@@ -43,7 +42,7 @@ typedef struct _zend_fcall_info {
 > Note that you don't have to specify both function_table and object; either will do. If you want to call a method, you have to supply the object that contains this method, in which case call_user_function()automatically sets the function table to this object's function table. Otherwise, you only need to specify function_table and can set object to NULL.
 > Next is the parameter count as integer and an array containing all necessary parameters. The last argument specifies whether the function should perform zval separation - this should always be set to 0. If set to 1, the function consumes less memory but fails if any of the parameters need separation.
 
-# 实现自己的`call_user_func`函数
+# 实现自己的 call_user_func 函数
 
 废话不多说，下面就来动手实现一个自己的`call_user_func`函数;
 这个函数是一个比较特殊的函数，因为他除了第一个参数是一个字符串之外，剩余的参数都是可变参数，而且没有固定的个数，所以想到这里是不是发现又遇到了一些小小的困难。不过没关系，遇到一切问题首先要想到查阅官方文档，于是在[php 官方文档](http://php.net/manual/en/internals2.funcs.php)中找到了答案，在该文档页中，向我们列举了所有的 Type Specifiers:

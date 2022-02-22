@@ -254,7 +254,7 @@ byref(std::basic_string_view<char, std::char_traits<char> > const&, unsigned lon
 
 ## 总结
 
-`string_view`作为 c++17 引入的新类型，其功能还是非常强大的。但是在使用的时候也要对其特性足够的了解，切勿滥用，尤其不能笼统的使用 `std::string` 替代 `const std::string&`。
+`string_view`作为 c++17 引入的新类型，其功能还是非常强大的。但是在使用的时候也要对其特性足够的了解，切勿滥用，尤其不能笼统的使用 `std::string` 替代 `const std::string&`���
 通常情况下，函数的参数，或者循环控制变量是`string_view`两个最常用的使用场景。对于其他使用场景，大家一定要注意 `string_view` 不会延长原 `std::string` 的生命周期，因此在对象中保存
 `string_view` 或者通过函数返回 `string_view` 的时候一定要非常小心。
 
