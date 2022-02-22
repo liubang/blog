@@ -1,12 +1,12 @@
 ---
 layout: article
-title: 安全的使用string_view
+title: c++17之string_view
 tags: [c++, c++17]
 ---
 
 ## string_view 简介
 
-`std::string_view`是 c++17 中新增的一种类型。其基本思想是，它可以让你在 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点。在 C++17 之前，我们只能在不正确的欠约束模板和正确的但约束滑稽冗长的模板之间进行选择:
+`std::string_view`是 c++17 中新增的一种类型。其基本思想是，它可以让你在 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点。在 C++17 之前，我们只能在不正确的欠约束模板和看似正确但有着冗长的声明约束的模板之间进行选择:
 
 ```cpp
 // c++03 style
@@ -39,7 +39,7 @@ public:
 };
 ```
 
-而有了 string_view 之后，这一切就变得相当简单了：
+而有了 `string_view` 之后，以上代码就可以简化成如下：
 
 ```cpp
 class Widget
@@ -52,7 +52,7 @@ public:
 };
 ```
 
-string_view 在替代`const std::string&`参数上取得了巨大的成功，但是有人坚持尝试在任何地方
+`string_view` 在替代`const std::string&`参数上取得了巨大的成功，但是有人坚持尝试在任何地方
 使用`std::string_view`来替代`const std::string&`，这是不对的，例如下面的例子：
 
 ```cpp
@@ -132,7 +132,7 @@ int byref(const std::string_view& sv)
 
 将上面的代码编译成汇编代码：
 
-```asm
+```cpp
 # gcc 11.2
 # g++ -std=c++20 -O1 test_string_view.cpp -o test_string_view.s
 byvalue(std::basic_string_view<char, std::char_traits<char> >):
@@ -182,7 +182,7 @@ void callbyref(std::string_view sv)
 
 同样的编译成汇编代码：
 
-```asm
+```cpp
 # gcc 11.2
 .LC0:
   .string "hello"
@@ -230,7 +230,7 @@ void byref(const std::string_view& sv, size_t* p)
 
 编译成汇编代码：
 
-```asm
+```cpp
 # gcc 11.2
 byvalue(std::basic_string_view<char, std::char_traits<char> >, unsigned long*):
   movq %rdi, (%rdx)
