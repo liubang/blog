@@ -1,6 +1,6 @@
 ---
 layout: article
-title: c++17 新特性constexpr if
+title: c++17新特性constexpr if
 tags: [c++, c++17]
 ---
 
