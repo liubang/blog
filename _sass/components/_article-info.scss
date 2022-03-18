@@ -1,5 +1,5 @@
 .article__info {
-  font-size: map-get($base, font-size-sm);
+  font-size: map-get($base, font-size) * 0.9;
   color: $text-color-l;
   .left-col {
     float: left;

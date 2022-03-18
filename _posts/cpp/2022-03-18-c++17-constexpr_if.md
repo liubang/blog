@@ -4,7 +4,7 @@ title: c++17:constexpr if
 tags: [c++, c++17]
 ---
 
-constexpr 是 c++11 引入的关键字，用于编译时常量和常量表达式。而 c++17 将这一特性做了增强，引入了 `constexpr if` ，
+> constexpr 是 c++11 引入的关键字，用于编译时常量和常量表达式。而 c++17 将这一特性做了增强，引入了 `constexpr if` ，
 使得编译器在编译时(compile time)能够做分支判断，从而有条件的编译代码。
 
 下面可以通过一个简单的例子来看看`constexpr if`的用法：
