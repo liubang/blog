@@ -1,6 +1,6 @@
 ---
 layout: article
-title: c++17: string_view
+title: c++17:string_view
 tags: [c++, c++17]
 ---
 

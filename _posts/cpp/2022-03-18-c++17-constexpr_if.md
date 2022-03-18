@@ -1,6 +1,6 @@
 ---
 layout: article
-title: c++17: constexpr if
+title: c++17:constexpr if
 tags: [c++, c++17]
 ---
 
