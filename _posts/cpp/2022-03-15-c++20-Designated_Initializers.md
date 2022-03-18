@@ -1,6 +1,6 @@
 ---
 layout: article
-title: c++20新特性Designated Initializers
+title: c++20: Designated Initializers
 tags: [c++, c++20]
 ---
 
