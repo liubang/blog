@@ -8,7 +8,6 @@
   lineNos = true
   lineNumbersInTable = false
   noClasses = false
-  style = "emacs" 
   tabWidth = 2
 
 [goldmark]
