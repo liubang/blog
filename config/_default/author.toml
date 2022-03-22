@@ -1,0 +1,14 @@
+name = "liubang"
+# avatar = "images/profile.png" # Avatar image. Default to "images/profile.webp".
+bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise"
+company = 'Baidu'
+# company = '<a href="https://example.com" target="_blank" rel="noopener noreferrer">Company</a>'
+location = "Beijing"
+
+[params]
+  #layout = "compact"
+
+[social]
+  email = "it.liubang@gmail.com"
+  github = "liubang"
+  weibo = "2113750192"

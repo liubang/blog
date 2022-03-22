@@ -1,0 +1,664 @@
+<!doctype html><html lang="zh-cn" data-palette="blue gray"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>php扩展开发之对象处理器(Object Handlers) - liubang&#39;s blog</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/zh-cn/manifest.json">
+<meta name="keywords" content="" />
+<meta name="description" content="Object Handlers 在前面的博文中，已经介绍过一些 object handlers 了，也特别介绍了如何通过指定 handlers 来创建一个自定义的结构和使用clone_obj来对自定义的结构进行克隆操" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="php扩展开发之对象处理器(Object Handlers)">
+<meta itemprop="description" content="Object Handlers 在前面的博文中，已经介绍过一些 object handlers 了，也特别介绍了如何通过指定 handlers 来创建一个自定义的结构和使用clone_obj来对自定义的结构进行克隆操"><meta itemprop="datePublished" content="2017-08-27T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2017-08-27T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3074">
+<meta itemprop="keywords" content="c,php," /><meta property="og:title" content="php扩展开发之对象处理器(Object Handlers)" />
+<meta property="og:description" content="Object Handlers 在前面的博文中，已经介绍过一些 object handlers 了，也特别介绍了如何通过指定 handlers 来创建一个自定义的结构和使用clone_obj来对自定义的结构进行克隆操" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/zh-cn/posts/php/2017-08-27-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E5%AF%B9%E8%B1%A1%E5%A4%84%E7%90%86%E5%99%A8/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-08-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-08-27T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="php扩展开发之对象处理器(Object Handlers)"/>
+<meta name="twitter:description" content="Object Handlers 在前面的博文中，已经介绍过一些 object handlers 了，也特别介绍了如何通过指定 handlers 来创建一个自定义的结构和使用clone_obj来对自定义的结构进行克隆操"/>
+<meta property="og:image" content="/images/logo.png"/>
+  <meta name="twitter:image" content="/images/logo.png"/><link rel="stylesheet" href="/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css" integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8&#43;I&#43;qU=" crossorigin="anonymous"><link rel="stylesheet" href="/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css" integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css" integrity="sha256-PSKHlLztu/oEEr64&#43;8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin="anonymous"></head>
+  <body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/zh-cn/"><img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy"
+   width="136" height="69"
+   />
+LIUBANG
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=php%e6%89%a9%e5%b1%95%e5%bc%80%e5%8f%91%e4%b9%8b%e5%af%b9%e8%b1%a1%e5%a4%84%e7%90%86%e5%99%a8%28Object%20Handlers%29&url=%2fzh-cn%2fposts%2fphp%2f2017-08-27-php%25E6%2589%25A9%25E5%25B1%2595%25E5%25BC%2580%25E5%258F%2591%25E4%25B9%258B%25E5%25AF%25B9%25E8%25B1%25A1%25E5%25A4%2584%25E7%2590%2586%25E5%2599%25A8%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fphp%2f2017-08-27-php%25E6%2589%25A9%25E5%25B1%2595%25E5%25BC%2580%25E5%258F%2591%25E4%25B9%258B%25E5%25AF%25B9%25E8%25B1%25A1%25E5%25A4%2584%25E7%2590%2586%25E5%2599%25A8%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column"><section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-language"></i> 语言</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="dropdown">
+        <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          简体中文
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li></ul>
+      </div>
+    </div>
+  </form>
+</section>
+
+
+<section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</section>
+
+<section class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</section>
+
+
+<section class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</section>
+<section class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-arrow-left"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></section>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/zh-cn/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main role="main" class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">文章</a></li><li class="breadcrumb-item active">Php扩展开发之对象处理器(Object Handlers)</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper">
+  <div class="d-flex flex-column component rounded post-panel">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
+  <i class="fas fa-fw fa-coffee"></i>
+</a>
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    <a class="action" href="#post-comments" role="button" aria-label="Comments" title="Comments">
+  <i class="fas fa-fw fa-comments"></i>
+</a>
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">Php扩展开发之对象处理器(Object Handlers)
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2017-08-27 08:00:00 &#43;0800 CST。">
+    2017-08-27
+  </span><span class="post-reading-time">
+    7 分钟阅读
+  </span><span class="post-taxonomies"><a href="/zh-cn/categories/php/" class="badge post-taxonomy">php</a><a href="/zh-cn/tags/c/" class="badge post-taxonomy">c</a><a href="/zh-cn/tags/php/" class="badge post-taxonomy">php</a></span>
+</div>
+
+<div class="post-content mb-3"><h2 id="object-handlers">Object Handlers<a class="anchor ms-1" href="#object-handlers"><i class="fas fa-link"></i></a></h2>
+<p>在前面的博文中，已经介绍过一些 object handlers 了，也特别介绍了如何通过指定 handlers 来创建一个自定义的结构和使用<code>clone_obj</code>来对自定义的结构进行克隆操作。
+然而，这只是开始：在 php 中，几乎所有的对象操作，都可以通过 object handlers 来实现，而且所有的魔术方法和魔术接口在内核中都是实现了对应的 object handler。此外，
+一些 handlers 并没有开放给用户端的 php，例如，内部类可以自定义类的比较操作，而使用 php 代码是无法实现的。</p>
+<p>由于 php 中有很多不同的 object handlers，这里只挑几个来讨论，其它的只给出简单的说明。</p>
+<h2 id="概述">概述<a class="anchor ms-1" href="#概述"><i class="fas fa-link"></i></a></h2>
+<p>下面列举出 php 中主要的 26 个(php5.6 中为 28 个)object handlers（位于 phpsrc/Zend/zend_object_handlers.h），并给出简要的说明。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">zval</span> <span class="o">*</span><span class="n">read_property</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">member</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">_zend_literal</span> <span class="o">*</span><span class="n">key</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">void</span> <span class="n">write_property</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">member</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">_zend_literal</span> <span class="o">*</span><span class="n">key</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="kt">int</span> <span class="n">has_property</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">member</span><span class="p">,</span> <span class="kt">int</span> <span class="n">has_set_exists</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">_zend_literal</span> <span class="o">*</span><span class="n">key</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="kt">void</span> <span class="n">unset_property</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">member</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">_zend_literal</span> <span class="o">*</span><span class="n">key</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="n">zval</span> <span class="o">**</span><span class="n">get_property_ptr_ptr</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">member</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">_zend_literal</span> <span class="o">*</span><span class="n">key</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>上述 handlers 分别表示<code>__get</code>，<code>__set</code>，<code>__isset</code>，<code>__unset</code>方法。<code>get_property_ptr_ptr</code>等同于<code>__get</code>返回一个引用类型。<code>zend_literal *key</code>作为这些函数的参数
+起到优化作用，例如它包含了一些将属性名进行 hash 计算的结果。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">zval</span> <span class="o">*</span><span class="n">read_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">void</span> <span class="n">write_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">offset</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">value</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="kt">int</span> <span class="n">has_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">member</span><span class="p">,</span> <span class="kt">int</span> <span class="n">check_empty</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="kt">void</span> <span class="n">unset_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">offset</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>上述了几个 handlers 就是内核用以实现<code>ArrayAccess</code>接口的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">void</span> <span class="n">set</span><span class="p">(</span><span class="n">zval</span> <span class="o">**</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">value</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">zval</span> <span class="o">*</span><span class="n">get</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>上述 handlers 用来<code>get</code>或<code>set</code>一个对象的值。他们可以用来重写（从某种程度上）像<code>+=</code>，<code>++</code>这样的符合赋值操作符，他们的存在主要是作为代理对象，但在实际应用中
+缺很少被使用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">HashTable</span> <span class="o">*</span><span class="n">get_properties</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">HashTable</span> <span class="o">*</span><span class="n">get_debug_info</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">is_temp</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>上述 handlers 用来获取对象的属性，并返回 hashtable。前者更加通用，例如它还被用在<code>get_object_vars</code>函数中。而后者唯一的作用就是在类似于<code>var_dump</code>这种 debug 函数中打印
+属性信息。因此，即使一个对象没有提供一些正式的属性，但是它仍然能够打印一些有用的 debug 信息。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">union</span> <span class="n">_zend_function</span> <span class="o">*</span><span class="n">get_method</span><span class="p">(</span><span class="n">zval</span> <span class="o">**</span><span class="n">object_ptr</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">method</span><span class="p">,</span> <span class="kt">int</span> <span class="n">method_len</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">_zend_literal</span> <span class="o">*</span><span class="n">key</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">int</span> <span class="n">call_method</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">method</span><span class="p">,</span> <span class="n">INTERNAL_FUNCTION_PARAMETERS</span><span class="p">)</span>
+</span></span></code></pre></div><p><code>get_method</code> handler 通过查找<code>zend_function</code>来调用一个指定的方法。如果不存在这个指定的方法，就会触发<code>__call-like</code>的魔术方法来捕获所有的行为，这时候<code>get_method</code>
+就会标记当前情况为<code>ZEND_OVERLOADED_FUNCTION</code>，从而使得<code>call_method</code>被执行。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">union</span> <span class="n">_zend_function</span> <span class="o">*</span><span class="n">get_constructor</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>类似于<code>get_method</code> handler，但是不同的是它是专门用来获取构造函数的。覆盖此 handler 通常是为了禁止用户自定义构造函数抛出错误。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">int</span> <span class="n">count_elements</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="kt">long</span> <span class="o">*</span><span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>这就是内核实现<code>Countable::count</code>方法的方式。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">int</span> <span class="n">compare_objects</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object1</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">object2</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">int</span> <span class="n">cast_object</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">readobj</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">retval</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span> <span class="n">TSRMLSDC</span><span class="p">)</span>
+</span></span></code></pre></div><p>内部类拥有自定义比较操作的功能，而且能重写每种类型的类型转换操作。用户层的 php 类只能靠<code>__toString()</code>方法重写对象到 string 的类型转换操作。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">int</span> <span class="n">get_closure</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">obj</span><span class="p">,</span> <span class="n">zend_class_entry</span> <span class="o">**</span><span class="n">ce_ptr</span><span class="p">,</span> <span class="k">union</span> <span class="n">_zend_function</span> <span class="o">**</span><span class="n">fptr_ptr</span><span class="p">,</span> <span class="n">zval</span> <span class="o">**</span><span class="n">zobj_ptr</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>当一个对象被当做函数调用的时候，这个 handler 就会被触发执行。实际上它就是<code>__invoke</code>的内核实现。它的名字源于它主要是用作实现闭包。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">zend_class_entry</span> <span class="o">*</span><span class="n">get_class_entry</span><span class="p">(</span><span class="k">const</span> <span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">int</span> <span class="n">get_class_name</span><span class="p">(</span><span class="k">const</span> <span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">class_name</span><span class="p">,</span> <span class="n">zend_uint</span> <span class="o">*</span><span class="n">class_name_len</span><span class="p">,</span> <span class="kt">int</span> <span class="n">parent</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>上面两个 handler 分别用于通过一个对象获取 class_entry 和类的名字。一般情况下不会去覆盖它们。我认为唯一有必要重写它们的情况就是当你创建一个自定义结构并没有将
+标准的<code>zend_object</code>作为其中的子结构。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">void</span> <span class="n">add_ref</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">void</span> <span class="n">del_ref</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="n">zend_object_value</span> <span class="n">clone_obj</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="n">HashTable</span> <span class="o">*</span><span class="n">get_gc</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">***</span><span class="n">table</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">n</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span></code></pre></div><p>上述的操作主要用于对象维护。当一个<code>zval</code>开始引用一个对象的时候，<code>add_ref</code>将会被调用，当一个引用被移出的时候<code>del_ref</code>就会被调用。默认情况下，这些 handlers 会
+改变 object store 中的<code>refcount</code>的值。同样的，它们也没有必要被重写，唯一可能的情况就是你不想使用 Zend object store，而想自定义一个。对于<code>clone_obj</code>，前面的文
+章中已经介绍过了。<code>get_gc</code>会返回对象中所有的变量，所以错综复杂的依赖关系可以被适当的搜集。</p>
+<h2 id="使用-object-handlers-来实现-array-access">使用 object handlers 来实现 array access<a class="anchor ms-1" href="#使用-object-handlers-来实现-array-access"><i class="fas fa-link"></i></a></h2>
+<p>正如前面一篇文章中提到的，<code>ArrayAccess</code>接口是用来给 array buffer views 提供类似数组的行为。那么现在，我们将通过使用对应的<code>*_dimension</code> object handlers 来实现同样
+的功能。但是使用自定义的实现方式能够避免额外的函数调用造成的开销，从而提升性能。</p>
+<p>提供维度操作的 object handlers 分别为<code>read_dimention</code>，<code>write_dimention</code>，<code>has_dimention</code>，<code>unset_dimention</code>。它们都需要传递一个对象的<code>zval</code>作为第一个参数，<code>offset</code>
+作为第二个参数。由于我们的实现的是一个 ArrayBuffer，所以<code>offset</code>一定是一个整数类型，所以我们首先来定义一个工具函数，来从一个<code>zval</code>中获取整数值。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">static</span> <span class="kt">long</span> <span class="nf">get_long_from_zval</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">offset</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">Z_TYPE_P</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">==</span> <span class="n">IS_LONG</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">        <span class="k">return</span> <span class="n">Z_LVAL_P</span><span class="p">(</span><span class="n">offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="n">zval</span> <span class="n">tmp</span> <span class="o">=</span> <span class="o">*</span><span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        <span class="n">zval_copy_ctor</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmp</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">        <span class="n">convert_to_long</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmp</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">        <span class="k">return</span> <span class="n">Z_LAVL</span><span class="p">(</span><span class="n">tmp</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>接下来我们来分别实现相应的 handlers。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">static</span> <span class="n">zval</span> <span class="o">*</span><span class="nf">linger_array_buffer_view_read_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">zv_offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">type</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="n">buffer_view_object</span> <span class="o">*</span><span class="n">intern</span> <span class="o">=</span> <span class="n">zend_object_store_get_object</span><span class="p">(</span><span class="n">object</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="n">zval</span> <span class="o">*</span><span class="n">retval</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="kt">long</span> <span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">intern</span><span class="o">-&gt;</span><span class="n">std</span><span class="p">.</span><span class="n">ce</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="k">return</span> <span class="n">zend_get_std_object_handlers</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">read_dimension</span><span class="p">(</span><span class="n">object</span><span class="p">,</span> <span class="n">zv_offset</span><span class="p">,</span> <span class="n">type</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">zv_offset</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">		<span class="n">zend_throw_exception</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;Cannot append to a typed array&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="n">offset</span> <span class="o">=</span> <span class="n">get_long_from_zval</span><span class="p">(</span><span class="n">zv_offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="n">intern</span><span class="o">-&gt;</span><span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">		<span class="n">zend_throw_exception</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;Offset is outside the buffer range&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="n">retval</span> <span class="o">=</span> <span class="n">linger_buffer_view_offset_get</span><span class="p">(</span><span class="n">intern</span><span class="p">,</span> <span class="n">offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">	<span class="n">Z_DELREF_P</span><span class="p">(</span><span class="n">retval</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	<span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">
+</span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">linger_array_buffer_view_write_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">zv_offset</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">value</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">	<span class="n">buffer_view_object</span> <span class="o">*</span><span class="n">intern</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">	<span class="kt">long</span> <span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">	<span class="n">intern</span> <span class="o">=</span> <span class="n">zend_object_store_get_object</span><span class="p">(</span><span class="n">object</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">
+</span></span><span class="line"><span class="ln">33</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">intern</span><span class="o">-&gt;</span><span class="n">std</span><span class="p">.</span><span class="n">ce</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">		<span class="k">return</span> <span class="n">zend_get_std_object_handlers</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">write_dimension</span><span class="p">(</span><span class="n">object</span><span class="p">,</span> <span class="n">zv_offset</span><span class="p">,</span> <span class="n">value</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">
+</span></span><span class="line"><span class="ln">37</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">zv_offset</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">		<span class="n">zend_throw_exception</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;Cannot append to a typed array&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">
+</span></span><span class="line"><span class="ln">42</span><span class="cl">	<span class="n">offset</span> <span class="o">=</span> <span class="n">get_long_from_zval</span><span class="p">(</span><span class="n">zv_offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">43</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="n">intern</span><span class="o">-&gt;</span><span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl">		<span class="n">zend_throw_excpetion</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;Offset is outside the buffer range&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl">		<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">46</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">47</span><span class="cl">
+</span></span><span class="line"><span class="ln">48</span><span class="cl">	<span class="n">linger_buffer_view_offset_set</span><span class="p">(</span><span class="n">intern</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">50</span><span class="cl">
+</span></span><span class="line"><span class="ln">51</span><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="nf">linger_array_buffer_view_has_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">zv_offset</span><span class="p">,</span>  <span class="kt">int</span> <span class="n">check_empty</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">52</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">53</span><span class="cl">	<span class="n">buffer_view_object</span> <span class="o">*</span><span class="n">intern</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">54</span><span class="cl">	<span class="kt">long</span> <span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">55</span><span class="cl">	<span class="n">intern</span> <span class="o">=</span> <span class="n">zend_object_store_get_object</span><span class="p">(</span><span class="n">object</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">56</span><span class="cl">
+</span></span><span class="line"><span class="ln">57</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">intern</span><span class="o">-&gt;</span><span class="n">std</span><span class="p">.</span><span class="n">ce</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">58</span><span class="cl">		<span class="k">return</span> <span class="n">zend_get_std_object_handlers</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">has_dimension</span><span class="p">(</span><span class="n">object</span><span class="p">,</span> <span class="n">zv_offset</span><span class="p">,</span> <span class="n">check_empty</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">59</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">60</span><span class="cl">
+</span></span><span class="line"><span class="ln">61</span><span class="cl">	<span class="n">offset</span> <span class="o">=</span> <span class="n">get_long_from_zval</span><span class="p">(</span><span class="n">zv_offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">62</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="n">intern</span><span class="o">-&gt;</span><span class="n">length</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">63</span><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">64</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">65</span><span class="cl">
+</span></span><span class="line"><span class="ln">66</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">check_empty</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">67</span><span class="cl">		<span class="kt">int</span> <span class="n">retval</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">68</span><span class="cl">		<span class="n">zval</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">linger_buffer_view_offset_get</span><span class="p">(</span><span class="n">intern</span><span class="p">,</span> <span class="n">offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">69</span><span class="cl">		<span class="n">retval</span> <span class="o">=</span> <span class="n">zend_is_true</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">70</span><span class="cl">		<span class="n">zval_ptr_dtor</span><span class="p">(</span><span class="o">&amp;</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">71</span><span class="cl">		<span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">72</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">73</span><span class="cl">
+</span></span><span class="line"><span class="ln">74</span><span class="cl">	<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">75</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">76</span><span class="cl">
+</span></span><span class="line"><span class="ln">77</span><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">linger_array_buffer_view_unset_dimension</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">object</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">zv_offset</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">78</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">79</span><span class="cl">	<span class="n">zend_throw_exception</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">&#34;Cannot unset offsets in a typed array&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">80</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>关于以上代码的写法上没什么好解释的，但是还需要补充说明一些事情。也许细心的你看到上述代码会感到一些疑惑，为什么我们会在读操作中校验 append 呢（<code>zv_offset == NULL</code>），
+这个与上述代码中我们没有使用到的<code>type</code>参数有关。对于普通的读操作，例如<code>$foo[0]</code>，<code>type</code>的值为<code>BP_VAR_R</code>，但是在其他情况下，它也可能是<code>BP_VAR_W</code>，<code>BP_VAR_RW</code>，<code>BP_VAR_IS</code>或者<code>BP_VAR_UNSET</code>的一种。
+为了帮助理解什么时候会产生<code>non-read</code>的情况，举几个例子看看：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">$foo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>				<span class="c1">// [0] is a read_dimension(...,BP_VAR_R),
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="c1"></span>						<span class="c1">// [1] is a read_dimension(...,BP_VAR_R)
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"></span><span class="nv">$foo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$bar</span><span class="p">;</span>		<span class="c1">// [0] is a read_dimension(...,BP_VAR_W), [1] is a write_dimension
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1"></span><span class="nv">$foo</span><span class="p">[][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$bar</span><span class="p">;</span>		<span class="c1">// [] is a read_dimension(...,BP_VAR_W), [1] is a write_dimension
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="c1"></span><span class="nx">isset</span><span class="p">(</span><span class="nv">$foo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]);</span>		<span class="c1">// [0] is a read_dimension(...,BP_VAR_IS), [1] is a has_dimension
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"></span><span class="nx">unset</span><span class="p">(</span><span class="nv">$foo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]);</span>		<span class="c1">// [0] is a read_dimension(...,BP_VAR_UNSET), [1] is a unset_dimension
+</span></span></span></code></pre></div><p>正如你看到的其他嵌套维度访问的时候<code>BP_VAR</code>的类型，在这些情况下，只有最外层的访问会调用实际的操作处理器，而内层维度的都是通过访问相应类型的读处理器进行的。
+所以如果使用<code>[]</code>添加操作符进行嵌套维度访问，<code>read_dimension</code>将会被调用，而且此时的 offset 为 NULL。正常情况下，我们需要根据上下文判断<code>type</code>的类型，来做出相应的操作，例如：
+<code>isset</code>操作不能抛出任何错误和异常，我们通过显示的检查<code>BP_VAR_IS</code>来做出操作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">type</span> <span class="o">==</span> <span class="n">BP_VAR_IS</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">uninitialized_zval_ptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>但是在我们这个特殊的 ArrayBuffer 例子中，嵌套访问并没有实际的意义，所以不用担心这种情况。</p>
+<h2 id="继承">继承<a class="anchor ms-1" href="#继承"><i class="fas fa-link"></i></a></h2>
+<p>有一种关键的情况我们不得不考虑，那就是继承。当你自定义一个类的 object handlers 后，他会沿着继承链一直生效。所以，如果一个类继承了 ArrayBufferView 中的其中某个类，那么它将会使用和父类同样的 handlers，也就是说
+派生类将再也不能使用<code>ArrayAccess</code>。要解决这个问题并不难，一个非常简单的方法就是分别在相关 dimension handlers 中添加一个校验当前类是否为派生类，如果是的话就直接返回标准类的相关处理器。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">intern</span><span class="o">-&gt;</span><span class="n">std</span><span class="p">.</span><span class="n">ce</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="k">return</span> <span class="n">zend_get_std_object_handlers</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">read_dimension</span><span class="p">(</span><span class="n">object</span><span class="p">,</span> <span class="n">zv_offset</span><span class="p">,</span> <span class="n">type</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="自定义比较处理器">自定义比较处理器<a class="anchor ms-1" href="#自定义比较处理器"><i class="fas fa-link"></i></a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="nf">linger_array_buffer_view_compare_objects</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">obj1</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">obj2</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="n">buffer_view_object</span> <span class="o">*</span><span class="n">intern1</span> <span class="o">=</span> <span class="n">zend_object_store_get_object</span><span class="p">(</span><span class="n">obj1</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="n">buffer_view_object</span> <span class="o">*</span><span class="n">intern2</span> <span class="o">=</span> <span class="n">zend_object_store_get_object</span><span class="p">(</span><span class="n">obj2</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="k">if</span> <span class="p">(</span><span class="n">memcmp</span><span class="p">(</span><span class="n">intern1</span><span class="p">,</span> <span class="n">intern2</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer_view_object</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="自定义-get_debug_info">自定义 get_debug_info<a class="anchor ms-1" href="#自定义-get_debug_info"><i class="fas fa-link"></i></a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">static</span> <span class="n">HashTable</span> <span class="o">*</span><span class="nf">linger_array_buffer_view_get_debug_info</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">obj</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">is_temp</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="n">buffer_view_object</span> <span class="o">*</span><span class="n">intern</span> <span class="o">=</span> <span class="n">zend_object_store_get_object</span><span class="p">(</span><span class="n">obj</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="n">HashTable</span> <span class="o">*</span><span class="n">properties</span> <span class="o">=</span> <span class="n">Z_OBJPROP_P</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="n">HashTable</span> <span class="o">*</span><span class="n">ht</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="n">ALLOC_HASHTABLE</span><span class="p">(</span><span class="n">ht</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="n">ZEND_INIT_SYMTABLE_EX</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="n">intern</span><span class="o">-&gt;</span><span class="n">length</span> <span class="o">+</span> <span class="n">zend_hash_num_elements</span><span class="p">(</span><span class="n">properties</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="n">zend_hash_copy</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="p">(</span><span class="n">copy_ctor_func_t</span><span class="p">)</span> <span class="n">zval_add_ref</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="p">));</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="o">*</span><span class="n">is_temp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">intern</span><span class="o">-&gt;</span><span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">		<span class="n">zval</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">linger_buffer_view_offset_get</span><span class="p">(</span><span class="n">intern</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">		<span class="n">zend_hash_index_update</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">value</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="k">return</span> <span class="n">ht</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>至此，我们就对之前写的<code>ArrayBufferView</code>完成了改造，完整的代码可以访问<a href="https://github.com/iliubang/php-ArrayBuffer.git" target="_blank" rel="noopener noreferrer">https://github.com/iliubang/php-ArrayBuffer.git</a></p>
+</div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content surface">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-coffee"></i>打赏</h5>
+        <a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary" aria-label="Close"><i class="fas fa-times"></i></a>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
+              <i class="fab fa-fw fa-alipay"></i>支付宝
+            </a>
+          </li><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
+              <i class="fab fa-fw fa-weixin"></i>微信
+            </a>
+          </li></ul>
+        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
+          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
+          </div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-left"></i>
+    <a href="/zh-cn/posts/php/2017-08-25-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%AE%80%E6%98%93%E7%9A%84arraybuffer/">Php扩展开发之打造一个简易的ArrayBuffer
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/zh-cn/posts/php/2017-08-28-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E8%BF%AD%E4%BB%A3%E5%99%A8/">Php扩展开发之迭代器
+</a>
+    <i class="fas fa-fw fa-chevron-right"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/zh-cn/posts/php/2017-08-25-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%AE%80%E6%98%93%E7%9A%84arraybuffer/">Php扩展开发之打造一个简易的ArrayBuffer
+</a>
+          <span class="float-end post-date">2017-08-25
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/php/2017-08-24-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AD%98%E5%82%A8/">Php扩展开发之自定义对象的存储
+</a>
+          <span class="float-end post-date">2017-08-24
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/php/2017-03-09-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8Bcall-user-func%E5%8E%9F%E7%90%86%E5%92%8C%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0/">Php扩展开发之call_user_func原理和回调函数的实现
+</a>
+          <span class="float-end post-date">2017-03-09
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/sp/2017-08-21-c%E8%AF%AD%E8%A8%80%E4%B9%8Bstruct/">C语言之struct
+</a>
+          <span class="float-end post-date">2017-08-21
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/">彻底掌握malloc
+</a>
+          <span class="float-end post-date">2017-03-17
+</span>
+        </li></ul>
+    </div>
+  </section><div class="card component row post-comments" id="post-comments">
+  <div class="card-header">
+    <h2 class="card-title">评论</h2>
+  </div>
+  <div class="card-body"><script src="https://utteranc.es/client.js"
+  repo="liubang/blog"
+  issue-term="pathname"
+  label="comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script></div>
+</div></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <section class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt="liubang" src="/images/profile.webp" loading="lazy"
+   width="1000" height="1000"
+   />
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">liubang</div><div class="profile-bio">Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Baidu</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+</div>
+  </div>
+</section>
+  <div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#object-handlers">Object Handlers</a></li>
+    <li><a href="#概述">概述</a></li>
+    <li><a href="#使用-object-handlers-来实现-array-access">使用 object handlers 来实现 array access</a></li>
+    <li><a href="#继承">继承</a></li>
+    <li><a href="#自定义比较处理器">自定义比较处理器</a></li>
+    <li><a href="#自定义-get_debug_info">自定义 get_debug_info</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/zh-cn/posts/cpp/2022-03-18-c&#43;&#43;17-constexpr_if/">C&#43;&#43;17:constexpr If
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-03-15-c&#43;&#43;20-designated_initializers/">C&#43;&#43;20:Designated Initializers
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
+</a>
+      </li></ul>
+  </div>
+</section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/categories/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/categories/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/zh-cn/categories/java/" class="badge rounded post-taxonomy" title="java">
+            java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/categories/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/ds/" class="badge rounded post-taxonomy" title="ds">
+            ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/inf/" class="badge rounded post-taxonomy" title="inf">
+            inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/storage/" class="badge rounded post-taxonomy" title="storage">
+            storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/tags/c/" class="badge rounded post-taxonomy" title="c">
+            c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/tags/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/tags/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/zh-cn/tags/java/" class="badge rounded post-taxonomy" title="Java">
+            Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/jni/" class="badge rounded post-taxonomy" title="JNI">
+            JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge rounded post-taxonomy" title="c&#43;&#43;17">
+            c&#43;&#43;17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/algorithm/" class="badge rounded post-taxonomy" title="algorithm">
+            algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/tags/c&#43;&#43;20/" class="badge rounded post-taxonomy" title="c&#43;&#43;20">
+            c&#43;&#43;20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2016-2022 LiuBang. All Rights Reserved.
+</div>
+<div class="powered-by mb-2">
+  Powered by <a href="https://gohugo.io" target="_blank" rel="noopener noreferrer">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank" rel="noopener noreferrer">Bootstrap</a> theme.
+</div>
+
+
+
+</footer>
+<script src="/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js" integrity="sha256-aJTp8Icy&#43;VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin="anonymous" defer></script><script src="/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js" integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js" integrity="sha256-Vs2p5NUlCvakrAMEy/36Od&#43;5KIyDFnmExO1/vipUw00=" crossorigin="anonymous" defer></script><script defer src="/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js" integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin="anonymous"></script>
+<script defer src="/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js" integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg&#43;8Q53c4bN/Kc7hJD7w=" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,0 +1,658 @@
+<!doctype html><html lang="zh-cn" data-palette="blue gray"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>c&#43;&#43;17:string_view - liubang&#39;s blog</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/zh-cn/manifest.json">
+<meta name="keywords" content="" />
+<meta name="description" content="string_view 简介 std::string_view是 c&#43;&#43;17 中新增的一种类型。其核心理念是，能够让我们在传统的 C&#43;&#43;03 风格的具体性和泛型编程之间找到一个很好的折衷点" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="c&#43;&#43;17:string_view">
+<meta itemprop="description" content="string_view 简介 std::string_view是 c&#43;&#43;17 中新增的一种类型。其核心理念是，能够让我们在传统的 C&#43;&#43;03 风格的具体性和泛型编程之间找到一个很好的折衷点"><meta itemprop="datePublished" content="2022-02-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-02-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2172">
+<meta itemprop="keywords" content="c&#43;&#43;,c&#43;&#43;17," /><meta property="og:title" content="c&#43;&#43;17:string_view" />
+<meta property="og:description" content="string_view 简介 std::string_view是 c&#43;&#43;17 中新增的一种类型。其核心理念是，能够让我们在传统的 C&#43;&#43;03 风格的具体性和泛型编程之间找到一个很好的折衷点" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-02-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-02-14T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="c&#43;&#43;17:string_view"/>
+<meta name="twitter:description" content="string_view 简介 std::string_view是 c&#43;&#43;17 中新增的一种类型。其核心理念是，能够让我们在传统的 C&#43;&#43;03 风格的具体性和泛型编程之间找到一个很好的折衷点"/>
+<meta property="og:image" content="/images/logo.png"/>
+  <meta name="twitter:image" content="/images/logo.png"/><link rel="stylesheet" href="/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css" integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8&#43;I&#43;qU=" crossorigin="anonymous"><link rel="stylesheet" href="/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css" integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css" integrity="sha256-PSKHlLztu/oEEr64&#43;8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin="anonymous"></head>
+  <body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/zh-cn/"><img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy"
+   width="136" height="69"
+   />
+LIUBANG
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=c%2b%2b17%3astring_view&url=%2fzh-cn%2fposts%2fcpp%2f2022-02-14-c%2b%2b17%25E4%25B9%258Bstring_view%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fcpp%2f2022-02-14-c%2b%2b17%25E4%25B9%258Bstring_view%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column"><section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-language"></i> 语言</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="dropdown">
+        <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          简体中文
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li></ul>
+      </div>
+    </div>
+  </form>
+</section>
+
+
+<section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</section>
+
+<section class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</section>
+
+
+<section class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</section>
+<section class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-arrow-left"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></section>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/zh-cn/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main role="main" class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">文章</a></li><li class="breadcrumb-item active">C&#43;&#43;17:string_view</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper">
+  <div class="d-flex flex-column component rounded post-panel">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
+  <i class="fas fa-fw fa-coffee"></i>
+</a>
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    <a class="action" href="#post-comments" role="button" aria-label="Comments" title="Comments">
+  <i class="fas fa-fw fa-comments"></i>
+</a>
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">C&#43;&#43;17:string_view
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-02-14 08:00:00 &#43;0800 CST。">
+    2022-02-14
+  </span><span class="post-reading-time">
+    5 分钟阅读
+  </span><span class="post-taxonomies"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge post-taxonomy">c&#43;&#43;</a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge post-taxonomy">c&#43;&#43;</a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge post-taxonomy">c&#43;&#43;17</a></span>
+</div>
+
+<div class="post-content mb-3"><h2 id="string_view-简介">string_view 简介<a class="anchor ms-1" href="#string_view-简介"><i class="fas fa-link"></i></a></h2>
+<p><code>std::string_view</code>是 c++17 中新增的一种类型。其核心理念是，能够让我们在传统的 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点。
+在 C++17 标准之前，我们通常只能在粗糙的不严谨的模板实现和相对严谨但是有着冗长约束的模板之间做出选择。举个简单的例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// c++03 style
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">Widget</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="kt">void</span> <span class="n">setName</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">new_name</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="kt">void</span> <span class="nf">setName</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">new_name</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1">// 不正确的欠约束的模板
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">Widget</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="n">setName</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">new_name</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="c1">// 正确的但是约束但滑稽冗长的模板
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">Widget</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">    <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="err">= </span><span class="nc">decltype</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">())</span> <span class="o">&gt;&gt;</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">                              <span class="kt">void</span> <span class="n">setName</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">new_name</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>而有了 <code>string_view</code> 之后，以上代码就可以简化成如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">class</span> <span class="nc">Widget</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    <span class="kt">void</span> <span class="n">setName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="n">name_</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p><code>string_view</code> 在替代<code>const std::string&amp;</code>参数上取得了巨大的成功，但是有人坚持尝试在任何地方
+使用<code>std::string_view</code>来替代<code>const std::string&amp;</code>，这是不对的，例如下面的例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">s1</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="p">;</span>  <span class="c1">// OK, lifetime-extended
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">);</span>  <span class="c1">// OK, lifetime-extended
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv1</span> <span class="o">=</span> <span class="s">&#34;hello world&#34;</span><span class="p">;</span>  <span class="c1">// OK, points to static array
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&#34;hello world&#34;</span><span class="p">);</span>  <span class="c1">// BUG! Dangling pointer!
+</span></span></span></code></pre></div><p>为了更加清楚的说明问题，这里用一个完整的示例来演示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string_view&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="k">class</span> <span class="nc">Widget</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="k">explicit</span> <span class="n">Widget</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="o">:</span> <span class="n">name_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="p">{}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="kt">void</span>             <span class="nf">setName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span> <span class="n">name_</span> <span class="o">=</span> <span class="n">name</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">getName</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">name_</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl">
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    <span class="n">Widget</span> <span class="n">w</span><span class="p">(</span><span class="s">&#34;ok&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">    <span class="k">auto</span>   <span class="n">name</span> <span class="o">=</span> <span class="n">w</span><span class="p">.</span><span class="n">getName</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">    <span class="n">w</span><span class="p">.</span><span class="n">setName</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>   <span class="c1">// BUG! heap use after free
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>当我们使用<code>AddressSanitizer</code>工具来编译运行的时候，会报出<code>heap-use-after-free</code>的错误。
+这个例子中使用 <code>string_view</code> 作为返回类型，由于 <code>string_view</code> 只是创建了一个 string 的视图，它既不能对 string 进行修改，也没有明确的所有权。
+当我们调用<code>w.getName()</code>，返回的只是 <code>w::name_</code> 的一个视图，当我们调用<code>w.setName(&quot;hello&quot;);</code>后， <code>w::name_</code>替换成一个新构造的 string 对象，
+由于<code>name</code>只是<code>w::name_</code>原来 string 对象的一个视图，它并不能延长原 string 对象的生命周期，因此原来的 string 对象被释放。当我们再使用<code>name</code>
+变量的时候，就会出现问题。</p>
+<h2 id="传值还是引用">传值还是引用<a class="anchor ms-1" href="#传值还是引用"><i class="fas fa-link"></i></a></h2>
+<p>先说结论：按值传递 <code>string_view</code> 是通用的方式。下面来具体分析原因。</p>
+<p>在 C++ 中，所有的值默认都是通过值传递，当我们使用<code>Widget w</code>的时候，实际上我们得到的是一个全新的对象。
+但是对于大内存的拷贝是很昂贵的操作，因此当我们传递一些像<code>std::string</code>这样的很大的对象的时候，需要使用引用传递的方式来对按值传递进行优化。
+而对于像<code>int</code>, <code>char *</code>, <code>std::pair&lt;int, int&gt;</code>, <code>std::span&lt;Widget&gt;</code>这样的轻量对象，我们依然更加倾向于使用默认的按值传递的方式。</p>
+<p>对于<code>string_view</code>而言，按值传递比按引用传递有三个方面的性能优势：</p>
+<p><strong>1. 消除了被调用方的间接指针</strong></p>
+<p><code>pass-by-const-reference</code> 意味着传递的是对象的地址，而 <code>pass-by-value</code> 意味着传递的是对象本身。
+对于 <code>int</code>, <code>span</code>, <code>string_view</code> 这样的 trivial types 来说，它们会直接保存在寄存器上。
+我们可以通过一个例子来具具体说明一下区别：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// test_string_view.cpp
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;string_view&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="kt">int</span> <span class="nf">byvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="k">return</span> <span class="n">sv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="kt">int</span> <span class="nf">byref</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="o">&amp;</span> <span class="n">sv</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="k">return</span> <span class="n">sv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>将上面的代码编译成汇编代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp"># gcc 11.2
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp"># g++ -std=c++20 -O1 test_string_view.cpp -o test_string_view.s
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="cp"></span><span class="n">byvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">  <span class="n">movl</span> <span class="o">%</span><span class="n">edi</span><span class="p">,</span> <span class="o">%</span><span class="n">eax</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">  <span class="n">ret</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="n">byref</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">  <span class="n">movl</span> <span class="p">(</span><span class="o">%</span><span class="n">rdi</span><span class="p">),</span> <span class="o">%</span><span class="n">eax</span>
+</span></span><span class="line"><span class="ln">9</span><span class="cl">  <span class="n">ret</span>
+</span></span></code></pre></div><p>通过上面的汇编代码，可以很清晰的看到，按值传递的时候是将 <code>string_view</code> 直接在寄存器之间传递，
+而按引用传递，则是需要先将 size 成员通过引用的地址和偏移 load 到内存中，然后再传递给寄存器。</p>
+<p><strong>2. 在调用的时候，能消除一次栈帧溢出</strong></p>
+<p>当我们通过引用传递的时候，调用者需要将对象的地址放入寄存器，所以对象一定要有地址。
+即使调用者的其他所有对象都可以直接通过寄存器来保存，但是传递对象地址的行为也会迫使调用者将其溢出到堆栈中。
+而按值传递消除了溢出参数的必要，在一些极端情况下意味着此次调用根本不需要调用程序中的栈帧。</p>
+<p>下面同样通过一个例子来更加具体的说明：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string_view&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kt">int</span> <span class="nf">byvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="k">return</span> <span class="n">sv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="kt">int</span> <span class="nf">byref</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="o">&amp;</span> <span class="n">sv</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="k">return</span> <span class="n">sv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl">
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="kt">void</span> <span class="nf">callbyvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="n">byvalue</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="kt">void</span> <span class="nf">callbyref</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    <span class="n">byref</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>同样的编译成汇编代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp"># gcc 11.2
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span><span class="p">.</span><span class="nl">LC0</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">  <span class="p">.</span><span class="n">string</span> <span class="s">&#34;hello&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">callbyvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">  <span class="n">movl</span> <span class="err">$</span><span class="mi">5</span><span class="p">,</span> <span class="o">%</span><span class="n">edi</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">  <span class="n">movl</span> <span class="err">$</span><span class="p">.</span><span class="n">LC0</span><span class="p">,</span> <span class="o">%</span><span class="n">esi</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="n">jmp</span> <span class="n">byvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="n">callbyref</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">  <span class="n">subq</span> <span class="err">$</span><span class="mi">24</span><span class="p">,</span> <span class="o">%</span><span class="n">rsp</span> <span class="c1">// 分配堆栈空间
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>  <span class="n">movq</span> <span class="o">%</span><span class="n">rsp</span><span class="p">,</span> <span class="o">%</span><span class="n">rdi</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">  <span class="n">movq</span> <span class="err">$</span><span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="o">%</span><span class="n">rsp</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">  <span class="n">movq</span> <span class="err">$</span><span class="p">.</span><span class="n">LC0</span><span class="p">,</span> <span class="mi">8</span><span class="p">(</span><span class="o">%</span><span class="n">rsp</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="n">call</span> <span class="n">byref</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">  <span class="n">addq</span> <span class="err">$</span><span class="mi">24</span><span class="p">,</span> <span class="o">%</span><span class="n">rsp</span> <span class="c1">// 清理堆栈空间
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1"></span>  <span class="n">ret</span>
+</span></span></code></pre></div><p>在 callbyvalue 中，只需要在寄存器中设置好 <code>string_view</code> 的数据指针和大小就直接调用 <code>byvalue</code> 了。而在
+callbyref 中，需要使用 <code>string_view</code> 参数的地址，所以首先在堆栈上分配空间，当调用 byref 返回的时候，需要清理之前分配好的堆栈空间。</p>
+<p><strong>3. 对编译器优化更加友好</strong></p>
+<p>当我们传递引用的时候，我们给被调用的函数一个它们一无所知的对象引用，被调用方不知道还有谁持有这个对象的引用，
+也不知道自己的指针是否指向该对象或该对象的一部分。因此编译器在做优化的时候必须非常保守。
+而当我们按值传递的时候，我们给被调用函数一个全新的副本，一个绝对不会与程序中其他任何对象构成别名的副本，因此编译器可以尽可能做更多的优化。</p>
+<p>例如下面的例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stddef.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string_view&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="kt">void</span> <span class="nf">byvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">sv</span><span class="p">,</span> <span class="n">size_t</span><span class="o">*</span> <span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span><span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="kt">void</span> <span class="nf">byref</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="o">&amp;</span> <span class="n">sv</span><span class="p">,</span> <span class="n">size_t</span><span class="o">*</span> <span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span><span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>编译成汇编代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp"># gcc 11.2
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span><span class="n">byvalue</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="o">*</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">  <span class="n">movq</span> <span class="o">%</span><span class="n">rdi</span><span class="p">,</span> <span class="p">(</span><span class="o">%</span><span class="n">rdx</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="n">ret</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">byref</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">basic_string_view</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">char_traits</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="o">*</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">  <span class="n">movq</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="o">%</span><span class="n">rsi</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="n">xorl</span> <span class="o">%</span><span class="n">eax</span><span class="p">,</span> <span class="o">%</span><span class="n">eax</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">  <span class="n">cmpq</span> <span class="err">$</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="o">%</span><span class="n">rdi</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">  <span class="n">je</span> <span class="p">.</span><span class="n">L5</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">.</span><span class="nl">L6</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">  <span class="n">addq</span> <span class="err">$</span><span class="mi">1</span><span class="p">,</span> <span class="o">%</span><span class="n">rax</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">  <span class="n">movq</span> <span class="o">%</span><span class="n">rax</span><span class="p">,</span> <span class="p">(</span><span class="o">%</span><span class="n">rsi</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="n">cmpq</span> <span class="p">(</span><span class="o">%</span><span class="n">rdi</span><span class="p">),</span> <span class="o">%</span><span class="n">rax</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">  <span class="n">jb</span> <span class="p">.</span><span class="n">L6</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">.</span><span class="nl">L5</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">  <span class="n">ret</span>
+</span></span></code></pre></div><p>在 <code>byvalue</code> 中，编译器能够很聪明的知道循环是以 1 为步幅，累加 <code>sv.size()</code> 次，因此直接将程序优化为将 <code>*p</code> 赋值为 <code>sv.size()</code>。
+而 <code>byref</code> 中，编译器老老实实生成循环的代码。</p>
+<h2 id="总结">总结<a class="anchor ms-1" href="#总结"><i class="fas fa-link"></i></a></h2>
+<p><code>string_view</code>作为 c++17 引入的新类型，其功能还是非常强大的。但是在使用的时候也要对其特性足够的了解，切勿滥用，尤其不能笼统的使用 <code>std::string</code> 替代 <code>const std::string&amp;</code>。
+在通常情况下，函数的参数，或者循环控制变量是<code>string_view</code>两个最常用的使用场景。对于其他使用场景，大家一定要注意 <code>string_view</code> 不会延长原 <code>std::string</code> 的生命周期，因此在对象中保存
+<code>string_view</code> 或者通过函数返回 <code>string_view</code> 的时候一定要非常小心。</p>
+<p>另外，对于<code>string_view</code>这种简单的类型，更倾向于按值传递。</p>
+</div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content surface">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-coffee"></i>打赏</h5>
+        <a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary" aria-label="Close"><i class="fas fa-times"></i></a>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
+              <i class="fab fa-fw fa-alipay"></i>支付宝
+            </a>
+          </li><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
+              <i class="fab fa-fw fa-weixin"></i>微信
+            </a>
+          </li></ul>
+        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
+          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
+          </div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-left"></i>
+    <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
+</a>
+    <i class="fas fa-fw fa-chevron-right"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/zh-cn/posts/cpp/2018-03-19-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8Cstl/">C&#43;&#43;编程之标准库和STL
+</a>
+          <span class="float-end post-date">2018-03-19
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/cpp/2018-03-15-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E5%AD%97%E7%AC%A6%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2/">C&#43;&#43;编程之字符和字符串
+</a>
+          <span class="float-end post-date">2018-03-15
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/cpp/2018-03-14-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%AC%A6%E9%87%8D%E8%BD%BD/">C&#43;&#43;编程之操作符重载
+</a>
+          <span class="float-end post-date">2018-03-14
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/cpp/2018-03-14-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%A8%A1%E6%9D%BF%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B/">C&#43;&#43;编程之模板和泛型编程
+</a>
+          <span class="float-end post-date">2018-03-14
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/cpp/2018-03-05-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/">C&#43;&#43;编程之继承和多态
+</a>
+          <span class="float-end post-date">2018-03-05
+</span>
+        </li></ul>
+    </div>
+  </section><div class="card component row post-comments" id="post-comments">
+  <div class="card-header">
+    <h2 class="card-title">评论</h2>
+  </div>
+  <div class="card-body"><script src="https://utteranc.es/client.js"
+  repo="liubang/blog"
+  issue-term="pathname"
+  label="comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script></div>
+</div></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <section class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt="liubang" src="/images/profile.webp" loading="lazy"
+   width="1000" height="1000"
+   />
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">liubang</div><div class="profile-bio">Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Baidu</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+</div>
+  </div>
+</section>
+  <div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#string_view-简介">string_view 简介</a></li>
+    <li><a href="#传值还是引用">传值还是引用</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/zh-cn/posts/cpp/2022-03-18-c&#43;&#43;17-constexpr_if/">C&#43;&#43;17:constexpr If
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-03-15-c&#43;&#43;20-designated_initializers/">C&#43;&#43;20:Designated Initializers
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
+</a>
+      </li></ul>
+  </div>
+</section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/categories/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/categories/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/zh-cn/categories/java/" class="badge rounded post-taxonomy" title="java">
+            java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/categories/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/ds/" class="badge rounded post-taxonomy" title="ds">
+            ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/inf/" class="badge rounded post-taxonomy" title="inf">
+            inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/storage/" class="badge rounded post-taxonomy" title="storage">
+            storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/tags/c/" class="badge rounded post-taxonomy" title="c">
+            c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/tags/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/tags/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/zh-cn/tags/java/" class="badge rounded post-taxonomy" title="Java">
+            Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/jni/" class="badge rounded post-taxonomy" title="JNI">
+            JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge rounded post-taxonomy" title="c&#43;&#43;17">
+            c&#43;&#43;17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/algorithm/" class="badge rounded post-taxonomy" title="algorithm">
+            algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/tags/c&#43;&#43;20/" class="badge rounded post-taxonomy" title="c&#43;&#43;20">
+            c&#43;&#43;20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2016-2022 LiuBang. All Rights Reserved.
+</div>
+<div class="powered-by mb-2">
+  Powered by <a href="https://gohugo.io" target="_blank" rel="noopener noreferrer">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank" rel="noopener noreferrer">Bootstrap</a> theme.
+</div>
+
+
+
+</footer>
+<script src="/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js" integrity="sha256-aJTp8Icy&#43;VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin="anonymous" defer></script><script src="/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js" integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js" integrity="sha256-Vs2p5NUlCvakrAMEy/36Od&#43;5KIyDFnmExO1/vipUw00=" crossorigin="anonymous" defer></script><script defer src="/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js" integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin="anonymous"></script>
+<script defer src="/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js" integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg&#43;8Q53c4bN/Kc7hJD7w=" crossorigin="anonymous"></script>
+
+</body>
+</html>

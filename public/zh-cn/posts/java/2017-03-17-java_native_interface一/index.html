@@ -1,0 +1,563 @@
+<!doctype html><html lang="zh-cn" data-palette="blue gray"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Java Native Interface（一） - liubang&#39;s blog</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/zh-cn/manifest.json">
+<meta name="keywords" content="" />
+<meta name="description" content="最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="Java Native Interface（一）">
+<meta itemprop="description" content="最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来"><meta itemprop="datePublished" content="2017-03-17T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2017-03-17T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1317">
+<meta itemprop="keywords" content="Java,JNI," /><meta property="og:title" content="Java Native Interface（一）" />
+<meta property="og:description" content="最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/zh-cn/posts/java/2017-03-17-java_native_interface%E4%B8%80/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-03-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-03-17T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Java Native Interface（一）"/>
+<meta name="twitter:description" content="最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来"/>
+<meta property="og:image" content="/images/logo.png"/>
+  <meta name="twitter:image" content="/images/logo.png"/><link rel="stylesheet" href="/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css" integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8&#43;I&#43;qU=" crossorigin="anonymous"><link rel="stylesheet" href="/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css" integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css" integrity="sha256-PSKHlLztu/oEEr64&#43;8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin="anonymous"></head>
+  <body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/zh-cn/"><img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy"
+   width="136" height="69"
+   />
+LIUBANG
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=Java%20Native%20Interface%ef%bc%88%e4%b8%80%ef%bc%89&url=%2fzh-cn%2fposts%2fjava%2f2017-03-17-java_native_interface%25E4%25B8%2580%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fjava%2f2017-03-17-java_native_interface%25E4%25B8%2580%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column"><section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-language"></i> 语言</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="dropdown">
+        <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          简体中文
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li></ul>
+      </div>
+    </div>
+  </form>
+</section>
+
+
+<section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</section>
+
+<section class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</section>
+
+
+<section class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</section>
+<section class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-arrow-left"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></section>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/zh-cn/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main role="main" class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">文章</a></li><li class="breadcrumb-item active">Java Native Interface（一）</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper">
+  <div class="d-flex flex-column component rounded post-panel">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
+  <i class="fas fa-fw fa-coffee"></i>
+</a>
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    <a class="action" href="#post-comments" role="button" aria-label="Comments" title="Comments">
+  <i class="fas fa-fw fa-comments"></i>
+</a>
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">Java Native Interface（一）
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2017-03-17 08:00:00 &#43;0800 CST。">
+    2017-03-17
+  </span><span class="post-reading-time">
+    3 分钟阅读
+  </span><span class="post-taxonomies"><a href="/zh-cn/categories/java/" class="badge post-taxonomy">java</a><a href="/zh-cn/tags/java/" class="badge post-taxonomy">Java</a><a href="/zh-cn/tags/jni/" class="badge post-taxonomy">JNI</a></span>
+</div>
+
+<div class="post-content mb-3"><p>最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来可以巩固所学，二来能将其迁移到本地</p>
+<h1 id="1-简介">1 简介<a class="anchor ms-1" href="#1-简介"><i class="fas fa-link"></i></a></h1>
+<p>有时候，使用 native code(c/c++)来克服 Java 中的内存管理和性能的局限性是很有必要的。Java 支持 native codes，被称作 Java Native Interface(JNI)。</p>
+<p>JNI 非常难，毕竟它牵涉到了两种编程语言。假设聪明的你对 Java 和 C/C++以及 GCC 编译器已经有所了解。那么下面就一起来一步步学习 JNI 吧。</p>
+<h1 id="2-开始">2 开始<a class="anchor ms-1" href="#2-开始"><i class="fas fa-link"></i></a></h1>
+<h2 id="21-用-c-语言实现第一个-jni-程序">2.1 用 c 语言实现第一个 JNI 程序<a class="anchor ms-1" href="#21-用-c-语言实现第一个-jni-程序"><i class="fas fa-link"></i></a></h2>
+<p><strong>Step 1:</strong> 创建一个名字为 JNITest.java 的文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JNITest</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="kd">static</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">load</span><span class="o">(</span><span class="s">&#34;/home/ubuntu/workspace/java/jni/mynativelib.so&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="c1">//申明一个无参的native方法，而且返回空
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">native</span> <span class="kt">void</span> <span class="nf">greet</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="c1">//测试
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="n">JNITest</span> <span class="n">test</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JNITest</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="n">test</span><span class="o">.</span><span class="na">greet</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>首先用静态代码块加载本地动态链接库&quot;mynativelib.so&quot;。对于静态代码块，我相信写过 Java 的你应该非常清楚，它只会在类被加载的时候执行一次。这个动态链接库会被添加到 Java 的 library path（保存在 Java 系统变量 java.library.path）中，如果加载失败，就会抛出<code>UnsatisfiedLinkError</code>异常。也可以使用 JVM 启动参数来加载该动态链接库到 Java 的 library path 当中：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">-Djava.library.path=path_to_lib
+</span></span></code></pre></div><p>说明：JNI 中有两种常见的加载动态链接库的写法，一个是<code>System.load(filename)</code>，另一个是<code>System.loadLibrary(libname)</code>，二者的区别在于，第一种需要的是文件的全名称，而第二种只需要动态链接库的库名(windows 下省略.dll 后缀，linux 下省略 lib 前缀和.so 后缀)。</p>
+<p>然后我们使用<code>native</code>关键字申明一个名为<code>greet</code>的 native instance method。被 native 修饰的方法不能有方法体。</p>
+<p>接下来编译 JNITest.java 文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">javac JNITest.java
+</span></span></code></pre></div><p>**Step 2:**生成 C/C++头文件 JNITest.h</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">javah JNITest
+</span></span></code></pre></div><p>执行上述命令后自动生成一个名为 JNITest.h 的文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cm">/* DO NOT EDIT THIS FILE - it is machine generated */</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;jni.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span><span class="cm">/* Header for class JNITest */</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp">#ifndef _Included_JNITest
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="cp">#define _Included_JNITest
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="cp">#ifdef __cplusplus
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="cp"></span><span class="k">extern</span> <span class="s">&#34;C&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="cp"></span><span class="cm">/*
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="cm"> * Class:     JNITest
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="cm"> * Method:    greet
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="cm"> * Signature: ()V
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="n">JNIEXPORT</span> <span class="kt">void</span> <span class="n">JNICALL</span> <span class="n">Java_JNITest_greet</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">  <span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="p">,</span> <span class="n">jobject</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="cp">#ifdef __cplusplus
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="cp"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="cp">#endif
+</span></span></span></code></pre></div><p>该头文件声明了<code>Java_JNITest_greet</code>的函数原型，Java 中的函数对应到 C 中的命名规则为：<code>Java_{package_and_classname}_{method_name}(JNI arguments)</code></p>
+<p>其中 JNI arguments:</p>
+<ul>
+<li>JNIEnv *: 指向 JNI 执行环境的指针，通过它可以访问到所有的 JNI 方法</li>
+<li>jobject: 指向 Java 中的&quot;this&quot;</li>
+</ul>
+<p>**Step 3:**用 c 语言实现头文件中的函数 - jnitest.c</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;jni.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;JNITest.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="n">JNIEXPORT</span> <span class="kt">void</span> <span class="n">JNICALL</span> <span class="nf">Java_JNITest_greet</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="p">,</span> <span class="n">jobject</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;hello liubang...</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">	<span class="n">printf</span><span class="p">(</span><span class="s">&#34;this is implemented by c and called by java!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">	<span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">9</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>**Step 4:**编译动态链接库</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">gcc -fPIC -shared -I /opt/app/java/include/ -I /opt/app/java/include/linux/ jnitest.c -o mynativelib.so
+</span></span></code></pre></div><p>**Step 5:**运行 Java 程序</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">java JNITest
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl">====output===
+</span></span><span class="line"><span class="ln">4</span><span class="cl">ubuntu@vm-911:~/workspace/java/jni$ java JNITest
+</span></span><span class="line"><span class="ln">5</span><span class="cl">hello liubang...
+</span></span><span class="line"><span class="ln">6</span><span class="cl">this is implemented by c and called by java!
+</span></span></code></pre></div><p>于是第一个 c 语言实现的 JNI 程序就跑起来了，是不是很简单。别着急，这只是个开始！</p>
+<h1 id="2-jni-in-package">2 JNI in Package<a class="anchor ms-1" href="#2-jni-in-package"><i class="fas fa-link"></i></a></h1>
+<p>通常情况下，几乎所有的 Java 类都有自己的 package 而不是直接使用默认的无名的 package。那么对于使用了 package 的 Java 类如何来创建 JNI 程序呢，其实跟开始的例子几乎是一样的。</p>
+<p>首先实现一个 test.HelloJNI 类</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nn">test</span><span class="o">;</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloJNI</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="kd">static</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">&#34;hello&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="kd">private</span> <span class="kd">native</span> <span class="kt">void</span> <span class="nf">sayHello</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="k">new</span> <span class="n">HelloJNI</span><span class="o">().</span><span class="na">sayHello</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>然后编译 Java 程序</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">javac test/HelloJNI.java
+</span></span></code></pre></div><p>接着生成 C/C++头文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">//将生成的头文件存放在include文件夹
+</span></span><span class="line"><span class="ln">2</span><span class="cl">javah -d include test.HelloJNI
+</span></span></code></pre></div><p>实现头文件中定义的函数</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;jni.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;include/test_HelloJNI.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="n">JNIEXPORT</span> <span class="kt">void</span> <span class="n">JNICALL</span> <span class="nf">Java_test_HelloJNI_sayHello</span><span class="p">(</span><span class="n">JNIEnv</span> <span class="o">*</span><span class="n">env</span><span class="p">,</span> <span class="n">jobject</span> <span class="n">this</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;hello liubang</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>编译成动态链接库</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">gcc -fPIC -shared -I /opt/app/java/include/ -I /opt/app/java/include/linux/ HelloJNI.c -o libhello.so
+</span></span></code></pre></div><p>然后运行 Java 程序</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">java -Djava.library.path=. test.HelloJNI
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl">====output====
+</span></span><span class="line"><span class="ln">4</span><span class="cl">ubuntu@vm-911:~/workspace/java/jni/demo1$ java -Djava.library.path=. test.HelloJNI
+</span></span><span class="line"><span class="ln">5</span><span class="cl">hello liubang
+</span></span></code></pre></div></div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content surface">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-coffee"></i>打赏</h5>
+        <a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary" aria-label="Close"><i class="fas fa-times"></i></a>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
+              <i class="fab fa-fw fa-alipay"></i>支付宝
+            </a>
+          </li><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
+              <i class="fab fa-fw fa-weixin"></i>微信
+            </a>
+          </li></ul>
+        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
+          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
+          </div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-left"></i>
+    <a href="/zh-cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/">彻底掌握malloc
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/zh-cn/posts/java/2017-03-20-java_native_interface%E4%BA%8C/">Java Native Interface（二）
+</a>
+    <i class="fas fa-fw fa-chevron-right"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/zh-cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/">彻底掌握malloc
+</a>
+          <span class="float-end post-date">2017-03-17
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/compiler/2017-03-15-%E5%9F%BA%E4%BA%8Ec%E8%AF%AD%E8%A8%80%E7%9A%84%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%BC%80%E5%8F%91/">基于c语言的编程语言开发
+</a>
+          <span class="float-end post-date">2017-03-15
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/php/2017-03-09-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8Bcall-user-func%E5%8E%9F%E7%90%86%E5%92%8C%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0/">Php扩展开发之call_user_func原理和回调函数的实现
+</a>
+          <span class="float-end post-date">2017-03-09
+</span>
+        </li></ul>
+    </div>
+  </section><div class="card component row post-comments" id="post-comments">
+  <div class="card-header">
+    <h2 class="card-title">评论</h2>
+  </div>
+  <div class="card-body"><script src="https://utteranc.es/client.js"
+  repo="liubang/blog"
+  issue-term="pathname"
+  label="comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script></div>
+</div></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <section class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt="liubang" src="/images/profile.webp" loading="lazy"
+   width="1000" height="1000"
+   />
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">liubang</div><div class="profile-bio">Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Baidu</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+</div>
+  </div>
+</section>
+  <div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#21-用-c-语言实现第一个-jni-程序">2.1 用 c 语言实现第一个 JNI 程序</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/zh-cn/posts/cpp/2022-03-18-c&#43;&#43;17-constexpr_if/">C&#43;&#43;17:constexpr If
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-03-15-c&#43;&#43;20-designated_initializers/">C&#43;&#43;20:Designated Initializers
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
+</a>
+      </li></ul>
+  </div>
+</section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/categories/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/categories/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/zh-cn/categories/java/" class="badge rounded post-taxonomy" title="java">
+            java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/categories/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/ds/" class="badge rounded post-taxonomy" title="ds">
+            ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/inf/" class="badge rounded post-taxonomy" title="inf">
+            inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/storage/" class="badge rounded post-taxonomy" title="storage">
+            storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/tags/c/" class="badge rounded post-taxonomy" title="c">
+            c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/tags/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/tags/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/zh-cn/tags/java/" class="badge rounded post-taxonomy" title="Java">
+            Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/jni/" class="badge rounded post-taxonomy" title="JNI">
+            JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge rounded post-taxonomy" title="c&#43;&#43;17">
+            c&#43;&#43;17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/algorithm/" class="badge rounded post-taxonomy" title="algorithm">
+            algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/tags/c&#43;&#43;20/" class="badge rounded post-taxonomy" title="c&#43;&#43;20">
+            c&#43;&#43;20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2016-2022 LiuBang. All Rights Reserved.
+</div>
+<div class="powered-by mb-2">
+  Powered by <a href="https://gohugo.io" target="_blank" rel="noopener noreferrer">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank" rel="noopener noreferrer">Bootstrap</a> theme.
+</div>
+
+
+
+</footer>
+<script src="/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js" integrity="sha256-aJTp8Icy&#43;VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin="anonymous" defer></script><script src="/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js" integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js" integrity="sha256-Vs2p5NUlCvakrAMEy/36Od&#43;5KIyDFnmExO1/vipUw00=" crossorigin="anonymous" defer></script><script defer src="/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js" integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin="anonymous"></script>
+<script defer src="/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js" integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg&#43;8Q53c4bN/Kc7hJD7w=" crossorigin="anonymous"></script>
+
+</body>
+</html>

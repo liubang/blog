@@ -1,0 +1,678 @@
+<!doctype html><html lang="zh-cn" data-palette="blue gray"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LevelDB 源码阅读之 Compaction - liubang&#39;s blog</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/zh-cn/manifest.json">
+<meta name="keywords" content="" />
+<meta name="description" content="1. 概览 要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为： 数据先写入到 WAL 日志中，做持久化 然后数据同步到mut" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="LevelDB 源码阅读之 Compaction">
+<meta itemprop="description" content="1. 概览 要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为： 数据先写入到 WAL 日志中，做持久化 然后数据同步到mut"><meta itemprop="datePublished" content="2021-01-12T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-01-12T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3259">
+<meta itemprop="keywords" content="leveldb,storage," /><meta property="og:title" content="LevelDB 源码阅读之 Compaction" />
+<meta property="og:description" content="1. 概览 要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为： 数据先写入到 WAL 日志中，做持久化 然后数据同步到mut" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-01-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-01-12T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="LevelDB 源码阅读之 Compaction"/>
+<meta name="twitter:description" content="1. 概览 要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为： 数据先写入到 WAL 日志中，做持久化 然后数据同步到mut"/>
+<meta property="og:image" content="/images/logo.png"/>
+  <meta name="twitter:image" content="/images/logo.png"/><link rel="stylesheet" href="/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css" integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8&#43;I&#43;qU=" crossorigin="anonymous"><link rel="stylesheet" href="/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css" integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css" integrity="sha256-PSKHlLztu/oEEr64&#43;8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin="anonymous"></head>
+  <body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/zh-cn/"><img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy"
+   width="136" height="69"
+   />
+LIUBANG
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=LevelDB%20%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb%e4%b9%8b%20Compaction&url=%2fzh-cn%2fposts%2fstorage%2f2021-01-12-leveldb%25E6%25BA%2590%25E7%25A0%2581%25E9%2598%2585%25E8%25AF%25BB%25E4%25B9%258Bcompaction%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fstorage%2f2021-01-12-leveldb%25E6%25BA%2590%25E7%25A0%2581%25E9%2598%2585%25E8%25AF%25BB%25E4%25B9%258Bcompaction%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column"><section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-language"></i> 语言</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="dropdown">
+        <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          简体中文
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li></ul>
+      </div>
+    </div>
+  </form>
+</section>
+
+
+<section class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</section>
+
+<section class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</section>
+
+
+<section class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</section>
+<section class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-arrow-left"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></section>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/zh-cn/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/zh-cn/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main role="main" class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">文章</a></li><li class="breadcrumb-item active">LevelDB 源码阅读之 Compaction</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper">
+  <div class="d-flex flex-column component rounded post-panel">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
+  <i class="fas fa-fw fa-coffee"></i>
+</a>
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    <a class="action" href="#post-comments" role="button" aria-label="Comments" title="Comments">
+  <i class="fas fa-fw fa-comments"></i>
+</a>
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">LevelDB 源码阅读之 Compaction
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2021-01-12 08:00:00 &#43;0800 CST。">
+    2021-01-12
+  </span><span class="post-reading-time">
+    7 分钟阅读
+  </span><span class="post-taxonomies"><a href="/zh-cn/categories/storage/" class="badge post-taxonomy">storage</a><a href="/zh-cn/tags/leveldb/" class="badge post-taxonomy">leveldb</a><a href="/zh-cn/tags/storage/" class="badge post-taxonomy">storage</a></span>
+</div>
+
+<div class="post-content mb-3"><h1 id="1-概览">1. 概览<a class="anchor ms-1" href="#1-概览"><i class="fas fa-link"></i></a></h1>
+<p>要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为：</p>
+<ol>
+<li>数据先写入到 WAL 日志中，做持久化</li>
+<li>然后数据同步到<code>mutable memtable</code>中</li>
+<li>当<code>mutable memtable</code>大小达到<code>Options.write_buffer_size</code>设置的大小时，就会变成<code>immutable memtable</code>，并且创建一个新的<code>mutable memtable</code></li>
+<li>后台的 Compaction 线程会把<code>immutable memtable</code>dump 成 sstable 文件，并设置于 Level 0 层</li>
+<li>当 Level i 达到一定条件后，就会和 Level i + 1 层的 sstable 进行合并，从而触发 Compaction 过程，并在 Level
+n + 1 层生成一个新的 sstable 文件</li>
+</ol>
+<h1 id="2-compaction-分类">2. Compaction 分类<a class="anchor ms-1" href="#2-compaction-分类"><i class="fas fa-link"></i></a></h1>
+<p>在 LevelDB 中，Compaction 大体上可以分为两类，分别是：</p>
+<ul>
+<li><code>immutable memtable compaction</code>，也叫做<strong>minor compaction</strong>，指的是将<code>immutable memtable</code>dump 到 sstable 文件的过程</li>
+<li><code>sstable compaction</code>，也叫做<strong>major compaction</strong>，指的是 sstable 文件之间的合并过程</li>
+</ul>
+<p>而对于<code>sstable compaction</code>又可以细分为三种：</p>
+<ul>
+<li><code>manual compaction</code>，是指外部通过调用<code>DBImpl::CompactRange</code>接口触发的</li>
+<li><code>size compaction</code>，是指程序根据每个 Level 的总文件大小通过一定规则自动触发的</li>
+<li><code>seek compaction</code>，每个 sstable 文件内部维护了一个<strong>seek miss</strong>的 counter，当达到一定条件的时候，LevelDB 就认为这个文件需要 Compact</li>
+</ul>
+<p>从<code>DBImpl::BackgroundCompaction</code>的代码逻辑中不难看出，这些 Compaction 策略的优先级为：</p>
+<p><code>immutable memtable compaction</code> &gt; <code>manual compaction</code> &gt; <code>size compaction</code> &gt; <code>seek compaction</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// db_impl.cc
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="n">DBImpl</span><span class="o">::</span><span class="n">BackgroundCompaction</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">  <span class="n">mutex_</span><span class="p">.</span><span class="n">AssertHeld</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">  <span class="c1">// 首先判断是否存在 immutable memtable，如果存在，则优先进行
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span>  <span class="c1">// immutable memtable compaction
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span><span class="n">imm_</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="n">CompactMemTable</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">  <span class="n">Compaction</span><span class="o">*</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">  <span class="c1">// 其次判断是否存在 manual_compaction_，如果有，则进行manual compaction
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span>  <span class="kt">bool</span> <span class="n">is_manual</span> <span class="o">=</span> <span class="p">(</span><span class="n">manual_compaction_</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">  <span class="n">InternalKey</span> <span class="n">manual_end</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">is_manual</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">    <span class="c1">// 然后通过PickCompaction选择size compaction还是seek compaction
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="c1"></span>    <span class="n">c</span> <span class="o">=</span> <span class="n">versions_</span><span class="o">-&gt;</span><span class="n">PickCompaction</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">  <span class="c1">//......
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">
+</span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1">// version_set.cc
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1"></span><span class="n">Compaction</span><span class="o">*</span> <span class="n">VersionSet</span><span class="o">::</span><span class="n">PickCompaction</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">  <span class="n">Compaction</span><span class="o">*</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">  <span class="kt">int</span> <span class="n">level</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">  <span class="c1">// We prefer compactions triggered by too much data in a level over
+</span></span></span><span class="line"><span class="ln">29</span><span class="cl"><span class="c1"></span>  <span class="c1">// the compactions triggered by seeks.
+</span></span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="c1"></span>  <span class="k">const</span> <span class="kt">bool</span> <span class="n">size_compaction</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_</span><span class="o">-&gt;</span><span class="n">compaction_score_</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">  <span class="k">const</span> <span class="kt">bool</span> <span class="n">seek_compaction</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_</span><span class="o">-&gt;</span><span class="n">file_to_compact_</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">size_compaction</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">34</span><span class="cl"><span class="c1"></span>  <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">seek_compaction</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">36</span><span class="cl"><span class="c1"></span>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">    <span class="k">return</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">40</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><h1 id="3-immutable-memtable-compaction">3. Immutable memtable Compaction<a class="anchor ms-1" href="#3-immutable-memtable-compaction"><i class="fas fa-link"></i></a></h1>
+<h2 id="31-触发条件">3.1 触发条件<a class="anchor ms-1" href="#31-触发条件"><i class="fas fa-link"></i></a></h2>
+<p>由于<code>immutable memtable compaction</code>是当存在<strong>Immutable memtable</strong>的时候才会触发，因此，<code>immutable memtable compaction</code>的触发于数据的写入有着密切的关联。追踪整个数据写入的逻辑，不难发现整个调用的链路为：<code>DBImpl::Put</code> -&gt; <code>DB::Put</code> -&gt; <code>DBImpl::Write</code> -&gt; <code>DBImpl::MakeRoomForWrite</code>。</p>
+<p><code>DBImpl::MakeRoomForWrite</code>的逻辑也很清晰：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// db_impl.cc
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="n">Status</span> <span class="n">DBImpl</span><span class="o">::</span><span class="n">MakeRoomForWrite</span><span class="p">(</span><span class="kt">bool</span> <span class="n">force</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">  <span class="n">mutex_</span><span class="p">.</span><span class="n">AssertHeld</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="n">assert</span><span class="p">(</span><span class="o">!</span><span class="n">writers_</span><span class="p">.</span><span class="n">empty</span><span class="p">());</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">  <span class="kt">bool</span> <span class="n">allow_delay</span> <span class="o">=</span> <span class="o">!</span><span class="n">force</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">  <span class="n">Status</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">bg_error_</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">      <span class="c1">// Yield previous error
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>      <span class="n">s</span> <span class="o">=</span> <span class="n">bg_error_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">      <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">allow_delay</span> <span class="o">&amp;&amp;</span> <span class="n">versions_</span><span class="o">-&gt;</span><span class="n">NumLevelFiles</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">                                  <span class="n">config</span><span class="o">::</span><span class="n">kL0_SlowdownWritesTrigger</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1"></span>      <span class="n">mutex_</span><span class="p">.</span><span class="n">Unlock</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">      <span class="n">env_</span><span class="o">-&gt;</span><span class="n">SleepForMicroseconds</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">      <span class="n">allow_delay</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>  <span class="c1">// Do not delay a single write more than once
+</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="c1"></span>      <span class="n">mutex_</span><span class="p">.</span><span class="n">Lock</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="o">!</span><span class="n">force</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">               <span class="p">(</span><span class="n">mem_</span><span class="o">-&gt;</span><span class="n">ApproximateMemoryUsage</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">options_</span><span class="p">.</span><span class="n">write_buffer_size</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">      <span class="c1">// There is room in current memtable
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span>      <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">imm_</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1"></span>      <span class="n">background_work_finished_signal_</span><span class="p">.</span><span class="n">Wait</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">versions_</span><span class="o">-&gt;</span><span class="n">NumLevelFiles</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">config</span><span class="o">::</span><span class="n">kL0_StopWritesTrigger</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="c1"></span>      <span class="n">background_work_finished_signal_</span><span class="p">.</span><span class="n">Wait</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">31</span><span class="cl"><span class="c1"></span>      <span class="n">imm_</span> <span class="o">=</span> <span class="n">mem_</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">      <span class="n">has_imm_</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="nb">true</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_release</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">      <span class="n">mem_</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MemTable</span><span class="p">(</span><span class="n">internal_comparator_</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">      <span class="n">mem_</span><span class="o">-&gt;</span><span class="n">Ref</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">36</span><span class="cl"><span class="c1"></span>      <span class="n">MaybeScheduleCompaction</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">  <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li>先判断 Level 0 层的文件数是否达到了 <code>kL0_SlowdownWritesTrigger (default: 8)</code>中配置的值，如果达到的话，则 Sleep 1ms</li>
+<li>判断当前 memtable 占用的内存大小是否达到了 <code>Options.write_buffer_size</code> 的值，如果没有达到，则说明当前 memtable 符合写入条件</li>
+<li>如果当前 memtable 占用的内存大小达到了阈值，则检查是否有还未 compaction 的 immutable memtable，如果有，则等待直到上一个 immutable memtable compaction 执行完成</li>
+<li>如果不存在还未 compaction 的 immutable memtable，则判断当前 Level 0 层的的文件数是否达到了 <code>kL0_StopWritesTrigger (default: 12)</code>设置的数量，如果达到了则等待后台的 compaction 任务执行完成，并且直到满足条件</li>
+<li>如果当前 Level 0 层的文件数没有达到阈值，则将当前的 mutable memtable 设置成 immutable mentable，并创建一个新的 mutable memtable，然后触发 compaction</li>
+</ol>
+<h2 id="32-执行过程">3.2 执行过程<a class="anchor ms-1" href="#32-执行过程"><i class="fas fa-link"></i></a></h2>
+<p>Immutable memtable compaction 的执行过程逻辑在<code>DBImpl::CompactMemTable</code> -&gt; <code>DBImpl::WriteLevel0Table</code>中，整个流程分为 3 个步骤：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// db_impl.cc
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="n">Status</span> <span class="n">DBImpl</span><span class="o">::</span><span class="n">WriteLevel0Table</span><span class="p">(</span><span class="n">MemTable</span><span class="o">*</span> <span class="n">mem</span><span class="p">,</span> <span class="n">VersionEdit</span><span class="o">*</span> <span class="n">edit</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">                                <span class="n">Version</span><span class="o">*</span> <span class="n">base</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1"></span>  <span class="n">Status</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="n">mutex_Unlock</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="n">s</span> <span class="o">=</span> <span class="n">BuildTable</span><span class="p">(</span><span class="n">dbname_</span><span class="p">,</span> <span class="n">env_</span><span class="p">,</span> <span class="n">options_</span><span class="p">,</span> <span class="n">table_cache_</span><span class="p">,</span> <span class="n">iter</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">meta</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="n">mutex_Lock</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">ok</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">meta</span><span class="p">.</span><span class="n">file_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="k">const</span> <span class="n">Slice</span> <span class="n">min_user_key</span> <span class="o">=</span> <span class="n">meta</span><span class="p">.</span><span class="n">smallest</span><span class="p">.</span><span class="n">user_key</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="k">const</span> <span class="n">Slice</span> <span class="n">max_user_key</span> <span class="o">=</span> <span class="n">meta</span><span class="p">.</span><span class="n">largest</span><span class="p">.</span><span class="n">user_key</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">baze</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">      <span class="n">level</span> <span class="o">=</span> <span class="n">baze</span><span class="o">-&gt;</span><span class="n">PickLevelForMemTableOutput</span><span class="p">(</span><span class="n">min_user_key</span><span class="p">,</span> <span class="n">max_user_key</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">    <span class="n">edit</span><span class="o">-&gt;</span><span class="n">AddFile</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">meta</span><span class="p">.</span><span class="n">number</span><span class="p">,</span> <span class="n">meta</span><span class="p">.</span><span class="n">file_size</span><span class="p">,</span> <span class="n">meta</span><span class="p">.</span><span class="n">smallest</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">                  <span class="n">meta</span><span class="p">.</span><span class="n">largest</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li>调用<code>DBImpl::BuildTable</code>将 Immutable memtable 中的数据 dump 成 sstable 文件</li>
+<li>调用<code>VersionSet::PickLevelForMemTableOutput</code>为这个新生成的 sstable 文件选择一个新的 Level</li>
+<li>调用<code>VersionEdit::AddFile</code>将这个新的 sstable 文件放到选出来的 Level 中</li>
+</ol>
+<p>下图是<code>VersionSet::PickLevelForMemTableOutput</code>的流程图</p>
+<p><img class="img-fluid" alt="" src="/images/2021-01-12/PickLevelForMemTableOutput.jpg" loading="lazy"
+   width="954" height="1096"
+   />
+
+</p>
+<h1 id="4-sstable-compaction">4. Sstable Compaction<a class="anchor ms-1" href="#4-sstable-compaction"><i class="fas fa-link"></i></a></h1>
+<p>Sstable Compaction 就是将不同层级的 sst 文件进行合并的，主要是为了均衡各个 level 的数据，保证读性能，同时也会合并 delete 数据，释放磁盘空间。</p>
+<h2 id="41-manual-compaction">4.1 Manual Compaction<a class="anchor ms-1" href="#41-manual-compaction"><i class="fas fa-link"></i></a></h2>
+<p>Manual Compaction 的核心逻辑在 <code>VersionSet::CompactRange</code> 中，执行流程为：</p>
+<ol>
+<li>通过 <code>Version::GetOverlappingInputs</code> 获取指定的 Level 中 key-range 与[start, end]有交集的 sstable</li>
+<li>如果指定的 Level &gt; 0 则对一次 compaction 的 sst 文件总大小做个限制，避免一次 compact 过多</li>
+<li>通过 <code>VersionSet::SetupOtherInputs</code> 获取其他需要 compatcion 的 sstable
+<ol>
+<li>通过调用<code>VersionSet::AddBoundaryInputs</code>将当前 Level 中符合边界条件的 sst 添加到要 compaction 的 sst 列表中</li>
+<li>通过调用<code>VersionSet::GetRange</code>确定当前 Level 中要 compaction 的 sst 文件的 key range</li>
+<li>通过调用<code>Version::GetOverlappingInputs</code>获取 Level + 1 层中与上一步获取的 key range 有交集的 sst 文件</li>
+<li>通过调用<code>VersionSet::GetRange2</code>获取所有将要参与 compaction 的 sst 文件的 key range</li>
+<li>在不改变 Level + 1 层 compaction 文件个数的情况下，尝试增加 Level 层 compaction 文件的数量</li>
+<li>获取 Level + 2 层中与上述获取的最终 key range 有交集的 sst 文件</li>
+</ol>
+</li>
+</ol>
+<h2 id="42-size-compaction">4.2 Size Compaction<a class="anchor ms-1" href="#42-size-compaction"><i class="fas fa-link"></i></a></h2>
+<p>Size Compaction 的执行条件是 LevelDB 会计算每个 Level 的总文件大小，从而计算出一个 score，最后根据 score，来选择一个合适的 level 来进行 compaction。
+score 的计算逻辑主要在<code>VersionSet::Finalize</code>中：当$Level = 0$时，$score = files.size() / 4$，当 $Level &gt; 0$时，$score
+= levelbytes / (1048576.0 * 10^level)$。通过遍历每一层的所有 sstable 文件，根据对应的公式计算出来$score$，然后挑选出最大的$score$以及对应的 Level。</p>
+<h2 id="43-seek-compaction">4.3 Seek Compaction<a class="anchor ms-1" href="#43-seek-compaction"><i class="fas fa-link"></i></a></h2>
+<p>在<code>FileMetaData</code>中，有一个字段是<code>allowed_seeks</code>，是用来保存当前 sst 文件，允许容忍的 seek miss 最大值，每次调用 Get，并且触发 seek miss 的时候，就会对对应的 sst 文件的<code>allowed_seeks</code>执行减 1。<code>allowed_seeks</code>的初始值为：$sstsize / 16384$，且最小为 100。
+如果某个 sst 文件的<code>allowed_seeks</code>减到 0 的时候，则会将该 sst 文件赋值给<code>Version::file_to_compact_</code>，同时将该 sst 的 level 赋值给<code>Version::file_to_compact_level_</code>。</p>
+<h2 id="44-do-compaction-work">4.4 Do Compaction Work<a class="anchor ms-1" href="#44-do-compaction-work"><i class="fas fa-link"></i></a></h2>
+<p>前面的逻辑属于 Compaction 策略，而这一步可以说是真正执行 Compaction 的过程了，核心逻辑都在<code>DBImpl::DoCompactionWork</code>中：</p>
+<ol>
+<li>调用<code>VersionSet::MakeInputIterator</code>构造迭代器：
+<ol>
+<li>对于 Level 0 层的文件，会为每一个 sst 文件创建一个 Iterator</li>
+<li>对于非 Level 0 层的文件，会创建一个 concatenating iterator (TwoLevelIterator)</li>
+<li>然后将通过上述两条规则创建好的 Iterator 构造成 <code>MergingIterator</code></li>
+</ol>
+</li>
+<li>对构造好的 Iterator 进行遍历
+<ol>
+<li><code>input-&gt;SeekToFirst()</code></li>
+<li>优先检查并合并存在的<code>Immutable Memtable</code></li>
+<li>如果当前 key 与 level + 2 层产生的重叠的 sst 文件的 size 超过阈值，则调用 <code>DBImpl::FinishCompactionOutputFile</code> 立即结束当前写入的 sstable 文件</li>
+<li>解析当前的 key</li>
+<li>判断当前 key 是否重复且不在快照范围内，或者当前 key 被标记为删除(<code>type == kTypeDeletion</code>)并且当前 key 不在快照范围内并且在 Level + 2 层以上的 Level 中不存在该 key(<code>Compaction::IsBaseLevelForKey</code>)，满足上述条件时，该 key 被丢弃</li>
+<li>当该 key 不被丢弃时，将该 key 写入到 compat 的 sst 文件中</li>
+<li>当当前写入的 sst 文件大小超过阈值的时候，会关闭该文件，在下一次写入 key 的时候创建一个新的 sst 文件</li>
+<li>调用迭代器迁移<code>input-&gt;Next()</code></li>
+</ol>
+</li>
+<li>更新 compact 统计信息</li>
+<li>调用<code>DBImpl::InstallCompactionResults</code>生效 compact 后的状态
+<ol>
+<li>将 compat 中的 input sstable 设置为删除，生成的新的 sstable 文件添加到 Level + 1 层中</li>
+<li>调用<code>VersionSet::LogAndApply</code>应用 VersionEdit
+<ol>
+<li>以当前 version 为基准，构造新的 Version</li>
+<li>通过<code>VersionSet::Builder</code>将 VersionEdit 应用在新的 Version 上</li>
+<li>重新计算每一个 sstable 的 score 值</li>
+<li>写入 MANIFEST 文件</li>
+<li>将<code>current_</code>设置为新的 version</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content surface">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-coffee"></i>打赏</h5>
+        <a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary" aria-label="Close"><i class="fas fa-times"></i></a>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
+              <i class="fab fa-fw fa-alipay"></i>支付宝
+            </a>
+          </li><li class="nav-item text-nowrap" role="presentation">
+            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
+              <i class="fab fa-fw fa-weixin"></i>微信
+            </a>
+          </li></ul>
+        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
+          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
+            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
+          </div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-left"></i>
+    <a href="/zh-cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/">分布式协议
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
+</a>
+    <i class="fas fa-fw fa-chevron-right"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/zh-cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/">分布式协议
+</a>
+          <span class="float-end post-date">2020-05-25
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/">使用c语言模拟lisp语法
+</a>
+          <span class="float-end post-date">2019-08-18
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/sp/2019-07-18-%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5%E5%99%A8%E6%8A%80%E5%B7%A7%E4%B9%8B%E4%BD%BF%E7%94%A8ld_preload%E6%94%B9%E5%8F%98%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%A1%8C%E4%B8%BA/">动态连接器技巧之使用LD_PRELOAD改变程序的行为
+</a>
+          <span class="float-end post-date">2019-07-18
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/">多线程编程
+</a>
+          <span class="float-end post-date">2018-12-05
+</span>
+        </li><li>
+          <a href="/zh-cn/posts/php/2018-04-16-%E4%BD%BF%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E9%AB%98%E6%80%A7%E8%83%BD%E8%B7%AF%E7%94%B1/">使用正则表达式开发一个高性能路由
+</a>
+          <span class="float-end post-date">2018-04-16
+</span>
+        </li></ul>
+    </div>
+  </section><div class="card component row post-comments" id="post-comments">
+  <div class="card-header">
+    <h2 class="card-title">评论</h2>
+  </div>
+  <div class="card-body"><script src="https://utteranc.es/client.js"
+  repo="liubang/blog"
+  issue-term="pathname"
+  label="comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script></div>
+</div></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <section class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt="liubang" src="/images/profile.webp" loading="lazy"
+   width="1000" height="1000"
+   />
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">liubang</div><div class="profile-bio">Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Baidu</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+</div>
+  </div>
+</section>
+  <div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#31-触发条件">3.1 触发条件</a></li>
+    <li><a href="#32-执行过程">3.2 执行过程</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#41-manual-compaction">4.1 Manual Compaction</a></li>
+    <li><a href="#42-size-compaction">4.2 Size Compaction</a></li>
+    <li><a href="#43-seek-compaction">4.3 Seek Compaction</a></li>
+    <li><a href="#44-do-compaction-work">4.4 Do Compaction Work</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/zh-cn/posts/cpp/2022-03-18-c&#43;&#43;17-constexpr_if/">C&#43;&#43;17:constexpr If
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-03-15-c&#43;&#43;20-designated_initializers/">C&#43;&#43;20:Designated Initializers
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
+</a>
+      </li><li>
+        <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
+</a>
+      </li></ul>
+  </div>
+</section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/categories/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/categories/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/zh-cn/categories/java/" class="badge rounded post-taxonomy" title="java">
+            java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/categories/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/ds/" class="badge rounded post-taxonomy" title="ds">
+            ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/inf/" class="badge rounded post-taxonomy" title="inf">
+            inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/storage/" class="badge rounded post-taxonomy" title="storage">
+            storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/zh-cn/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/zh-cn/tags/c/" class="badge rounded post-taxonomy" title="c">
+            c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
+            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/tags/php/" class="badge rounded post-taxonomy" title="php">
+            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/tags/sp/" class="badge rounded post-taxonomy" title="sp">
+            sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/zh-cn/tags/java/" class="badge rounded post-taxonomy" title="Java">
+            Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/jni/" class="badge rounded post-taxonomy" title="JNI">
+            JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge rounded post-taxonomy" title="c&#43;&#43;17">
+            c&#43;&#43;17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/compiler/" class="badge rounded post-taxonomy" title="compiler">
+            compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/algorithm/" class="badge rounded post-taxonomy" title="algorithm">
+            algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/tags/c&#43;&#43;20/" class="badge rounded post-taxonomy" title="c&#43;&#43;20">
+            c&#43;&#43;20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-weibo"></i>
+      </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2016-2022 LiuBang. All Rights Reserved.
+</div>
+<div class="powered-by mb-2">
+  Powered by <a href="https://gohugo.io" target="_blank" rel="noopener noreferrer">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank" rel="noopener noreferrer">Bootstrap</a> theme.
+</div>
+
+
+
+</footer>
+<script src="/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js" integrity="sha256-aJTp8Icy&#43;VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin="anonymous" defer></script><script src="/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js" integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js" integrity="sha256-Vs2p5NUlCvakrAMEy/36Od&#43;5KIyDFnmExO1/vipUw00=" crossorigin="anonymous" defer></script><script defer src="/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js" integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin="anonymous"></script>
+<script defer src="/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js" integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg&#43;8Q53c4bN/Kc7hJD7w=" crossorigin="anonymous"></script>
+
+</body>
+</html>
