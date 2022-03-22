@@ -1,687 +1,234 @@
-<!doctype html><html lang="zh-cn" data-palette="blue gray"
-  >
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>c语言之struct - liubang&#39;s blog</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
-<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
-<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
-<link rel="icon" href="/images/icons/favicon.ico">
-<link rel="manifest" href="/zh-cn/manifest.json">
-<meta name="keywords" content="" />
-<meta name="description" content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="c语言之struct">
-<meta itemprop="description" content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个"><meta itemprop="datePublished" content="2017-08-21T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2017-08-21T00:00:00+00:00" />
-<meta itemprop="wordCount" content="2547">
-<meta itemprop="keywords" content="c," /><meta property="og:title" content="c语言之struct" />
-<meta property="og:description" content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/zh-cn/posts/sp/2017-08-21-c%E8%AF%AD%E8%A8%80%E4%B9%8Bstruct/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2017-08-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2017-08-21T00:00:00+00:00" />
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="c语言之struct"/>
-<meta name="twitter:description" content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个"/>
-<meta property="og:image" content="/images/logo.png"/>
-  <meta name="twitter:image" content="/images/logo.png"/><link rel="stylesheet" href="/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css" integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8&#43;I&#43;qU=" crossorigin="anonymous"><link rel="stylesheet" href="/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css" integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin="anonymous">
-<link rel="stylesheet" href="/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css" integrity="sha256-PSKHlLztu/oEEr64&#43;8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin="anonymous"></head>
-  <body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
-  <div class="container">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="fas fa-bars"></i>
-    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/zh-cn/"><img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy"
-   width="136" height="69"
-   />
-LIUBANG
-    </a>
-    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
-  <div class="offcanvas-header">
-    <h3 class="offcanvas-title">Share</h3>
-    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body">
-    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
-      target="_blank" href="https://twitter.com/intent/tweet?title=c%e8%af%ad%e8%a8%80%e4%b9%8bstruct&url=%2fzh-cn%2fposts%2fsp%2f2017-08-21-c%25E8%25AF%25AD%25E8%25A8%2580%25E4%25B9%258Bstruct%2f">
-      <i class="fab fa-fw fa-twitter"></i> Twitter
-    </a>
-    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
-      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fsp%2f2017-08-21-c%25E8%25AF%25AD%25E8%25A8%2580%25E4%25B9%258Bstruct%2f">
-      <i class="fab fa-fw fa-facebook-f"></i> Facebook
-    </a>
-  </div>
-</div>
-    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
-  aria-controls="offcanvasSettings" aria-label="Toggle settings">
-  <i class="fas fa-ellipsis-v"></i>
-</button>
-
-<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
-  <div class="offcanvas-header">
-    <h3 class="offcanvas-title">设置</h3>
-    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body d-flex flex-column"><section class="setting">
-  <form class="row">
-    <div class="col-auto">
-      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-language"></i> 语言</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <div class="dropdown">
-        <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          简体中文
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li></ul>
-      </div>
-    </div>
-  </form>
-</section>
-
-
-<section class="setting">
-  <form class="row">
-    <div class="col-auto">
-      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="modeSwitcher">
-      </div>
-    </div>
-  </form>
-</section>
-
-<section class="setting">
-  <form class="font-size-switcher-form row">
-    <div class="col-auto">
-      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
-    </div>
-  </form>
-</section>
-
-
-<section class="setting palettes">
-  <form class="row">
-    <div class="col-auto">
-      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
-        <i class="fas fa-eye-dropper"></i>
-      </a>
-    </div>
-  </form>
-  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
-        class="btn btn-sm w-100 palette" data-palette="blue">
-      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
-        class="btn btn-sm w-100 palette" data-palette="blue-gray">
-      </button><button type="button" id="palette-brown" aria-label="棕色"
-        class="btn btn-sm w-100 palette" data-palette="brown">
-      </button><button type="button" id="palette-cyan" aria-label="青色"
-        class="btn btn-sm w-100 palette" data-palette="cyan">
-      </button><button type="button" id="palette-green" aria-label="绿色"
-        class="btn btn-sm w-100 palette" data-palette="green">
-      </button><button type="button" id="palette-indigo" aria-label="靛青色"
-        class="btn btn-sm w-100 palette" data-palette="indigo">
-      </button><button type="button" id="palette-orange" aria-label="橙色"
-        class="btn btn-sm w-100 palette" data-palette="orange">
-      </button><button type="button" id="palette-pink" aria-label="粉色"
-        class="btn btn-sm w-100 palette" data-palette="pink">
-      </button><button type="button" id="palette-purple" aria-label="紫色"
-        class="btn btn-sm w-100 palette" data-palette="purple">
-      </button><button type="button" id="palette-red" aria-label="红色"
-        class="btn btn-sm w-100 palette" data-palette="red">
-      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
-        class="btn btn-sm w-100 palette" data-palette="teal">
-      </button><button type="button" id="palette-yellow" aria-label="黄色"
-        class="btn btn-sm w-100 palette" data-palette="yellow">
-      </button></div>
-</section>
-<section class="setting actions d-flex justify-content-around mt-auto overflow-auto">
-  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
-    <span class="action-icon"><i class="fas fa-2x fa-arrow-left"></i></span> 返回
-  </a>
-  <a role="button" class="action action-reload-page">
-    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
-  </a>
-  <a role="button" class="action action-copy-url">
-    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
-  </a><a class="action action-social-share" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
-    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
-    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
-  </a></section>
-
-</div>
-</div>
-
-    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
-      <form class="search-bar my-1" action="/zh-cn/search">
-  <div class="input-group input-group-sm">
-    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
-    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
-  </div>
-</form>
-      <ul class="navbar-nav ms-auto"><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/series/">
-            <i class="fas fa-fw fa-columns"></i>专栏
-          </a>
-        </li><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/archives/">
-            <i class="fas fa-fw fa-file-archive"></i>归档
-          </a>
-        </li><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/categories/">
-            <i class="fas fa-fw fa-folder"></i>分类
-          </a>
-        </li><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/tags/">
-            <i class="fas fa-fw fa-tags"></i>标签
-          </a>
-        </li></ul>
-    </div>
-  </div>
-</nav>
-</header>
-<main role="main" class="container">
-      <div class="row content">
-<div class="col-lg-8">
-  <div class="container"><nav class="row card component" aria-label="breadcrumb">
-  <div class="card-body">
-    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">文章</a></li><li class="breadcrumb-item active">C语言之struct</li></ol>
-  </div>
-</nav><div class="post-panel-wrapper">
-  <div class="d-flex flex-column component rounded post-panel">
-    
-    <a class="action action-panel-toggler" role="button" title="Panel toggler">
-      <i class="fas fa-fw fa-chevron-circle-down"></i>
-    </a>
-    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
-  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
-</a>
-
-    
-
-    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
-  <i class="fas fa-fw fa-coffee"></i>
-</a>
-    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
-  <i class="fas fa-fw fa-copyright"></i>
-</a>
-    <a class="action" href="#post-comments" role="button" aria-label="Comments" title="Comments">
-  <i class="fas fa-fw fa-comments"></i>
-</a>
-    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
-  <i class="fas fa-fw fa-list-alt"></i>
-</a>
-    
-  </div>
-</div>
-<article class="row card component mb-4 post">
-  <div class="card-header ">
-    <h1 class="card-title post-title">C语言之struct
-</h1>
-  </div>
-  <div class="card-body"><div class="post-meta">
-  <span class="post-date" title="创建于 2017-08-21 08:00:00 &#43;0800 CST。">
-    2017-08-21
-  </span><span class="post-reading-time">
-    6 分钟阅读
-  </span><span class="post-taxonomies"><a href="/zh-cn/categories/sp/" class="badge post-taxonomy">sp</a><a href="/zh-cn/tags/c/" class="badge post-taxonomy">c</a></span>
-</div>
-
-<div class="post-content mb-3"><h2 id="struct">struct<a class="anchor ms-1" href="#struct"><i class="fas fa-link"></i></a></h2>
-<blockquote>
-<p>在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个指针就能访问集合中的所有成员。结构体中可以包含许多简单或符合数据类型，因此从内存分配上看，有点类似数组，而从变量组织上看，又类似于面向对象编程语言中的类。</p>
-</blockquote>
-<h3 id="定义-struct">定义 struct<a class="anchor ms-1" href="#定义-struct"><i class="fas fa-link"></i></a></h3>
-<p>定义一个 struct 非常简单，使用<code>struct</code>关键字即可。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">struct</span> <span class="n">student</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">};</span>
-</span></span></code></pre></div><h3 id="struct-的初始化">struct 的初始化<a class="anchor ms-1" href="#struct-的初始化"><i class="fas fa-link"></i></a></h3>
-<p>通常有四种常用的 struct 初始化方式。</p>
-<p>１．定义并初始化</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">ext</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">filetype</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">}</span> <span class="n">extensions</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="p">{</span><span class="s">&#34;gif&#34;</span><span class="p">,</span> <span class="s">&#34;image/gif&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="p">{</span><span class="s">&#34;jpg&#34;</span><span class="p">,</span> <span class="s">&#34;image/jpg&#34;</span><span class="p">}</span>
-</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="p">};</span>
-</span></span></code></pre></div><p>２．按照成员声明的顺序初始化</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">struct</span> <span class="n">Person</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln">5</span><span class="cl">
-</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="k">struct</span> <span class="n">Person</span> <span class="n">zhangsan</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#34;张三&#34;</span><span class="p">,</span> <span class="mi">24</span><span class="p">};</span>
-</span></span></code></pre></div><p>本质上，这种方式跟第一种是一样的。</p>
-<p>３．指定初始化，成员顺序可以不定，Linux Kernel 中多采用这种方式。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">struct</span> <span class="n">Student</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="kt">int</span> <span class="n">score</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="k">struct</span> <span class="n">Student</span> <span class="n">zhangsan</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;张三&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="p">.</span><span class="n">c</span> <span class="o">=</span> <span class="sc">&#39;B&#39;</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="mi">92</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">};</span>
-</span></span></code></pre></div><p>４．指定初始化，成员顺序可以不定。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">struct</span> <span class="n">Student</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="kt">int</span> <span class="n">score</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="k">struct</span> <span class="n">Student</span> <span class="n">zhangsan</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="nl">c</span><span class="p">:</span> <span class="sc">&#39;C&#39;</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="nl">score</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="nl">name</span><span class="p">:</span> <span class="s">&#34;张三&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">};</span>
-</span></span></code></pre></div><h3 id="structure-member-alignment-padding-and-data-packing">structure member alignment, padding and data packing.<a class="anchor ms-1" href="#structure-member-alignment-padding-and-data-packing"><i class="fas fa-link"></i></a></h3>
-<p>首先我们来看看以下程序的结果</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">structa_tag</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="kt">short</span> <span class="kt">int</span> <span class="n">s</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">}</span> <span class="n">structa_t</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">structb_tag</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="kt">short</span> <span class="kt">int</span> <span class="n">s</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span> <span class="n">structb_t</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">
-</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">structc_tag</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="kt">double</span> <span class="n">d</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">    <span class="kt">int</span> <span class="n">s</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span> <span class="n">structc_t</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">
-</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">structd_tag</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">21</span><span class="cl">    <span class="kt">double</span> <span class="n">d</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">22</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">23</span><span class="cl">    <span class="kt">int</span> <span class="n">s</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="p">}</span> <span class="n">structd_t</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">25</span><span class="cl">
-</span></span><span class="line"><span class="ln">26</span><span class="cl">
-</span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln">29</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;sizeof(structa_t) = %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">structa_t</span><span class="p">));</span>
-</span></span><span class="line"><span class="ln">30</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;sizeof(structb_t) = %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">structb_t</span><span class="p">));</span>
-</span></span><span class="line"><span class="ln">31</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;sizeof(structc_t) = %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">structc_t</span><span class="p">));</span>
-</span></span><span class="line"><span class="ln">32</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;sizeof(structd_t) = %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">structd_t</span><span class="p">));</span>
-</span></span><span class="line"><span class="ln">33</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">34</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>在执行程序之前，不妨分析下运行的结果。</p>
-<h4 id="data-alignment">data alignment<a class="anchor ms-1" href="#data-alignment"><i class="fas fa-link"></i></a></h4>
-<p>许多实际意义的计算机对基本类型数据在内存中存放的位置有限制，他们会要求这些地址的起始地址的值是某个数 k 的倍数，这就是所谓的内存对齐，而这个 k 则被称为改数据类型的对齐模数(alignment modulus)。这种强制的要求一来是简化了处理器与内存之间传输系统的涉及，二来可以提升读取数据的速度。</p>
-<p>比如有这么一种处理器，它每次读写内存的时候都从某个 8 倍数地址开始，那么读或写一个 double 类型数据就只需要一次内存操作。否则，我们就可能需要两次内存操作才能完成这个动作，因为数据或许恰好横跨在两个符合对齐要求的 8 字节内存块上。</p>
-<h4 id="对齐的原则">对齐的原则<a class="anchor ms-1" href="#对齐的原则"><i class="fas fa-link"></i></a></h4>
-<ul>
-<li>数据类型自身对齐: char 类型自身对齐为 1 字节，short 类型为 2 字节，int/float 为 4 字节，double 为 8 字节</li>
-<li>结构体或类的自身对齐：其成员中自身对齐值最大的那个值</li>
-<li>指定对齐：#pragma pack(value)指定对齐的 value</li>
-<li>数据成员，结构体和类的有效对齐值：自身对齐值和指定对齐值中较小者，即有效对齐值=min{自身对齐值，当前指定的 pack 值}</li>
-</ul>
-<p>基于以上说明，我们来分析下上例程序的运行结果：</p>
-<p>对于<code>structa_tag</code>, <code>char</code>占１个字节，<code>short int</code>占 2 个字节，假如<code>short int</code>紧跟着<code>char</code>之后来分配内存，那么它将会以一个奇数边界开始。所以，计算机会在<code>char</code>之后填充 1 字节来保证<code>short int</code>起始地址从 2 的倍数开始。所以<code>stracta_t</code>的总大小为：<code>sizeof(char) + 1(padding) + sizeof(short)</code>，也就是 1 + 1 + 2 = 4 bytes.</p>
-<p>对于<code>structb_tag</code>，<code>sizeof(structb_t) = sizeof(short) + sizeof(char) + 1 (padding) + sizeof(int)</code>，即 2 + 1 + 1 + 4 = 8 bytes.</p>
-<p>对于<code>structc_tag</code>，由于<code>double</code>为 8 字节对齐，所以在<code>char</code>后需要填充 7 字节，通常我们以为这样就够了，<code>sizeof(char) + 7 (padding) + sizeof(double) + sizeof(int)</code>，1 + 7 + 8 + 4 = 20 bytes。然而实际上并不是这样的结果，因为虽然前述内容看上去满足了基本数据类型的自身对齐，但是对于结构体这种复合数据类型，作为一个整体也需要满足对齐，根据
-对齐原则，结构体或类的自身对齐，是以成员中自身对齐最大的那个值，也就是<code>structc_t</code>自身对齐的值为 8，所以在<code>int</code>后还有４个字节的填充，<code>sizeof(char) + 7 (padding) + sizeof(double) + sizeof(int) + 4 (padding)</code>, 1 + 7 + 8 + 4 + 4 = 24 bytes。</p>
-<p>对于<code>structd_tag</code>，对于这个的分析就简单多了，这里就不再赘述，结果显而易见，<code>sizeof(double) + sizeof(char) + 1 (padding) + sizeof(int) + 2 (padding)</code>，8 + 1 + 1 + 4 + 2 = 16 bytes。</p>
-<h4 id="packing">packing<a class="anchor ms-1" href="#packing"><i class="fas fa-link"></i></a></h4>
-<p><code>#pragma pack(n)</code>手动指定对齐数值。但是并不是指定后一定就能生效，因为根据对齐原则，有效对齐值=min{自身对齐值，当前指定的 pack 值}</p>
-<p>在 linux 中，使用 gcc 编译器时候可以使用 gcc 特有的语法来强制指定对齐数值，<code>__attribute__((aligned (n)))</code></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">A</span> <span class="n">A</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="kt">char</span> <span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="p">}</span> <span class="n">__attribute__</span><span class="p">((</span><span class="n">aligned</span> <span class="p">(</span><span class="mi">4</span><span class="p">)));</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;sizeof(A) = %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">A</span><span class="p">));</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">
-</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1">// will output 4
-</span></span></span></code></pre></div><p>这种写法在 linux kernel 中非常常见，例如著名的<a href="http://github.com/torvalds/linux/blob/master/include/linux/rbtree.h" target="_blank" rel="noopener noreferrer">rbtree</a>中有如下声明:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">struct</span> <span class="n">rb_node</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="kt">unsigned</span> <span class="kt">long</span>  <span class="n">__rb_parent_color</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl">	<span class="k">struct</span> <span class="n">rb_node</span> <span class="o">*</span><span class="n">rb_right</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl">	<span class="k">struct</span> <span class="n">rb_node</span> <span class="o">*</span><span class="n">rb_left</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="p">}</span> <span class="n">__attribute__</span><span class="p">((</span><span class="n">aligned</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">long</span><span class="p">))));</span>
-</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="cm">/* The alignment might seem pointless, but allegedly CRIS needs it */</span>
-</span></span></code></pre></div><p>关于<code>__attribute__</code>的其它用法，可以参考以下文章:</p>
-<ul>
-<li><a href="http://unixwiz.net/techtips/gnu-c-attributes.html" target="_blank" rel="noopener noreferrer">http://unixwiz.net/techtips/gnu-c-attributes.html</a></li>
-<li><a href="http://www.keil.com/support/man/docs/armcc/armcc_chr1359124973480.htm" target="_blank" rel="noopener noreferrer">http://www.keil.com/support/man/docs/armcc/armcc_chr1359124973480.htm</a></li>
-</ul>
-<h3 id="位域bit-field">位域(bit field)<a class="anchor ms-1" href="#位域bit-field"><i class="fas fa-link"></i></a></h3>
-<p>有些数据在存储时不需要占用一个完整的字节，只需要占用一个或几个二进制位。例如记录开关状态的变量，用<code>0</code>和<code>1</code>表示，也就是一个二进制位就能满足。正式基于这种考虑，c 语言又提供了一种叫做位域的数据结构。
-c 标准允许<code>unsigned int/signed int/int</code>类型的位域声明，c99 中加入了<code>_Bool</code>类型的位域。但像 GCC 这样的编译器自行加入了一些扩展，比如支持<code>short</code>，<code>char</code>等整形类型的位域字段。</p>
-<p>以下是 c 语言中 bit field 的一般形式</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="kt">unsigned</span> <span class="kt">short</span> <span class="nl">s1</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">                       <span class="nl">s2</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">                       <span class="nl">s3</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">                       <span class="p">......,</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">                       <span class="nl">sn</span> <span class="p">:</span> <span class="n">k</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="p">};</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><strong>要特别注意的是，bit field 是基于二进制位的一种结构，而不是基于字节(byte).</strong></p>
-<p>bit field 的出现，让我们可以通过变量名代表某些 bit，并通过变量名直接获得和设置一些内存中 bit 的值，而不是通过晦涩难以理解的位操作来进行。例如：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="k">struct</span> <span class="n">foo_t</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="nl">a</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">                     <span class="nl">b</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">                     <span class="nl">c</span> <span class="p">:</span> <span class="mi">4</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="p">};</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">
-</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="k">struct</span> <span class="n">foo_t</span> <span class="n">f</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="n">f</span><span class="p">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="n">f</span><span class="p">.</span><span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="n">f</span><span class="p">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="p">}</span>
+<!doctype html><html lang=zh-cn data-palette="blue gray"><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>c语言之struct - liubang's blog</title><link rel=apple-touch-icon href=/images/icons/icon-180x180.png sizes=180x180><link rel=icon href=/images/icons/icon-32x32.png sizes=32x32 type=image/png><link rel=icon href=/images/icons/icon-16x16.png sizes=16x16 type=image/png><link rel=icon href=/images/icons/favicon.ico><link rel=manifest href=/zh-cn/manifest.json><meta name=keywords content><meta name=description content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个"><meta name=robots content="index, follow"><meta itemprop=name content="c语言之struct"><meta itemprop=description content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个"><meta itemprop=datePublished content="2017-08-21T00:00:00+00:00"><meta itemprop=dateModified content="2017-08-21T00:00:00+00:00"><meta itemprop=wordCount content="2547"><meta itemprop=keywords content="c,"><meta property="og:title" content="c语言之struct"><meta property="og:description" content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个"><meta property="og:type" content="article"><meta property="og:url" content="/zh-cn/posts/sp/2017-08-21-c%E8%AF%AD%E8%A8%80%E4%B9%8Bstruct/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-08-21T00:00:00+00:00"><meta property="article:modified_time" content="2017-08-21T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="c语言之struct"><meta name=twitter:description content="struct 在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个"><meta property="og:image" content="/images/logo.png"><meta name=twitter:image content="/images/logo.png"><link rel=stylesheet href=/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8+I+qU=" crossorigin=anonymous><link rel=stylesheet href=/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin=anonymous><link rel=stylesheet href=/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css integrity="sha256-PSKHlLztu/oEEr64+8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin=anonymous></head><body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top"><div class=container><button class=navbar-toggler type=button data-bs-toggle=collapse data-bs-target=#navbarSupportedContent aria-controls=navbarSupportedContent aria-expanded=false aria-label="Toggle navigation">
+<i class="fas fa-bars"></i>
+</button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href=/zh-cn/><img class=logo alt=Logo src=/images/logo.webp loading=lazy width=136 height=69>
+LIUBANG</a><div class="offcanvas offcanvas-bottom surface" tabindex=-1 id=offcanvasSocialShare aria-labelledby=offcanvasSocialShare><div class=offcanvas-header><h3 class=offcanvas-title>Share</h3><button type=button class="btn btn-sm btn-outline-primary" data-bs-dismiss=offcanvas aria-label=Close>
+<i class="fas fa-times"></i></button></div><div class=offcanvas-body><a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button" target=_blank href="https://twitter.com/intent/tweet?title=c%e8%af%ad%e8%a8%80%e4%b9%8bstruct&url=%2fzh-cn%2fposts%2fsp%2f2017-08-21-c%25E8%25AF%25AD%25E8%25A8%2580%25E4%25B9%258Bstruct%2f"><i class="fab fa-fw fa-twitter"></i> Twitter</a>
+<a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button" target=_blank href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fsp%2f2017-08-21-c%25E8%25AF%25AD%25E8%25A8%2580%25E4%25B9%258Bstruct%2f"><i class="fab fa-fw fa-facebook-f"></i> Facebook</a></div></div><button class=navbar-settings type=button data-bs-toggle=offcanvas data-bs-target=#offcanvasSettings aria-controls=offcanvasSettings aria-label="Toggle settings">
+<i class="fas fa-ellipsis-v"></i></button><div class="offcanvas offcanvas-end surface h-100" tabindex=-1 id=offcanvasSettings aria-labelledby=offcanvasSettings><div class=offcanvas-header><h3 class=offcanvas-title>设置</h3><button type=button class="btn btn-sm btn-outline-primary" data-bs-dismiss=offcanvas aria-label=Close>
+<i class="fas fa-times"></i></button></div><div class="offcanvas-body d-flex flex-column"><section class=setting><form class=row><div class=col-auto><label for=fontSize class=form-label><i class="fas fa-fw fa-language"></i> 语言</label></div><div class="col-auto ms-auto"><div class=dropdown><a class="btn btn-sm btn-outline-primary dropdown-toggle" href=# id=languageDropdown role=button data-bs-toggle=dropdown aria-expanded=false>简体中文</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby=languageDropdown><li><a class=dropdown-item href=/en/>English</a></li></ul></div></div></form></section><section class=setting><form class=row><div class=col-auto><label><i class="fas fa-fw fa-adjust"></i> 模式</label></div><div class="col-auto ms-auto"><div class="form-check form-switch"><input class=form-check-input type=checkbox id=modeSwitcher></div></div></form></section><section class=setting><form class="font-size-switcher-form row"><div class=col-auto><label for=fontSize class=form-label><i class="fas fa-fw fa-font"></i> 字体大小</label></div><div class="col-auto ms-auto"><input type=range class=form-range min=-2 max=2 id=fontSize></div></form></section><section class="setting palettes"><form class=row><div class=col-auto><label><i class="fas fa-fw fa-palette"></i> 配色</label></div><div class="col-auto ms-auto"><a id=btnPalette class="btn btn-sm btn-outline-primary" role=button aria-label=palettePicker><i class="fas fa-eye-dropper"></i></a></div></form><div class="mt-2 d-flex justify-content-between visually-hidden" id=palettePicker><button type=button id=palette-blue aria-label=蓝色 class="btn btn-sm w-100 palette" data-palette=blue>
+</button><button type=button id=palette-blue-gray aria-label=蓝灰色 class="btn btn-sm w-100 palette" data-palette=blue-gray>
+</button><button type=button id=palette-brown aria-label=棕色 class="btn btn-sm w-100 palette" data-palette=brown>
+</button><button type=button id=palette-cyan aria-label=青色 class="btn btn-sm w-100 palette" data-palette=cyan>
+</button><button type=button id=palette-green aria-label=绿色 class="btn btn-sm w-100 palette" data-palette=green>
+</button><button type=button id=palette-indigo aria-label=靛青色 class="btn btn-sm w-100 palette" data-palette=indigo>
+</button><button type=button id=palette-orange aria-label=橙色 class="btn btn-sm w-100 palette" data-palette=orange>
+</button><button type=button id=palette-pink aria-label=粉色 class="btn btn-sm w-100 palette" data-palette=pink>
+</button><button type=button id=palette-purple aria-label=紫色 class="btn btn-sm w-100 palette" data-palette=purple>
+</button><button type=button id=palette-red aria-label=红色 class="btn btn-sm w-100 palette" data-palette=red>
+</button><button type=button id=palette-teal aria-label=蓝绿色 class="btn btn-sm w-100 palette" data-palette=teal>
+</button><button type=button id=palette-yellow aria-label=黄色 class="btn btn-sm w-100 palette" data-palette=yellow></button></div></section><section class="setting actions d-flex justify-content-around mt-auto overflow-auto"><a role=button class="action action-go-back" href="javascript: window.history.back();"><span class=action-icon><i class="fas fa-2x fa-arrow-left"></i></span> 返回</a>
+<a role=button class="action action-reload-page"><span class=action-icon><i class="fas fa-2x fa-redo-alt"></i></span> 刷新</a>
+<a role=button class="action action-copy-url"><span class=action-icon><i class="fas fa-2x fa-link"></i></span> 复制链接
+</a><a class="action action-social-share" type=button data-bs-toggle=offcanvas data-bs-target=#offcanvasSocialShare aria-controls=offcanvasSocialShare aria-label="Toggle social share"><span class=action-icon><i class="fas fa-2x fa-share-alt"></i></span> 分享</a></section></div></div><div class="collapse navbar-collapse" tabindex=-1 id=navbarSupportedContent aria-labelledby=navbarSupportedContent><form class="search-bar my-1" action=/zh-cn/search><div class="input-group input-group-sm"><span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+<input class="form-control rounded-pill" name=q type=search aria-label=Search></div></form><ul class="navbar-nav ms-auto"><li class=nav-item><a class=nav-link href=/zh-cn/series/><i class="fas fa-fw fa-columns"></i>专栏</a></li><li class=nav-item><a class=nav-link href=/zh-cn/archives/><i class="fas fa-fw fa-file-archive"></i>归档</a></li><li class=nav-item><a class=nav-link href=/zh-cn/categories/><i class="fas fa-fw fa-folder"></i>分类</a></li><li class=nav-item><a class=nav-link href=/zh-cn/tags/><i class="fas fa-fw fa-tags"></i>标签</a></li></ul></div></div></nav></header><main role=main class=container><div class="row content"><div class=col-lg-8><div class=container><nav class="row card component" aria-label=breadcrumb><div class=card-body><ol class=breadcrumb><li class=breadcrumb-item><a href=/zh-cn/>主页</a></li><li class=breadcrumb-item><a href=/zh-cn/posts/>文章</a></li><li class="breadcrumb-item active">C语言之struct</li></ol></div></nav><div class=post-panel-wrapper><div class="d-flex flex-column component rounded post-panel"><a class="action action-panel-toggler" role=button title="Panel toggler"><i class="fas fa-fw fa-chevron-circle-down"></i></a>
+<a id=sidebarToggler class="action d-none d-lg-block" role=button title="Sidebar toggler"><i class="fas fa-fw fa-expand-alt" data-fa-transform=rotate-45></i></a>
+<a class="action btn-reward" role=button data-bs-toggle=modal data-bs-target=#rewardModal title=打赏><i class="fas fa-fw fa-coffee"></i></a>
+<a class=action href=#post-copyright role=button aria-label=Copyright title=Copyright><i class="fas fa-fw fa-copyright"></i></a>
+<a class=action href=#post-comments role=button aria-label=Comments title=Comments><i class="fas fa-fw fa-comments"></i></a>
+<a class=action href=#postTOC aria-controls="Table of contents" role=button title="Table of contents"><i class="fas fa-fw fa-list-alt"></i></a></div></div><article class="row card component mb-4 post"><div class=card-header><h1 class="card-title post-title">C语言之struct</h1></div><div class=card-body><div class=post-meta><span class=post-date title="创建于 2017-08-21 08:00:00 +0800 CST。">2017-08-21
+</span><span class=post-reading-time>6 分钟阅读
+</span><span class=post-taxonomies><a href=/zh-cn/categories/sp/ class="badge post-taxonomy">sp</a><a href=/zh-cn/tags/c/ class="badge post-taxonomy">c</a></span></div><div class="post-content mb-3"><h2 id=struct>struct<a class="anchor ms-1" href=#struct><i class="fas fa-link"></i></a></h2><blockquote><p>在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个指针就能访问集合中的所有成员。结构体中可以包含许多简单或符合数据类型，因此从内存分配上看，有点类似数组，而从变量组织上看，又类似于面向对象编程语言中的类。</p></blockquote><h3 id=定义-struct>定义 struct<a class="anchor ms-1" href=#定义-struct><i class="fas fa-link"></i></a></h3><p>定义一个 struct 非常简单，使用<code>struct</code>关键字即可。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln>1</span><span class=cl><span class=k>struct</span> <span class=n>student</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>    <span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>3</span><span class=cl>    <span class=kt>int</span> <span class=n>age</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>4</span><span class=cl><span class=p>};</span>
+</span></span></code></pre></div><h3 id=struct-的初始化>struct 的初始化<a class="anchor ms-1" href=#struct-的初始化><i class="fas fa-link"></i></a></h3><p>通常有四种常用的 struct 初始化方式。</p><p>１．定义并初始化</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln>1</span><span class=cl><span class=k>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>    <span class=kt>char</span> <span class=o>*</span><span class=n>ext</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>3</span><span class=cl>    <span class=kt>char</span> <span class=o>*</span><span class=n>filetype</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>4</span><span class=cl><span class=p>}</span> <span class=n>extensions</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>5</span><span class=cl>    <span class=p>{</span><span class=s>&#34;gif&#34;</span><span class=p>,</span> <span class=s>&#34;image/gif&#34;</span><span class=p>},</span>
+</span></span><span class=line><span class=ln>6</span><span class=cl>    <span class=p>{</span><span class=s>&#34;jpg&#34;</span><span class=p>,</span> <span class=s>&#34;image/jpg&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=ln>7</span><span class=cl><span class=p>};</span>
+</span></span></code></pre></div><p>２．按照成员声明的顺序初始化</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln>1</span><span class=cl><span class=k>struct</span> <span class=n>Person</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>    <span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>3</span><span class=cl>    <span class=kt>int</span> <span class=n>age</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>4</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln>5</span><span class=cl>
+</span></span><span class=line><span class=ln>6</span><span class=cl><span class=k>struct</span> <span class=n>Person</span> <span class=n>zhangsan</span> <span class=o>=</span> <span class=p>{</span><span class=s>&#34;张三&#34;</span><span class=p>,</span> <span class=mi>24</span><span class=p>};</span>
+</span></span></code></pre></div><p>本质上，这种方式跟第一种是一样的。</p><p>３．指定初始化，成员顺序可以不定，Linux Kernel 中多采用这种方式。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=k>struct</span> <span class=n>Student</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 2</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl>    <span class=kt>int</span> <span class=n>score</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl>    <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=k>struct</span> <span class=n>Student</span> <span class=n>zhangsan</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>    <span class=p>.</span><span class=n>name</span> <span class=o>=</span> <span class=s>&#34;张三&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>    <span class=p>.</span><span class=n>c</span> <span class=o>=</span> <span class=sc>&#39;B&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>    <span class=p>.</span><span class=n>score</span> <span class=o>=</span> <span class=mi>92</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl><span class=p>};</span>
+</span></span></code></pre></div><p>４．指定初始化，成员顺序可以不定。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=k>struct</span> <span class=n>Student</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 2</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl>    <span class=kt>int</span> <span class=n>score</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl>    <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=k>struct</span> <span class=n>Student</span> <span class=n>zhangsan</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>    <span class=nl>c</span><span class=p>:</span> <span class=sc>&#39;C&#39;</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>    <span class=nl>score</span><span class=p>:</span> <span class=mi>93</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>    <span class=nl>name</span><span class=p>:</span> <span class=s>&#34;张三&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl><span class=p>};</span>
+</span></span></code></pre></div><h3 id=structure-member-alignment-padding-and-data-packing>structure member alignment, padding and data packing.<a class="anchor ms-1" href=#structure-member-alignment-padding-and-data-packing><i class="fas fa-link"></i></a></h3><p>首先我们来看看以下程序的结果</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>structa_tag</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>    <span class=kt>short</span> <span class=kt>int</span> <span class=n>s</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=p>}</span> <span class=n>structa_t</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>
+</span></span><span class=line><span class=ln> 8</span><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>structb_tag</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>    <span class=kt>short</span> <span class=kt>int</span> <span class=n>s</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>    <span class=kt>int</span> <span class=n>i</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl><span class=p>}</span> <span class=n>structb_t</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>
+</span></span><span class=line><span class=ln>14</span><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>structc_tag</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>    <span class=kt>double</span> <span class=n>d</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>    <span class=kt>int</span> <span class=n>s</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl><span class=p>}</span> <span class=n>structc_t</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>
+</span></span><span class=line><span class=ln>20</span><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>structd_tag</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>21</span><span class=cl>    <span class=kt>double</span> <span class=n>d</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>22</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>23</span><span class=cl>    <span class=kt>int</span> <span class=n>s</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>24</span><span class=cl><span class=p>}</span> <span class=n>structd_t</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>25</span><span class=cl>
+</span></span><span class=line><span class=ln>26</span><span class=cl>
+</span></span><span class=line><span class=ln>27</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln>28</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln>29</span><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;sizeof(structa_t) = %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>structa_t</span><span class=p>));</span>
+</span></span><span class=line><span class=ln>30</span><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;sizeof(structb_t) = %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>structb_t</span><span class=p>));</span>
+</span></span><span class=line><span class=ln>31</span><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;sizeof(structc_t) = %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>structc_t</span><span class=p>));</span>
+</span></span><span class=line><span class=ln>32</span><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;sizeof(structd_t) = %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>structd_t</span><span class=p>));</span>
+</span></span><span class=line><span class=ln>33</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>34</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>在执行程序之前，不妨分析下运行的结果。</p><h4 id=data-alignment>data alignment<a class="anchor ms-1" href=#data-alignment><i class="fas fa-link"></i></a></h4><p>许多实际意义的计算机对基本类型数据在内存中存放的位置有限制，他们会要求这些地址的起始地址的值是某个数 k 的倍数，这就是所谓的内存对齐，而这个 k 则被称为改数据类型的对齐模数(alignment modulus)。这种强制的要求一来是简化了处理器与内存之间传输系统的涉及，二来可以提升读取数据的速度。</p><p>比如有这么一种处理器，它每次读写内存的时候都从某个 8 倍数地址开始，那么读或写一个 double 类型数据就只需要一次内存操作。否则，我们就可能需要两次内存操作才能完成这个动作，因为数据或许恰好横跨在两个符合对齐要求的 8 字节内存块上。</p><h4 id=对齐的原则>对齐的原则<a class="anchor ms-1" href=#对齐的原则><i class="fas fa-link"></i></a></h4><ul><li>数据类型自身对齐: char 类型自身对齐为 1 字节，short 类型为 2 字节，int/float 为 4 字节，double 为 8 字节</li><li>结构体或类的自身对齐：其成员中自身对齐值最大的那个值</li><li>指定对齐：#pragma pack(value)指定对齐的 value</li><li>数据成员，结构体和类的有效对齐值：自身对齐值和指定对齐值中较小者，即有效对齐值=min{自身对齐值，当前指定的 pack 值}</li></ul><p>基于以上说明，我们来分析下上例程序的运行结果：</p><p>对于<code>structa_tag</code>, <code>char</code>占１个字节，<code>short int</code>占 2 个字节，假如<code>short int</code>紧跟着<code>char</code>之后来分配内存，那么它将会以一个奇数边界开始。所以，计算机会在<code>char</code>之后填充 1 字节来保证<code>short int</code>起始地址从 2 的倍数开始。所以<code>stracta_t</code>的总大小为：<code>sizeof(char) + 1(padding) + sizeof(short)</code>，也就是 1 + 1 + 2 = 4 bytes.</p><p>对于<code>structb_tag</code>，<code>sizeof(structb_t) = sizeof(short) + sizeof(char) + 1 (padding) + sizeof(int)</code>，即 2 + 1 + 1 + 4 = 8 bytes.</p><p>对于<code>structc_tag</code>，由于<code>double</code>为 8 字节对齐，所以在<code>char</code>后需要填充 7 字节，通常我们以为这样就够了，<code>sizeof(char) + 7 (padding) + sizeof(double) + sizeof(int)</code>，1 + 7 + 8 + 4 = 20 bytes。然而实际上并不是这样的结果，因为虽然前述内容看上去满足了基本数据类型的自身对齐，但是对于结构体这种复合数据类型，作为一个整体也需要满足对齐，根据
+对齐原则，结构体或类的自身对齐，是以成员中自身对齐最大的那个值，也就是<code>structc_t</code>自身对齐的值为 8，所以在<code>int</code>后还有４个字节的填充，<code>sizeof(char) + 7 (padding) + sizeof(double) + sizeof(int) + 4 (padding)</code>, 1 + 7 + 8 + 4 + 4 = 24 bytes。</p><p>对于<code>structd_tag</code>，对于这个的分析就简单多了，这里就不再赘述，结果显而易见，<code>sizeof(double) + sizeof(char) + 1 (padding) + sizeof(int) + 2 (padding)</code>，8 + 1 + 1 + 4 + 2 = 16 bytes。</p><h4 id=packing>packing<a class="anchor ms-1" href=#packing><i class="fas fa-link"></i></a></h4><p><code>#pragma pack(n)</code>手动指定对齐数值。但是并不是指定后一定就能生效，因为根据对齐原则，有效对齐值=min{自身对齐值，当前指定的 pack 值}</p><p>在 linux 中，使用 gcc 编译器时候可以使用 gcc 特有的语法来强制指定对齐数值，<code>__attribute__((aligned (n)))</code></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>A</span> <span class=n>A</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl>
+</span></span><span class=line><span class=ln> 5</span><span class=cl><span class=k>struct</span> <span class=n>A</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>    <span class=kt>char</span> <span class=n>c</span><span class=p>[</span><span class=mi>3</span><span class=p>];</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=p>}</span> <span class=n>__attribute__</span><span class=p>((</span><span class=n>aligned</span> <span class=p>(</span><span class=mi>4</span><span class=p>)));</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>
+</span></span><span class=line><span class=ln> 9</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;sizeof(A) = %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>A</span><span class=p>));</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>
+</span></span><span class=line><span class=ln>15</span><span class=cl><span class=c1>// will output 4
+</span></span></span></code></pre></div><p>这种写法在 linux kernel 中非常常见，例如著名的<a href=http://github.com/torvalds/linux/blob/master/include/linux/rbtree.h target=_blank rel="noopener noreferrer">rbtree</a>中有如下声明:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln>1</span><span class=cl><span class=k>struct</span> <span class=n>rb_node</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>	<span class=kt>unsigned</span> <span class=kt>long</span>  <span class=n>__rb_parent_color</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>3</span><span class=cl>	<span class=k>struct</span> <span class=n>rb_node</span> <span class=o>*</span><span class=n>rb_right</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>4</span><span class=cl>	<span class=k>struct</span> <span class=n>rb_node</span> <span class=o>*</span><span class=n>rb_left</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>5</span><span class=cl><span class=p>}</span> <span class=n>__attribute__</span><span class=p>((</span><span class=n>aligned</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=kt>long</span><span class=p>))));</span>
+</span></span><span class=line><span class=ln>6</span><span class=cl>    <span class=cm>/* The alignment might seem pointless, but allegedly CRIS needs it */</span>
+</span></span></code></pre></div><p>关于<code>__attribute__</code>的其它用法，可以参考以下文章:</p><ul><li><a href=http://unixwiz.net/techtips/gnu-c-attributes.html target=_blank rel="noopener noreferrer">http://unixwiz.net/techtips/gnu-c-attributes.html</a></li><li><a href=http://www.keil.com/support/man/docs/armcc/armcc_chr1359124973480.htm target=_blank rel="noopener noreferrer">http://www.keil.com/support/man/docs/armcc/armcc_chr1359124973480.htm</a></li></ul><h3 id=位域bit-field>位域(bit field)<a class="anchor ms-1" href=#位域bit-field><i class="fas fa-link"></i></a></h3><p>有些数据在存储时不需要占用一个完整的字节，只需要占用一个或几个二进制位。例如记录开关状态的变量，用<code>0</code>和<code>1</code>表示，也就是一个二进制位就能满足。正式基于这种考虑，c 语言又提供了一种叫做位域的数据结构。
+c 标准允许<code>unsigned int/signed int/int</code>类型的位域声明，c99 中加入了<code>_Bool</code>类型的位域。但像 GCC 这样的编译器自行加入了一些扩展，比如支持<code>short</code>，<code>char</code>等整形类型的位域字段。</p><p>以下是 c 语言中 bit field 的一般形式</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>    <span class=k>struct</span> <span class=n>A</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>        <span class=kt>unsigned</span> <span class=kt>short</span> <span class=nl>s1</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>                       <span class=nl>s2</span> <span class=p>:</span> <span class=mi>2</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>                       <span class=nl>s3</span> <span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>                       <span class=p>......,</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>                       <span class=nl>sn</span> <span class=p>:</span> <span class=n>k</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p><strong>要特别注意的是，bit field 是基于二进制位的一种结构，而不是基于字节(byte).</strong></p><p>bit field 的出现，让我们可以通过变量名代表某些 bit，并通过变量名直接获得和设置一些内存中 bit 的值，而不是通过晦涩难以理解的位操作来进行。例如：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>    <span class=k>struct</span> <span class=n>foo_t</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>        <span class=kt>unsigned</span> <span class=kt>int</span> <span class=nl>a</span> <span class=p>:</span> <span class=mi>3</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>                     <span class=nl>b</span> <span class=p>:</span> <span class=mi>2</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>                     <span class=nl>c</span> <span class=p>:</span> <span class=mi>4</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>
+</span></span><span class=line><span class=ln>11</span><span class=cl>    <span class=k>struct</span> <span class=n>foo_t</span> <span class=n>f</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>    <span class=n>f</span><span class=p>.</span><span class=n>a</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>    <span class=n>f</span><span class=p>.</span><span class=n>b</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>    <span class=n>f</span><span class=p>.</span><span class=n>c</span> <span class=o>=</span> <span class=mi>12</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl><span class=p>}</span>
 </span></span></code></pre></div><p>另外，使用 bit field 可以在展现和存储相同信息时，自定义更加紧凑的内存布局，节约内存的使用量。这使得 bit field 在嵌入式领域，在驱动程序领域得到广泛的应用。比如可以仅用两个字节就可以将
-tcpheader 从 dataoffset 到 fin 的信息全部表示和存储起来：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="k">struct</span> <span class="n">tcphdr</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="n">__u16</span> <span class="nl">doff</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">              <span class="nl">res1</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">              <span class="nl">cwr</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">              <span class="nl">ece</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">              <span class="nl">urg</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">              <span class="nl">ack</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">              <span class="nl">psh</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">              <span class="nl">rst</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">              <span class="nl">syn</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">              <span class="nl">fin</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="p">};</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><strong>注意：在 c 语言中，尝试获得一个 bit field 的地址是非法操作。</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="k">struct</span> <span class="n">flag_t</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="kt">int</span> <span class="nl">a</span> <span class="p">:</span> <span class="mi">1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="p">};</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="k">struct</span> <span class="n">flag_t</span> <span class="n">f</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">f</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">
-</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="c1">//compile output
-</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1"></span><span class="n">liubang</span><span class="err">@</span><span class="nl">venux</span><span class="p">:</span><span class="o">~/</span><span class="n">workspace</span><span class="o">/</span><span class="n">c</span><span class="o">/</span><span class="n">learn</span><span class="o">/</span><span class="mo">02</span><span class="err">$</span> <span class="n">gcc</span> <span class="n">demo5</span><span class="p">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">demo5</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="n">demo5</span><span class="p">.</span><span class="nl">c</span><span class="p">:</span> <span class="n">In</span> <span class="n">function</span> <span class="err">‘</span><span class="n">main</span><span class="err">’</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="n">demo5</span><span class="p">.</span><span class="nl">c</span><span class="p">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span> <span class="nl">error</span><span class="p">:</span> <span class="n">cannot</span> <span class="n">take</span> <span class="n">address</span> <span class="n">of</span> <span class="n">bit</span><span class="o">-</span><span class="n">field</span> <span class="err">‘</span><span class="n">a</span><span class="err">’</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl">     <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">f</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">                    <span class="o">^</span>
-</span></span></code></pre></div><h4 id="匿名位域">匿名位域<a class="anchor ms-1" href="#匿名位域"><i class="fas fa-link"></i></a></h4>
-<p>顾名思义，匿名位域就是位域成员没有名称，只给出了数据类型和位宽，如下所示：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="k">struct</span> <span class="n">bs</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="kt">int</span> <span class="nl">m</span> <span class="p">:</span> <span class="mi">12</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        <span class="kt">int</span>   <span class="o">:</span> <span class="mi">20</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">        <span class="kt">int</span> <span class="nl">n</span> <span class="p">:</span> <span class="mi">4</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="p">};</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>匿名位域一般用来填充或者调整成员的位置。因为没有名称，所以匿名位域不能使用。</p>
-</div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content surface">
-      <div class="modal-header">
-        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-coffee"></i>打赏</h5>
-        <a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary" aria-label="Close"><i class="fas fa-times"></i></a>
-      </div>
-      <div class="modal-body">
-        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item text-nowrap" role="presentation">
-            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
-              <i class="fab fa-fw fa-alipay"></i>支付宝
-            </a>
-          </li><li class="nav-item text-nowrap" role="presentation">
-            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
-              <i class="fab fa-fw fa-weixin"></i>微信
-            </a>
-          </li></ul>
-        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
-            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
-          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
-            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
-          </div></div>
-      </div>
-    </div>
-  </div>
-</div></div>
-  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
-    <i class="fas fa-fw fa-chevron-left"></i>
-    <a href="/zh-cn/posts/java/2017-03-20-java_native_interface%E4%B8%89/">Java Native Interface（三）
-</a>
-  </div><div class="post-nav post-next">
-    <a href="/zh-cn/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/">数据结构之hashtable
-</a>
-    <i class="fas fa-fw fa-chevron-right"></i>
-  </div></div></div>
-</article><div class="post-copyright mb-3 row card component" id="post-copyright">
-    <div class="card-header">
-        <h2 class="card-title">版权</h2>
-    </div>
-    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
-  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
-  CC BY-NC-ND 4.0 
-</a>
-
-
-    </div>
-</div><section class="related-posts row card component">
-    <div class="card-header">
-      <h2 class="card-title">相关文章</h2>
-    </div>
-    <div class="card-body">
-      <ul class="post-list"><li>
-          <a href="/zh-cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/">彻底掌握malloc
-</a>
-          <span class="float-end post-date">2017-03-17
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/compiler/2017-03-15-%E5%9F%BA%E4%BA%8Ec%E8%AF%AD%E8%A8%80%E7%9A%84%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%BC%80%E5%8F%91/">基于c语言的编程语言开发
-</a>
-          <span class="float-end post-date">2017-03-15
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/php/2017-03-09-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8Bcall-user-func%E5%8E%9F%E7%90%86%E5%92%8C%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0/">Php扩展开发之call_user_func原理和回调函数的实现
-</a>
-          <span class="float-end post-date">2017-03-09
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/java/2017-03-20-java_native_interface%E4%B8%89/">Java Native Interface（三）
-</a>
-          <span class="float-end post-date">2017-03-20
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/java/2017-03-20-java_native_interface%E4%BA%8C/">Java Native Interface（二）
-</a>
-          <span class="float-end post-date">2017-03-20
-</span>
-        </li></ul>
-    </div>
-  </section><div class="card component row post-comments" id="post-comments">
-  <div class="card-header">
-    <h2 class="card-title">评论</h2>
-  </div>
-  <div class="card-body"><script src="https://utteranc.es/client.js"
-  repo="liubang/blog"
-  issue-term="pathname"
-  label="comment"
-  theme="github-light"
-  crossorigin="anonymous"
-  async>
-</script></div>
-</div></div>
-</div><aside class="col-lg-4 sidebar d-flex">
-  <div class="container d-flex flex-column">
-    
-    <section class="card row text-center profile component">
-  <div class="card-body">
-    <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt="liubang" src="/images/profile.webp" loading="lazy"
-   width="1000" height="1000"
-   />
-</div>
-    <div class="col-12 profile-meta"><div class="profile-name">liubang</div><div class="profile-bio">Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Baidu</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
-      <i class="fas fa-fw fa-2x fa-envelope"></i>
-    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-github"></i>
-      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-weibo"></i>
-      </a></nav>
-</div>
-  </div>
-</section>
-  <div class="post-toc row mb-4 card component" id="postTOC">
-  <div class="card-header">
-    <h2 class="card-title">目录</h2>
-  </div>
-  <div class="card-body">
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#struct">struct</a>
-      <ul>
-        <li><a href="#定义-struct">定义 struct</a></li>
-        <li><a href="#struct-的初始化">struct 的初始化</a></li>
-        <li><a href="#structure-member-alignment-padding-and-data-packing">structure member alignment, padding and data packing.</a></li>
-        <li><a href="#位域bit-field">位域(bit field)</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-  </div>
-</div><section class="recent-posts row card component">
-  <div class="card-header">
-    <h2 class="card-title">最近文章</h2>
-  </div>
-  <div class="card-body">
-    <ul class="post-list"><li>
-        <a href="/zh-cn/posts/cpp/2022-03-18-c&#43;&#43;17-constexpr_if/">C&#43;&#43;17:constexpr If
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/cpp/2022-03-15-c&#43;&#43;20-designated_initializers/">C&#43;&#43;20:Designated Initializers
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
-</a>
-      </li></ul>
-  </div>
-</section><section class="categories-taxonomies row card component">
-      <div class="card-header">
-        <h2 class="card-title">
-          <a href="/zh-cn/categories">分类</a>
-        </h2>
-      </div>
-      <div class="card-body">
-        <div class="py-2"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
-            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/categories/php/" class="badge rounded post-taxonomy" title="php">
-            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/categories/sp/" class="badge rounded post-taxonomy" title="sp">
-            sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/zh-cn/categories/java/" class="badge rounded post-taxonomy" title="java">
-            java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/categories/compiler/" class="badge rounded post-taxonomy" title="compiler">
-            compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/ds/" class="badge rounded post-taxonomy" title="ds">
-            ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/inf/" class="badge rounded post-taxonomy" title="inf">
-            inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/storage/" class="badge rounded post-taxonomy" title="storage">
-            storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
-      </div>
-    </section><section class="tags-taxonomies row card component">
-      <div class="card-header">
-        <h2 class="card-title">
-          <a href="/zh-cn/tags">标签</a>
-        </h2>
-      </div>
-      <div class="card-body">
-        <div class="py-2"><a href="/zh-cn/tags/c/" class="badge rounded post-taxonomy" title="c">
-            c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
-            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/tags/php/" class="badge rounded post-taxonomy" title="php">
-            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/tags/sp/" class="badge rounded post-taxonomy" title="sp">
-            sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/zh-cn/tags/java/" class="badge rounded post-taxonomy" title="Java">
-            Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/jni/" class="badge rounded post-taxonomy" title="JNI">
-            JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge rounded post-taxonomy" title="c&#43;&#43;17">
-            c&#43;&#43;17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/compiler/" class="badge rounded post-taxonomy" title="compiler">
-            compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/algorithm/" class="badge rounded post-taxonomy" title="algorithm">
-            algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/tags/c&#43;&#43;20/" class="badge rounded post-taxonomy" title="c&#43;&#43;20">
-            c&#43;&#43;20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
-      </div>
-    </section>
-    
-  </div>
-</aside>
-</div>
-    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
-      <i class="fas fa-fw fa-2x fa-envelope"></i>
-    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-github"></i>
-      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-weibo"></i>
-      </a></nav>
-<div class="copyright mb-2">
-  Copyright © 2016-2022 LiuBang. All Rights Reserved.
-</div>
-<div class="powered-by mb-2">
-  Powered by <a href="https://gohugo.io" target="_blank" rel="noopener noreferrer">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank" rel="noopener noreferrer">Bootstrap</a> theme.
-</div>
-
-
-
-</footer>
-<script src="/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js" integrity="sha256-aJTp8Icy&#43;VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin="anonymous" defer></script><script src="/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js" integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin="anonymous" defer></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('\/service-worker.js').then(function(reg) {
-      console.log('Successfully registered service worker', reg);
-    }).catch(function(err) {
-      console.warn('Error whilst registering service worker', err);
-    });
-  });
-}
-</script><script src="/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js" integrity="sha256-Vs2p5NUlCvakrAMEy/36Od&#43;5KIyDFnmExO1/vipUw00=" crossorigin="anonymous" defer></script><script defer src="/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js" integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin="anonymous"></script>
-<script defer src="/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js" integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg&#43;8Q53c4bN/Kc7hJD7w=" crossorigin="anonymous"></script>
-
-</body>
-</html>
+tcpheader 从 dataoffset 到 fin 的信息全部表示和存储起来：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>    <span class=k>struct</span> <span class=n>tcphdr</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>        <span class=n>__u16</span> <span class=nl>doff</span> <span class=p>:</span> <span class=mi>4</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>              <span class=nl>res1</span> <span class=p>:</span> <span class=mi>4</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>              <span class=nl>cwr</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>              <span class=nl>ece</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>              <span class=nl>urg</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>              <span class=nl>ack</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>              <span class=nl>psh</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>              <span class=nl>rst</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>              <span class=nl>syn</span> <span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>              <span class=nl>fin</span> <span class=p>:</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p><strong>注意：在 c 语言中，尝试获得一个 bit field 的地址是非法操作。</strong></p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>    <span class=k>struct</span> <span class=n>flag_t</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>        <span class=kt>int</span> <span class=nl>a</span> <span class=p>:</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>    <span class=k>struct</span> <span class=n>flag_t</span> <span class=n>f</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;%p</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>f</span><span class=p>.</span><span class=n>a</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>
+</span></span><span class=line><span class=ln>14</span><span class=cl><span class=c1>//compile output
+</span></span></span><span class=line><span class=ln>15</span><span class=cl><span class=c1></span><span class=n>liubang</span><span class=err>@</span><span class=nl>venux</span><span class=p>:</span><span class=o>~/</span><span class=n>workspace</span><span class=o>/</span><span class=n>c</span><span class=o>/</span><span class=n>learn</span><span class=o>/</span><span class=mo>02</span><span class=err>$</span> <span class=n>gcc</span> <span class=n>demo5</span><span class=p>.</span><span class=n>c</span> <span class=o>-</span><span class=n>o</span> <span class=n>demo5</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl><span class=n>demo5</span><span class=p>.</span><span class=nl>c</span><span class=p>:</span> <span class=n>In</span> <span class=n>function</span> <span class=err>‘</span><span class=n>main</span><span class=err>’</span><span class=o>:</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl><span class=n>demo5</span><span class=p>.</span><span class=nl>c</span><span class=p>:</span><span class=mi>10</span><span class=o>:</span><span class=mi>20</span><span class=o>:</span> <span class=nl>error</span><span class=p>:</span> <span class=n>cannot</span> <span class=n>take</span> <span class=n>address</span> <span class=n>of</span> <span class=n>bit</span><span class=o>-</span><span class=n>field</span> <span class=err>‘</span><span class=n>a</span><span class=err>’</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl>     <span class=n>printf</span><span class=p>(</span><span class=s>&#34;%p</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>f</span><span class=p>.</span><span class=n>a</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>                    <span class=o>^</span>
+</span></span></code></pre></div><h4 id=匿名位域>匿名位域<a class="anchor ms-1" href=#匿名位域><i class="fas fa-link"></i></a></h4><p>顾名思义，匿名位域就是位域成员没有名称，只给出了数据类型和位宽，如下所示：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>    <span class=k>struct</span> <span class=n>bs</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>        <span class=kt>int</span> <span class=nl>m</span> <span class=p>:</span> <span class=mi>12</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>        <span class=kt>int</span>   <span class=o>:</span> <span class=mi>20</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>        <span class=kt>int</span> <span class=nl>n</span> <span class=p>:</span> <span class=mi>4</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>匿名位域一般用来填充或者调整成员的位置。因为没有名称，所以匿名位域不能使用。</p></div><div class="modal fade" id=rewardModal tabindex=-1 aria-labelledby=rewardModalLabel aria-hidden=true><div class=modal-dialog><div class="modal-content surface"><div class=modal-header><h5 class=modal-title id=rewardModalLabel><i class="fas fa-fw fa-coffee"></i>打赏</h5><a href=# data-bs-dismiss=modal class="btn btn-sm btn-outline-primary" aria-label=Close><i class="fas fa-times"></i></a></div><div class=modal-body><ul class="nav nav-tabs mb-3" role=tablist><li class="nav-item text-nowrap" role=presentation><a class="nav-link active" id=reward-alipay-tab data-bs-toggle=tab href=#reward-alipay role=tab aria-controls=reward-alipay aria-selected=true><i class="fab fa-fw fa-alipay"></i>支付宝</a></li><li class="nav-item text-nowrap" role=presentation><a class=nav-link id=reward-wechat-tab data-bs-toggle=tab href=#reward-wechat role=tab aria-controls=reward-wechat aria-selected=true><i class="fab fa-fw fa-weixin"></i>微信</a></li></ul><div class=tab-content id=rewardTabContent><div class="tab-pane fade post-reward-content show active" id=reward-alipay role=tabpanel aria-labelledby=reward-alipay-tab><img class="img-fluid post-reward-img" src=/images/reward/alipay.png loading=lazy></div><div class="tab-pane fade post-reward-content show" id=reward-wechat role=tabpanel aria-labelledby=reward-wechat-tab><img class="img-fluid post-reward-img" src=/images/reward/wechat.png loading=lazy></div></div></div></div></div></div></div><div class=card-footer><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev"><i class="fas fa-fw fa-chevron-left"></i>
+<a href=/zh-cn/posts/java/2017-03-20-java_native_interface%E4%B8%89/>Java Native Interface（三）</a></div><div class="post-nav post-next"><a href=/zh-cn/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/>数据结构之hashtable</a>
+<i class="fas fa-fw fa-chevron-right"></i></div></div></div></article><div class="post-copyright mb-3 row card component" id=post-copyright><div class=card-header><h2 class=card-title>版权</h2></div><div class=card-body><a class="d-flex align-items-center flex-column" target=_blank rel="license noopener noreferrer" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh><span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+CC BY-NC-ND 4.0</a></div></div><section class="related-posts row card component"><div class=card-header><h2 class=card-title>相关文章</h2></div><div class=card-body><ul class=post-list><li><a href=/zh-cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/>彻底掌握malloc</a>
+<span class="float-end post-date">2017-03-17</span></li><li><a href=/zh-cn/posts/compiler/2017-03-15-%E5%9F%BA%E4%BA%8Ec%E8%AF%AD%E8%A8%80%E7%9A%84%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%BC%80%E5%8F%91/>基于c语言的编程语言开发</a>
+<span class="float-end post-date">2017-03-15</span></li><li><a href=/zh-cn/posts/php/2017-03-09-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8Bcall-user-func%E5%8E%9F%E7%90%86%E5%92%8C%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0/>Php扩展开发之call_user_func原理和回调函数的实现</a>
+<span class="float-end post-date">2017-03-09</span></li><li><a href=/zh-cn/posts/java/2017-03-20-java_native_interface%E4%B8%89/>Java Native Interface（三）</a>
+<span class="float-end post-date">2017-03-20</span></li><li><a href=/zh-cn/posts/java/2017-03-20-java_native_interface%E4%BA%8C/>Java Native Interface（二）</a>
+<span class="float-end post-date">2017-03-20</span></li></ul></div></section><div class="card component row post-comments" id=post-comments><div class=card-header><h2 class=card-title>评论</h2></div><div class=card-body><script src=https://utteranc.es/client.js repo=liubang/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></div></div></div></div><aside class="col-lg-4 sidebar d-flex"><div class="container d-flex flex-column"><section class="card row text-center profile component"><div class=card-body><div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt=liubang src=/images/profile.webp loading=lazy width=1000 height=1000></div><div class="col-12 profile-meta"><div class=profile-name>liubang</div><div class=profile-bio>Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class=profile-company><i class="fas fa-fw fa-building"></i>Baidu</div><div class=profile-location><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href=mailto:it.liubang@gmail.com title=Email><i class="fas fa-fw fa-2x fa-envelope"></i>
+</a><a class="nav-link social-link" target=_blank href=https://github.com/liubang title=GitHub rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-github"></i>
+</a><a class="nav-link social-link" target=_blank href=https://weibo.com/2113750192 title=Weibo rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-weibo"></i></a></nav></div></div></section><div class="post-toc row mb-4 card component" id=postTOC><div class=card-header><h2 class=card-title>目录</h2></div><div class=card-body><nav id=TableOfContents><ul><li><a href=#struct>struct</a><ul><li><a href=#定义-struct>定义 struct</a></li><li><a href=#struct-的初始化>struct 的初始化</a></li><li><a href=#structure-member-alignment-padding-and-data-packing>structure member alignment, padding and data packing.</a></li><li><a href=#位域bit-field>位域(bit field)</a></li></ul></li></ul></nav></div></div><section class="recent-posts row card component"><div class=card-header><h2 class=card-title>最近文章</h2></div><div class=card-body><ul class=post-list><li><a href=/zh-cn/posts/cpp/2022-03-18-c++17-constexpr_if/>C++17:constexpr If</a></li><li><a href=/zh-cn/posts/cpp/2022-03-15-c++20-designated_initializers/>C++20:Designated Initializers</a></li><li><a href=/zh-cn/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/>C++元编程之遍历tuple</a></li><li><a href=/zh-cn/posts/cpp/2022-02-14-c++17%E4%B9%8Bstring_view/>C++17:string_view</a></li><li><a href=/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/>LevelDB 源码阅读之 Compaction</a></li></ul></div></section><section class="categories-taxonomies row card component"><div class=card-header><h2 class=card-title><a href=/zh-cn/categories>分类</a></h2></div><div class=card-body><div class=py-2><a href=/zh-cn/categories/c++/ class="badge rounded post-taxonomy" title=c++>c++<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href=/zh-cn/categories/php/ class="badge rounded post-taxonomy" title=php>
+php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href=/zh-cn/categories/sp/ class="badge rounded post-taxonomy" title=sp>
+sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href=/zh-cn/categories/java/ class="badge rounded post-taxonomy" title=java>
+java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href=/zh-cn/categories/compiler/ class="badge rounded post-taxonomy" title=compiler>
+compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/categories/ds/ class="badge rounded post-taxonomy" title=ds>
+ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/categories/inf/ class="badge rounded post-taxonomy" title=inf>
+inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/categories/storage/ class="badge rounded post-taxonomy" title=storage>
+storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div></div></section><section class="tags-taxonomies row card component"><div class=card-header><h2 class=card-title><a href=/zh-cn/tags>标签</a></h2></div><div class=card-body><div class=py-2><a href=/zh-cn/tags/c/ class="badge rounded post-taxonomy" title=c>c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href=/zh-cn/tags/c++/ class="badge rounded post-taxonomy" title=c++>
+c++<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href=/zh-cn/tags/php/ class="badge rounded post-taxonomy" title=php>
+php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href=/zh-cn/tags/sp/ class="badge rounded post-taxonomy" title=sp>
+sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href=/zh-cn/tags/java/ class="badge rounded post-taxonomy" title=Java>
+Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href=/zh-cn/tags/jni/ class="badge rounded post-taxonomy" title=JNI>
+JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href=/zh-cn/tags/c++17/ class="badge rounded post-taxonomy" title=c++17>
+c++17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href=/zh-cn/tags/compiler/ class="badge rounded post-taxonomy" title=compiler>
+compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href=/zh-cn/tags/algorithm/ class="badge rounded post-taxonomy" title=algorithm>
+algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/tags/c++20/ class="badge rounded post-taxonomy" title=c++20>
+c++20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div></div></section></div></aside></div></main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href=mailto:it.liubang@gmail.com title=Email><i class="fas fa-fw fa-2x fa-envelope"></i>
+</a><a class="nav-link social-link" target=_blank href=https://github.com/liubang title=GitHub rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-github"></i>
+</a><a class="nav-link social-link" target=_blank href=https://weibo.com/2113750192 title=Weibo rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-weibo"></i></a></nav><div class="copyright mb-2">Copyright © 2016-2022 LiuBang. All Rights Reserved.</div><div class="powered-by mb-2">Powered by <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> and the <a href=https://github.com/razonyang/hugo-theme-bootstrap target=_blank rel="noopener noreferrer">Bootstrap</a> theme.</div></footer><script src=/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js integrity="sha256-aJTp8Icy+VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin=anonymous defer></script><script src=/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin=anonymous defer></script>
+<script>"serviceWorker"in navigator&&window.addEventListener("load",()=>{navigator.serviceWorker.register("/service-worker.js").then(function(e){console.log("Successfully registered service worker",e)}).catch(function(e){console.warn("Error whilst registering service worker",e)})})</script><script src=/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js integrity="sha256-Vs2p5NUlCvakrAMEy/36Od+5KIyDFnmExO1/vipUw00=" crossorigin=anonymous defer></script><script defer src=/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin=anonymous></script>
+<script defer src=/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg+8Q53c4bN/Kc7hJD7w=" crossorigin=anonymous></script></body></html>

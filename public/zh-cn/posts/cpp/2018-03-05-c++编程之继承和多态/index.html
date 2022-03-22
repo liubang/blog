@@ -1,830 +1,370 @@
-<!doctype html><html lang="zh-cn" data-palette="blue gray"
-  >
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>c&#43;&#43;编程之继承和多态 - liubang&#39;s blog</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
-<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
-<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
-<link rel="icon" href="/images/icons/favicon.ico">
-<link rel="manifest" href="/zh-cn/manifest.json">
-<meta name="keywords" content="" />
-<meta name="description" content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C&#43;&#43;中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="c&#43;&#43;编程之继承和多态">
-<meta itemprop="description" content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C&#43;&#43;中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {"><meta itemprop="datePublished" content="2018-03-05T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2018-03-05T00:00:00+00:00" />
-<meta itemprop="wordCount" content="2462">
-<meta itemprop="keywords" content="c&#43;&#43;," /><meta property="og:title" content="c&#43;&#43;编程之继承和多态" />
-<meta property="og:description" content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C&#43;&#43;中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/zh-cn/posts/cpp/2018-03-05-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2018-03-05T00:00:00+00:00" />
-<meta property="article:modified_time" content="2018-03-05T00:00:00+00:00" />
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="c&#43;&#43;编程之继承和多态"/>
-<meta name="twitter:description" content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C&#43;&#43;中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {"/>
-<meta property="og:image" content="/images/logo.png"/>
-  <meta name="twitter:image" content="/images/logo.png"/><link rel="stylesheet" href="/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css" integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8&#43;I&#43;qU=" crossorigin="anonymous"><link rel="stylesheet" href="/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css" integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin="anonymous">
-<link rel="stylesheet" href="/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css" integrity="sha256-PSKHlLztu/oEEr64&#43;8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin="anonymous"></head>
-  <body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
-  <div class="container">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="fas fa-bars"></i>
-    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/zh-cn/"><img class="logo" alt="Logo" src="/images/logo.webp" loading="lazy"
-   width="136" height="69"
-   />
-LIUBANG
-    </a>
-    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
-  <div class="offcanvas-header">
-    <h3 class="offcanvas-title">Share</h3>
-    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body">
-    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
-      target="_blank" href="https://twitter.com/intent/tweet?title=c%2b%2b%e7%bc%96%e7%a8%8b%e4%b9%8b%e7%bb%a7%e6%89%bf%e5%92%8c%e5%a4%9a%e6%80%81&url=%2fzh-cn%2fposts%2fcpp%2f2018-03-05-c%2b%2b%25E7%25BC%2596%25E7%25A8%258B%25E4%25B9%258B%25E7%25BB%25A7%25E6%2589%25BF%25E5%2592%258C%25E5%25A4%259A%25E6%2580%2581%2f">
-      <i class="fab fa-fw fa-twitter"></i> Twitter
-    </a>
-    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
-      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fcpp%2f2018-03-05-c%2b%2b%25E7%25BC%2596%25E7%25A8%258B%25E4%25B9%258B%25E7%25BB%25A7%25E6%2589%25BF%25E5%2592%258C%25E5%25A4%259A%25E6%2580%2581%2f">
-      <i class="fab fa-fw fa-facebook-f"></i> Facebook
-    </a>
-  </div>
-</div>
-    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
-  aria-controls="offcanvasSettings" aria-label="Toggle settings">
-  <i class="fas fa-ellipsis-v"></i>
-</button>
-
-<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
-  <div class="offcanvas-header">
-    <h3 class="offcanvas-title">设置</h3>
-    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body d-flex flex-column"><section class="setting">
-  <form class="row">
-    <div class="col-auto">
-      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-language"></i> 语言</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <div class="dropdown">
-        <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          简体中文
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown"><li><a class="dropdown-item" href="/en/">English</a></li></ul>
-      </div>
-    </div>
-  </form>
-</section>
-
-
-<section class="setting">
-  <form class="row">
-    <div class="col-auto">
-      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="modeSwitcher">
-      </div>
-    </div>
-  </form>
-</section>
-
-<section class="setting">
-  <form class="font-size-switcher-form row">
-    <div class="col-auto">
-      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
-    </div>
-  </form>
-</section>
-
-
-<section class="setting palettes">
-  <form class="row">
-    <div class="col-auto">
-      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
-    </div>
-    <div class="col-auto ms-auto">
-      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
-        <i class="fas fa-eye-dropper"></i>
-      </a>
-    </div>
-  </form>
-  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
-        class="btn btn-sm w-100 palette" data-palette="blue">
-      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
-        class="btn btn-sm w-100 palette" data-palette="blue-gray">
-      </button><button type="button" id="palette-brown" aria-label="棕色"
-        class="btn btn-sm w-100 palette" data-palette="brown">
-      </button><button type="button" id="palette-cyan" aria-label="青色"
-        class="btn btn-sm w-100 palette" data-palette="cyan">
-      </button><button type="button" id="palette-green" aria-label="绿色"
-        class="btn btn-sm w-100 palette" data-palette="green">
-      </button><button type="button" id="palette-indigo" aria-label="靛青色"
-        class="btn btn-sm w-100 palette" data-palette="indigo">
-      </button><button type="button" id="palette-orange" aria-label="橙色"
-        class="btn btn-sm w-100 palette" data-palette="orange">
-      </button><button type="button" id="palette-pink" aria-label="粉色"
-        class="btn btn-sm w-100 palette" data-palette="pink">
-      </button><button type="button" id="palette-purple" aria-label="紫色"
-        class="btn btn-sm w-100 palette" data-palette="purple">
-      </button><button type="button" id="palette-red" aria-label="红色"
-        class="btn btn-sm w-100 palette" data-palette="red">
-      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
-        class="btn btn-sm w-100 palette" data-palette="teal">
-      </button><button type="button" id="palette-yellow" aria-label="黄色"
-        class="btn btn-sm w-100 palette" data-palette="yellow">
-      </button></div>
-</section>
-<section class="setting actions d-flex justify-content-around mt-auto overflow-auto">
-  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
-    <span class="action-icon"><i class="fas fa-2x fa-arrow-left"></i></span> 返回
-  </a>
-  <a role="button" class="action action-reload-page">
-    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
-  </a>
-  <a role="button" class="action action-copy-url">
-    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
-  </a><a class="action action-social-share" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
-    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
-    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
-  </a></section>
-
-</div>
-</div>
-
-    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
-      <form class="search-bar my-1" action="/zh-cn/search">
-  <div class="input-group input-group-sm">
-    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
-    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
-  </div>
-</form>
-      <ul class="navbar-nav ms-auto"><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/series/">
-            <i class="fas fa-fw fa-columns"></i>专栏
-          </a>
-        </li><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/archives/">
-            <i class="fas fa-fw fa-file-archive"></i>归档
-          </a>
-        </li><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/categories/">
-            <i class="fas fa-fw fa-folder"></i>分类
-          </a>
-        </li><li class="nav-item">
-          <a class="nav-link" href="/zh-cn/tags/">
-            <i class="fas fa-fw fa-tags"></i>标签
-          </a>
-        </li></ul>
-    </div>
-  </div>
-</nav>
-</header>
-<main role="main" class="container">
-      <div class="row content">
-<div class="col-lg-8">
-  <div class="container"><nav class="row card component" aria-label="breadcrumb">
-  <div class="card-body">
-    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/zh-cn/">主页</a></li><li class="breadcrumb-item"><a href="/zh-cn/posts/">文章</a></li><li class="breadcrumb-item active">C&#43;&#43;编程之继承和多态</li></ol>
-  </div>
-</nav><div class="post-panel-wrapper">
-  <div class="d-flex flex-column component rounded post-panel">
-    
-    <a class="action action-panel-toggler" role="button" title="Panel toggler">
-      <i class="fas fa-fw fa-chevron-circle-down"></i>
-    </a>
-    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
-  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
-</a>
-
-    
-
-    <a class="action btn-reward" role="button" data-bs-toggle="modal" data-bs-target="#rewardModal" title="打赏">
-  <i class="fas fa-fw fa-coffee"></i>
-</a>
-    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
-  <i class="fas fa-fw fa-copyright"></i>
-</a>
-    <a class="action" href="#post-comments" role="button" aria-label="Comments" title="Comments">
-  <i class="fas fa-fw fa-comments"></i>
-</a>
-    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
-  <i class="fas fa-fw fa-list-alt"></i>
-</a>
-    
-  </div>
-</div>
-<article class="row card component mb-4 post">
-  <div class="card-header ">
-    <h1 class="card-title post-title">C&#43;&#43;编程之继承和多态
-</h1>
-  </div>
-  <div class="card-body"><div class="post-meta">
-  <span class="post-date" title="创建于 2018-03-05 08:00:00 &#43;0800 CST。">
-    2018-03-05
-  </span><span class="post-reading-time">
-    5 分钟阅读
-  </span><span class="post-taxonomies"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge post-taxonomy">c&#43;&#43;</a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge post-taxonomy">c&#43;&#43;</a></span>
-</div>
-
-<div class="post-content mb-3"><h1 id="1-继承">1. 继承<a class="anchor ms-1" href="#1-继承"><i class="fas fa-link"></i></a></h1>
-<h2 id="11-术语">1.1 术语<a class="anchor ms-1" href="#11-术语"><i class="fas fa-link"></i></a></h2>
-<p>超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C++中，继承的语法规则如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">class</span> <span class="nc">SubclassName</span> <span class="o">:</span> <span class="n">inheritance</span><span class="o">-</span><span class="n">access</span><span class="o">-</span><span class="n">specifier</span> <span class="n">SuperclassName</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="p">......</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">};</span>
-</span></span></code></pre></div><p>子类继承了父类所有的成员，子类也可以定义自己的构造器和成员。</p>
-<p><strong>访问标识符</strong>：C++支持三种访问标识符：<code>private</code>，<code>public</code>和<code>protected</code>。一个类的 public 成员变量、成员函数，可以通过类的成员函数、类的实例变量进行访问。
-一个类的 protected 成员变量、成员函数，无法通过类的实例变量进行访问。但是可以通过类的友元函数、友元类进行访问。一个类的 private 成员变量、成员函数，无法通过类的实例变量进行访问。但是可以通过类的友元函数、友元类进行访问。</p>
-<p><strong>继承访问标识符</strong>：public 继承不改变基类成员的访问权限，private 继承使得基类所有成员在子类中的访问权限变为 private，protected 继承将基类中 public 成员变为子类的 protected 成员，其它成员的访问 权限不变。
-基类中的 private 成员不受继承方式的影响，子类永远无权访问。</p>
-<h2 id="12-一个示例">1.2 一个示例<a class="anchor ms-1" href="#12-一个示例"><i class="fas fa-link"></i></a></h2>
-<p><img class="img-fluid" alt="" src="/images/2018-03-05/ClassDiagram_MovablePoint.png" loading="lazy"
-   width="289" height="584"
-   />
-
-</p>
-<p>MovablePoint.h</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#ifndef MOVING_POINT_H
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#define MOVING_POINT_H
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;Point.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="k">class</span> <span class="nc">MoviablePoint</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Point</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="k">private</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="kt">int</span> <span class="n">xSpeed</span><span class="p">,</span> <span class="n">ySpeed</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
-</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="k">public</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="n">MovablePoint</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">xSpeed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ySpeed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="kt">int</span> <span class="nf">getXSpeed</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="kt">int</span> <span class="nf">getYSpeed</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="kt">void</span> <span class="nf">setXSpeed</span><span class="p">(</span><span class="kt">int</span> <span class="n">xSpeed</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="kt">void</span> <span class="nf">setYSpeed</span><span class="p">(</span><span class="kt">int</span> <span class="n">ySpeed</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="kt">void</span> <span class="nf">move</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">	<span class="kt">void</span> <span class="nf">print</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="cp">#endif
-</span></span></span></code></pre></div><p>MovablePoint.cpp</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;MovablePoint.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">MovablePoint</span><span class="o">::</span><span class="n">MovablePoint</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">xSpeed</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ySpeed</span><span class="p">)</span> <span class="o">:</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">xSpeed</span><span class="p">(</span><span class="n">xSpeed</span><span class="p">),</span> <span class="n">ySpeed</span><span class="p">(</span><span class="n">ySpeed</span><span class="p">)</span> <span class="p">{</span>  <span class="p">}</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1">// Getters
-</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="n">MovablePoint</span><span class="o">::</span><span class="n">getXSpeed</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">xSpeed</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="kt">int</span> <span class="n">MovablePoint</span><span class="o">::</span><span class="n">getYSpeed</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">ySpeed</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">
-</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1">// Functions
-</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="n">MovablePoint</span><span class="o">::</span><span class="n">print</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Movable&#34;</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="n">Point</span><span class="o">::</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; Speed=&#34;</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;(&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">xSpeed</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;,&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">ySpeed</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;)&#34;</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl">
-</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="kt">void</span> <span class="n">MovablePoint</span><span class="o">::</span><span class="n">move</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="n">Point</span><span class="o">::</span><span class="n">setX</span><span class="p">(</span><span class="n">Point</span><span class="o">::</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">xSpeed</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="n">Point</span><span class="o">::</span><span class="n">setY</span><span class="p">(</span><span class="n">Point</span><span class="o">::</span><span class="n">getY</span><span class="p">()</span> <span class="o">+</span> <span class="n">ySpeed</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="13-示例父类有-protected-成员">1.3 示例：父类有 protected 成员<a class="anchor ms-1" href="#13-示例父类有-protected-成员"><i class="fas fa-link"></i></a></h2>
-<p>再次强调一点，子类不能直接访问父类中被<code>private</code>修饰的成员。例如：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">void</span> <span class="n">MovablePoint</span><span class="o">::</span><span class="n">move</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="n">x</span> <span class="o">+=</span> <span class="n">xSpeed</span><span class="p">;</span> <span class="c1">// error: &#39;int Point::x&#39; is private
-</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"></span>	<span class="p">...</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>然而，如果我们把 x 改成<code>protected</code>的话，子类就可以直接访问了。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// Superclass Point
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="k">class</span> <span class="nc">Point</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="k">protected</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="p">......</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1">// Subclass MovablePoint
-</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">MovablePoint</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Point</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">......</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">
-</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="kt">void</span> <span class="n">MovablePoint</span><span class="o">::</span><span class="n">move</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="n">x</span> <span class="o">+=</span> <span class="n">xSpeed</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="n">y</span> <span class="o">+=</span> <span class="n">ySpeed</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h1 id="2-多态">2. 多态<a class="anchor ms-1" href="#2-多态"><i class="fas fa-link"></i></a></h1>
-<p>多态作用于运行时使用动态绑定的对象指针和引用。多态对普通对象不起作用，因为普通对象是在编译时静态绑定的。</p>
-<h1 id="21-替换">2.1 替换<a class="anchor ms-1" href="#21-替换"><i class="fas fa-link"></i></a></h1>
-<p>子类实例在 public 继承方式下，会继承父类的所有属性。子类能够做父类能做的任何事情，这就是&quot;is-a&quot;关系。因此你可以用父类引用
-替换子类实例。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;MovablePoint.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="n">Point</span> <span class="o">*</span><span class="n">ptrP1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MovablePoint</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">);</span> <span class="c1">// upcast
-</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span>	<span class="n">ptrP1</span><span class="o">-&gt;</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="c1">// ptrP1-&gt;move(); // error: &#39;class Point&#39; has no member named &#39;move&#39;
-</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>	<span class="k">delete</span> <span class="n">ptrP1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">
-</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="n">MovablePoint</span> <span class="n">map2</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="n">Point</span> <span class="o">&amp;</span><span class="n">p2</span> <span class="o">=</span> <span class="n">map2</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="n">p2</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="c1">// p2.move(); // error: &#39;class Point&#39; has no member named &#39;move&#39;
-</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="n">Point</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">MovablePoint</span><span class="p">(</span><span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">	<span class="n">p3</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="c1">// p3.move(); // error: &#39;class Point&#39; has no member named &#39;move&#39;
-</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><p>被替换的实例能够调用父类的所有方法，但是不能盗用子类中定义的函数，因为该引用是父类引用，不能识别子类成员。</p>
-<h2 id="22-多态性">2.2 多态性<a class="anchor ms-1" href="#22-多态性"><i class="fas fa-link"></i></a></h2>
-<ol>
-<li>子类实例能够被父类引用替换</li>
-<li>一旦被替换，该实例只能调用父类的方法，不能调用子类的</li>
-<li>如果子类重写了父类的方法，我们期望调用的是重写后的方法，而不是父类原有的方法</li>
-</ol>
-<p><strong>虚函数</strong>：为了实现多态机制，我们需要使用<code>virtual</code>关键字来修饰函数。此时，如果父类作用于子类实例，调用被<code>virtual</code>修饰的
-函数时，会调用子类中重写的函数，而不是父类中的原始函数。例如：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">Class</span> <span class="n">Point</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="p">......</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl">		<span class="k">virtual</span> <span class="kt">void</span> <span class="n">print</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cm">/* Test Substituting a subclass instance to a superclass reference.
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cm">   (TestSubstitution.cpp) */</span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;MovablePoint.h&#34;   // included &#34;Point.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">   <span class="c1">// Substitute a subclass instance to a superclass reference
-</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">   <span class="c1">// Using Object Pointer
-</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"></span>   <span class="n">Point</span> <span class="o">*</span> <span class="n">ptrP1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MovablePoint</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">);</span>   <span class="c1">// upcast
-</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1"></span>   <span class="n">ptrP1</span><span class="o">-&gt;</span><span class="n">print</span><span class="p">();</span> <span class="c1">// MovablePoint @ (11,12) Speed=(13,14)
-</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span>                   <span class="c1">//   - Run subclass version!!
-</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="c1"></span>   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">   <span class="k">delete</span> <span class="n">ptrP1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">
-</span></span><span class="line"><span class="ln">17</span><span class="cl">   <span class="c1">// Using Object Reference
-</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="c1"></span>   <span class="n">MovablePoint</span> <span class="n">mp2</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">   <span class="n">Point</span> <span class="o">&amp;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">mp2</span><span class="p">;</span>  <span class="c1">// upcast
-</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="c1"></span>   <span class="n">p2</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>     <span class="c1">// MovablePoint @ (21,22) Speed=(23,24)
-</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1"></span>                   <span class="c1">//   - Run subclass version!!
-</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span>   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">23</span><span class="cl">
-</span></span><span class="line"><span class="ln">24</span><span class="cl">   <span class="c1">// Using object with explicit constructor
-</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1"></span>   <span class="n">Point</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">MovablePoint</span><span class="p">(</span><span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">);</span>  <span class="c1">// upcast
-</span></span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="c1"></span>   <span class="n">p3</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>     <span class="c1">// Point @ (31,32) - Run superclass version!!
-</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="c1"></span>   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><strong>向上转型和向下转型</strong></p>
-<p>通常情况下，C++不允许我们将一种类型的地址赋值给另一种类型的指针（或引用）。例如：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kt">double</span> <span class="o">*</span><span class="n">ptr1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span> <span class="c1">// error: cannot convert &#39;int*&#39; to &#39;double*&#39; in initialization
-</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="kt">double</span> <span class="o">&amp;</span><span class="n">d</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// error: invalid initialication of reference of type &#39;double&amp;&#39; from expression of type &#39;int&#39;
-</span></span></span></code></pre></div><p>然而，父类指针或引用能够存放子类对象，而不需要显式的转型：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">MovablePoint</span> <span class="nf">mp</span><span class="p">(......);</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">Point</span> <span class="o">*</span><span class="n">ptrP1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mp</span><span class="p">;</span> <span class="c1">// Okay - Implicit upcast
-</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"></span><span class="n">Point</span> <span class="o">&amp;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">mp</span><span class="p">;</span>    <span class="c1">// Okay - Implicit upcast
+<!doctype html><html lang=zh-cn data-palette="blue gray"><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>c++编程之继承和多态 - liubang's blog</title><link rel=apple-touch-icon href=/images/icons/icon-180x180.png sizes=180x180><link rel=icon href=/images/icons/icon-32x32.png sizes=32x32 type=image/png><link rel=icon href=/images/icons/icon-16x16.png sizes=16x16 type=image/png><link rel=icon href=/images/icons/favicon.ico><link rel=manifest href=/zh-cn/manifest.json><meta name=keywords content><meta name=description content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C++中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {"><meta name=robots content="index, follow"><meta itemprop=name content="c++编程之继承和多态"><meta itemprop=description content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C++中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {"><meta itemprop=datePublished content="2018-03-05T00:00:00+00:00"><meta itemprop=dateModified content="2018-03-05T00:00:00+00:00"><meta itemprop=wordCount content="2462"><meta itemprop=keywords content="c++,"><meta property="og:title" content="c++编程之继承和多态"><meta property="og:description" content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C++中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {"><meta property="og:type" content="article"><meta property="og:url" content="/zh-cn/posts/cpp/2018-03-05-c++%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-05T00:00:00+00:00"><meta property="article:modified_time" content="2018-03-05T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="c++编程之继承和多态"><meta name=twitter:description content="1. 继承 1.1 术语 超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C++中，继承的语法规则如下： 1class SubclassName : inheritance-access-specifier SuperclassName {"><meta property="og:image" content="/images/logo.png"><meta name=twitter:image content="/images/logo.png"><link rel=stylesheet href=/css/main.min.507afbe6e4670fa3e961a0b35816b5daeb36029866fd6bd7b9d7871fcf88faa5.css integrity="sha256-UHr75uRnD6PpYaCzWBa12us2Aphm/WvXudeHH8+I+qU=" crossorigin=anonymous><link rel=stylesheet href=/css/katex.min.d080a89e03e1eb850f547d835c186b4273f69879aa497eb8b0e88c1578bf1f0b.css integrity="sha256-0ICongPh64UPVH2DXBhrQnP2mHmqSX64sOiMFXi/Hws=" crossorigin=anonymous><link rel=stylesheet href=/css/viewer.min.3d228794bcedbbfa0412beb8fbc1ec6973202945e42af7004f742a4d7bd620ab.css integrity="sha256-PSKHlLztu/oEEr64+8HsaXMgKUXkKvcAT3QqTXvWIKs=" crossorigin=anonymous></head><body><script>const items=["mode","palette"];items.forEach(function(e){const t=localStorage.getItem("hbs-"+e);t&&document.body.parentElement.setAttribute("data-"+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top"><div class=container><button class=navbar-toggler type=button data-bs-toggle=collapse data-bs-target=#navbarSupportedContent aria-controls=navbarSupportedContent aria-expanded=false aria-label="Toggle navigation">
+<i class="fas fa-bars"></i>
+</button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href=/zh-cn/><img class=logo alt=Logo src=/images/logo.webp loading=lazy width=136 height=69>
+LIUBANG</a><div class="offcanvas offcanvas-bottom surface" tabindex=-1 id=offcanvasSocialShare aria-labelledby=offcanvasSocialShare><div class=offcanvas-header><h3 class=offcanvas-title>Share</h3><button type=button class="btn btn-sm btn-outline-primary" data-bs-dismiss=offcanvas aria-label=Close>
+<i class="fas fa-times"></i></button></div><div class=offcanvas-body><a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button" target=_blank href="https://twitter.com/intent/tweet?title=c%2b%2b%e7%bc%96%e7%a8%8b%e4%b9%8b%e7%bb%a7%e6%89%bf%e5%92%8c%e5%a4%9a%e6%80%81&url=%2fzh-cn%2fposts%2fcpp%2f2018-03-05-c%2b%2b%25E7%25BC%2596%25E7%25A8%258B%25E4%25B9%258B%25E7%25BB%25A7%25E6%2589%25BF%25E5%2592%258C%25E5%25A4%259A%25E6%2580%2581%2f"><i class="fab fa-fw fa-twitter"></i> Twitter</a>
+<a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button" target=_blank href="https://www.facebook.com/sharer/sharer.php?u=%2fzh-cn%2fposts%2fcpp%2f2018-03-05-c%2b%2b%25E7%25BC%2596%25E7%25A8%258B%25E4%25B9%258B%25E7%25BB%25A7%25E6%2589%25BF%25E5%2592%258C%25E5%25A4%259A%25E6%2580%2581%2f"><i class="fab fa-fw fa-facebook-f"></i> Facebook</a></div></div><button class=navbar-settings type=button data-bs-toggle=offcanvas data-bs-target=#offcanvasSettings aria-controls=offcanvasSettings aria-label="Toggle settings">
+<i class="fas fa-ellipsis-v"></i></button><div class="offcanvas offcanvas-end surface h-100" tabindex=-1 id=offcanvasSettings aria-labelledby=offcanvasSettings><div class=offcanvas-header><h3 class=offcanvas-title>设置</h3><button type=button class="btn btn-sm btn-outline-primary" data-bs-dismiss=offcanvas aria-label=Close>
+<i class="fas fa-times"></i></button></div><div class="offcanvas-body d-flex flex-column"><section class=setting><form class=row><div class=col-auto><label for=fontSize class=form-label><i class="fas fa-fw fa-language"></i> 语言</label></div><div class="col-auto ms-auto"><div class=dropdown><a class="btn btn-sm btn-outline-primary dropdown-toggle" href=# id=languageDropdown role=button data-bs-toggle=dropdown aria-expanded=false>简体中文</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby=languageDropdown><li><a class=dropdown-item href=/en/>English</a></li></ul></div></div></form></section><section class=setting><form class=row><div class=col-auto><label><i class="fas fa-fw fa-adjust"></i> 模式</label></div><div class="col-auto ms-auto"><div class="form-check form-switch"><input class=form-check-input type=checkbox id=modeSwitcher></div></div></form></section><section class=setting><form class="font-size-switcher-form row"><div class=col-auto><label for=fontSize class=form-label><i class="fas fa-fw fa-font"></i> 字体大小</label></div><div class="col-auto ms-auto"><input type=range class=form-range min=-2 max=2 id=fontSize></div></form></section><section class="setting palettes"><form class=row><div class=col-auto><label><i class="fas fa-fw fa-palette"></i> 配色</label></div><div class="col-auto ms-auto"><a id=btnPalette class="btn btn-sm btn-outline-primary" role=button aria-label=palettePicker><i class="fas fa-eye-dropper"></i></a></div></form><div class="mt-2 d-flex justify-content-between visually-hidden" id=palettePicker><button type=button id=palette-blue aria-label=蓝色 class="btn btn-sm w-100 palette" data-palette=blue>
+</button><button type=button id=palette-blue-gray aria-label=蓝灰色 class="btn btn-sm w-100 palette" data-palette=blue-gray>
+</button><button type=button id=palette-brown aria-label=棕色 class="btn btn-sm w-100 palette" data-palette=brown>
+</button><button type=button id=palette-cyan aria-label=青色 class="btn btn-sm w-100 palette" data-palette=cyan>
+</button><button type=button id=palette-green aria-label=绿色 class="btn btn-sm w-100 palette" data-palette=green>
+</button><button type=button id=palette-indigo aria-label=靛青色 class="btn btn-sm w-100 palette" data-palette=indigo>
+</button><button type=button id=palette-orange aria-label=橙色 class="btn btn-sm w-100 palette" data-palette=orange>
+</button><button type=button id=palette-pink aria-label=粉色 class="btn btn-sm w-100 palette" data-palette=pink>
+</button><button type=button id=palette-purple aria-label=紫色 class="btn btn-sm w-100 palette" data-palette=purple>
+</button><button type=button id=palette-red aria-label=红色 class="btn btn-sm w-100 palette" data-palette=red>
+</button><button type=button id=palette-teal aria-label=蓝绿色 class="btn btn-sm w-100 palette" data-palette=teal>
+</button><button type=button id=palette-yellow aria-label=黄色 class="btn btn-sm w-100 palette" data-palette=yellow></button></div></section><section class="setting actions d-flex justify-content-around mt-auto overflow-auto"><a role=button class="action action-go-back" href="javascript: window.history.back();"><span class=action-icon><i class="fas fa-2x fa-arrow-left"></i></span> 返回</a>
+<a role=button class="action action-reload-page"><span class=action-icon><i class="fas fa-2x fa-redo-alt"></i></span> 刷新</a>
+<a role=button class="action action-copy-url"><span class=action-icon><i class="fas fa-2x fa-link"></i></span> 复制链接
+</a><a class="action action-social-share" type=button data-bs-toggle=offcanvas data-bs-target=#offcanvasSocialShare aria-controls=offcanvasSocialShare aria-label="Toggle social share"><span class=action-icon><i class="fas fa-2x fa-share-alt"></i></span> 分享</a></section></div></div><div class="collapse navbar-collapse" tabindex=-1 id=navbarSupportedContent aria-labelledby=navbarSupportedContent><form class="search-bar my-1" action=/zh-cn/search><div class="input-group input-group-sm"><span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+<input class="form-control rounded-pill" name=q type=search aria-label=Search></div></form><ul class="navbar-nav ms-auto"><li class=nav-item><a class=nav-link href=/zh-cn/series/><i class="fas fa-fw fa-columns"></i>专栏</a></li><li class=nav-item><a class=nav-link href=/zh-cn/archives/><i class="fas fa-fw fa-file-archive"></i>归档</a></li><li class=nav-item><a class=nav-link href=/zh-cn/categories/><i class="fas fa-fw fa-folder"></i>分类</a></li><li class=nav-item><a class=nav-link href=/zh-cn/tags/><i class="fas fa-fw fa-tags"></i>标签</a></li></ul></div></div></nav></header><main role=main class=container><div class="row content"><div class=col-lg-8><div class=container><nav class="row card component" aria-label=breadcrumb><div class=card-body><ol class=breadcrumb><li class=breadcrumb-item><a href=/zh-cn/>主页</a></li><li class=breadcrumb-item><a href=/zh-cn/posts/>文章</a></li><li class="breadcrumb-item active">C++编程之继承和多态</li></ol></div></nav><div class=post-panel-wrapper><div class="d-flex flex-column component rounded post-panel"><a class="action action-panel-toggler" role=button title="Panel toggler"><i class="fas fa-fw fa-chevron-circle-down"></i></a>
+<a id=sidebarToggler class="action d-none d-lg-block" role=button title="Sidebar toggler"><i class="fas fa-fw fa-expand-alt" data-fa-transform=rotate-45></i></a>
+<a class="action btn-reward" role=button data-bs-toggle=modal data-bs-target=#rewardModal title=打赏><i class="fas fa-fw fa-coffee"></i></a>
+<a class=action href=#post-copyright role=button aria-label=Copyright title=Copyright><i class="fas fa-fw fa-copyright"></i></a>
+<a class=action href=#post-comments role=button aria-label=Comments title=Comments><i class="fas fa-fw fa-comments"></i></a>
+<a class=action href=#postTOC aria-controls="Table of contents" role=button title="Table of contents"><i class="fas fa-fw fa-list-alt"></i></a></div></div><article class="row card component mb-4 post"><div class=card-header><h1 class="card-title post-title">C++编程之继承和多态</h1></div><div class=card-body><div class=post-meta><span class=post-date title="创建于 2018-03-05 08:00:00 +0800 CST。">2018-03-05
+</span><span class=post-reading-time>5 分钟阅读
+</span><span class=post-taxonomies><a href=/zh-cn/categories/c++/ class="badge post-taxonomy">c++</a><a href=/zh-cn/tags/c++/ class="badge post-taxonomy">c++</a></span></div><div class="post-content mb-3"><h1 id=1-继承>1. 继承<a class="anchor ms-1" href=#1-继承><i class="fas fa-link"></i></a></h1><h2 id=11-术语>1.1 术语<a class="anchor ms-1" href=#11-术语><i class="fas fa-link"></i></a></h2><p>超类（基类）和子类（派生类）：在面向对象程序设计中，我们通常使用继承来避免代码冗余。在 C++中，继承的语法规则如下：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=k>class</span> <span class=nc>SubclassName</span> <span class=o>:</span> <span class=n>inheritance</span><span class=o>-</span><span class=n>access</span><span class=o>-</span><span class=n>specifier</span> <span class=n>SuperclassName</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>	<span class=p>......</span>
+</span></span><span class=line><span class=ln>3</span><span class=cl><span class=p>};</span>
+</span></span></code></pre></div><p>子类继承了父类所有的成员，子类也可以定义自己的构造器和成员。</p><p><strong>访问标识符</strong>：C++支持三种访问标识符：<code>private</code>，<code>public</code>和<code>protected</code>。一个类的 public 成员变量、成员函数，可以通过类的成员函数、类的实例变量进行访问。
+一个类的 protected 成员变量、成员函数，无法通过类的实例变量进行访问。但是可以通过类的友元函数、友元类进行访问。一个类的 private 成员变量、成员函数，无法通过类的实例变量进行访问。但是可以通过类的友元函数、友元类进行访问。</p><p><strong>继承访问标识符</strong>：public 继承不改变基类成员的访问权限，private 继承使得基类所有成员在子类中的访问权限变为 private，protected 继承将基类中 public 成员变为子类的 protected 成员，其它成员的访问 权限不变。
+基类中的 private 成员不受继承方式的影响，子类永远无权访问。</p><h2 id=12-一个示例>1.2 一个示例<a class="anchor ms-1" href=#12-一个示例><i class="fas fa-link"></i></a></h2><p><img class=img-fluid alt src=/images/2018-03-05/ClassDiagram_MovablePoint.png loading=lazy width=289 height=584></p><p>MovablePoint.h</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#ifndef MOVING_POINT_H
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#define MOVING_POINT_H
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;Point.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=k>class</span> <span class=nc>MoviablePoint</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Point</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=k>private</span><span class=o>:</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>	<span class=kt>int</span> <span class=n>xSpeed</span><span class=p>,</span> <span class=n>ySpeed</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>
+</span></span><span class=line><span class=ln>10</span><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>	<span class=n>MovablePoint</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>,</span> <span class=kt>int</span> <span class=n>y</span><span class=p>,</span> <span class=kt>int</span> <span class=n>xSpeed</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=kt>int</span> <span class=n>ySpeed</span> <span class=o>=</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>	<span class=kt>int</span> <span class=nf>getXSpeed</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>	<span class=kt>int</span> <span class=nf>getYSpeed</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>	<span class=kt>void</span> <span class=nf>setXSpeed</span><span class=p>(</span><span class=kt>int</span> <span class=n>xSpeed</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>	<span class=kt>void</span> <span class=nf>setYSpeed</span><span class=p>(</span><span class=kt>int</span> <span class=n>ySpeed</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>	<span class=kt>void</span> <span class=nf>move</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>	<span class=kt>void</span> <span class=nf>print</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl><span class=cp>#endif
+</span></span></span></code></pre></div><p>MovablePoint.cpp</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;MovablePoint.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=n>MovablePoint</span><span class=o>::</span><span class=n>MovablePoint</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>,</span> <span class=kt>int</span> <span class=n>y</span><span class=p>,</span> <span class=kt>int</span> <span class=n>xSpeed</span><span class=p>,</span> <span class=kt>int</span> <span class=n>ySpeed</span><span class=p>)</span> <span class=o>:</span> <span class=n>Point</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>),</span> <span class=n>xSpeed</span><span class=p>(</span><span class=n>xSpeed</span><span class=p>),</span> <span class=n>ySpeed</span><span class=p>(</span><span class=n>ySpeed</span><span class=p>)</span> <span class=p>{</span>  <span class=p>}</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>
+</span></span><span class=line><span class=ln> 8</span><span class=cl><span class=c1>// Getters
+</span></span></span><span class=line><span class=ln> 9</span><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>MovablePoint</span><span class=o>::</span><span class=n>getXSpeed</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span> <span class=k>return</span> <span class=n>xSpeed</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl><span class=kt>int</span> <span class=n>MovablePoint</span><span class=o>::</span><span class=n>getYSpeed</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span> <span class=k>return</span> <span class=n>ySpeed</span><span class=p>;</span> <span class=p>}</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>
+</span></span><span class=line><span class=ln>12</span><span class=cl><span class=c1>// Functions
+</span></span></span><span class=line><span class=ln>13</span><span class=cl><span class=c1></span><span class=kt>void</span> <span class=n>MovablePoint</span><span class=o>::</span><span class=n>print</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>	<span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Movable&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>	<span class=n>Point</span><span class=o>::</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>	<span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34; Speed=&#34;</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;(&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>xSpeed</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;,&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>ySpeed</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;)&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl>
+</span></span><span class=line><span class=ln>19</span><span class=cl><span class=kt>void</span> <span class=n>MovablePoint</span><span class=o>::</span><span class=n>move</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>20</span><span class=cl>	<span class=n>Point</span><span class=o>::</span><span class=n>setX</span><span class=p>(</span><span class=n>Point</span><span class=o>::</span><span class=n>getX</span><span class=p>()</span> <span class=o>+</span> <span class=n>xSpeed</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>21</span><span class=cl>	<span class=n>Point</span><span class=o>::</span><span class=n>setY</span><span class=p>(</span><span class=n>Point</span><span class=o>::</span><span class=n>getY</span><span class=p>()</span> <span class=o>+</span> <span class=n>ySpeed</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>22</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><h2 id=13-示例父类有-protected-成员>1.3 示例：父类有 protected 成员<a class="anchor ms-1" href=#13-示例父类有-protected-成员><i class="fas fa-link"></i></a></h2><p>再次强调一点，子类不能直接访问父类中被<code>private</code>修饰的成员。例如：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=kt>void</span> <span class=n>MovablePoint</span><span class=o>::</span><span class=n>move</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>	<span class=n>x</span> <span class=o>+=</span> <span class=n>xSpeed</span><span class=p>;</span> <span class=c1>// error: &#39;int Point::x&#39; is private
+</span></span></span><span class=line><span class=ln>3</span><span class=cl><span class=c1></span>	<span class=p>...</span>
+</span></span><span class=line><span class=ln>4</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>然而，如果我们把 x 改成<code>protected</code>的话，子类就可以直接访问了。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=c1>// Superclass Point
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=k>class</span> <span class=nc>Point</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=k>protected</span><span class=o>:</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>	<span class=kt>int</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>	<span class=p>......</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>
+</span></span><span class=line><span class=ln> 9</span><span class=cl><span class=c1>// Subclass MovablePoint
+</span></span></span><span class=line><span class=ln>10</span><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>MovablePoint</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Point</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl><span class=p>......</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>
+</span></span><span class=line><span class=ln>14</span><span class=cl><span class=kt>void</span> <span class=n>MovablePoint</span><span class=o>::</span><span class=n>move</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>	<span class=n>x</span> <span class=o>+=</span> <span class=n>xSpeed</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>	<span class=n>y</span> <span class=o>+=</span> <span class=n>ySpeed</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><h1 id=2-多态>2. 多态<a class="anchor ms-1" href=#2-多态><i class="fas fa-link"></i></a></h1><p>多态作用于运行时使用动态绑定的对象指针和引用。多态对普通对象不起作用，因为普通对象是在编译时静态绑定的。</p><h1 id=21-替换>2.1 替换<a class="anchor ms-1" href=#21-替换><i class="fas fa-link"></i></a></h1><p>子类实例在 public 继承方式下，会继承父类的所有属性。子类能够做父类能做的任何事情，这就是"is-a"关系。因此你可以用父类引用
+替换子类实例。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;MovablePoint.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>	<span class=n>Point</span> <span class=o>*</span><span class=n>ptrP1</span> <span class=o>=</span> <span class=k>new</span> <span class=n>MovablePoint</span><span class=p>(</span><span class=mi>11</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>14</span><span class=p>);</span> <span class=c1>// upcast
+</span></span></span><span class=line><span class=ln> 8</span><span class=cl><span class=c1></span>	<span class=n>ptrP1</span><span class=o>-&gt;</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>	<span class=c1>// ptrP1-&gt;move(); // error: &#39;class Point&#39; has no member named &#39;move&#39;
+</span></span></span><span class=line><span class=ln>10</span><span class=cl><span class=c1></span>	<span class=k>delete</span> <span class=n>ptrP1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>
+</span></span><span class=line><span class=ln>12</span><span class=cl>	<span class=n>MovablePoint</span> <span class=n>map2</span><span class=p>(</span><span class=mi>21</span><span class=p>,</span> <span class=mi>22</span><span class=p>,</span> <span class=mi>23</span><span class=p>,</span> <span class=mi>24</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>	<span class=n>Point</span> <span class=o>&amp;</span><span class=n>p2</span> <span class=o>=</span> <span class=n>map2</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>	<span class=n>p2</span><span class=p>.</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>	<span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>	<span class=c1>// p2.move(); // error: &#39;class Point&#39; has no member named &#39;move&#39;
+</span></span></span><span class=line><span class=ln>17</span><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=ln>18</span><span class=cl>	<span class=n>Point</span> <span class=n>p3</span> <span class=o>=</span> <span class=n>MovablePoint</span><span class=p>(</span><span class=mi>31</span><span class=p>,</span> <span class=mi>32</span><span class=p>,</span> <span class=mi>33</span><span class=p>,</span> <span class=mi>34</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>	<span class=n>p3</span><span class=p>.</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>20</span><span class=cl>	<span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>21</span><span class=cl>	<span class=c1>// p3.move(); // error: &#39;class Point&#39; has no member named &#39;move&#39;
+</span></span></span><span class=line><span class=ln>22</span><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></div><p>被替换的实例能够调用父类的所有方法，但是不能盗用子类中定义的函数，因为该引用是父类引用，不能识别子类成员。</p><h2 id=22-多态性>2.2 多态性<a class="anchor ms-1" href=#22-多态性><i class="fas fa-link"></i></a></h2><ol><li>子类实例能够被父类引用替换</li><li>一旦被替换，该实例只能调用父类的方法，不能调用子类的</li><li>如果子类重写了父类的方法，我们期望调用的是重写后的方法，而不是父类原有的方法</li></ol><p><strong>虚函数</strong>：为了实现多态机制，我们需要使用<code>virtual</code>关键字来修饰函数。此时，如果父类作用于子类实例，调用被<code>virtual</code>修饰的
+函数时，会调用子类中重写的函数，而不是父类中的原始函数。例如：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=n>Class</span> <span class=n>Point</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl>	<span class=p>......</span>
+</span></span><span class=line><span class=ln>3</span><span class=cl>		<span class=k>virtual</span> <span class=kt>void</span> <span class=n>print</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>4</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cm>/* Test Substituting a subclass instance to a superclass reference.
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cm>   (TestSubstitution.cpp) */</span>
+</span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;MovablePoint.h&#34;   // included &#34;Point.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>   <span class=c1>// Substitute a subclass instance to a superclass reference
+</span></span></span><span class=line><span class=ln> 9</span><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>   <span class=c1>// Using Object Pointer
+</span></span></span><span class=line><span class=ln>11</span><span class=cl><span class=c1></span>   <span class=n>Point</span> <span class=o>*</span> <span class=n>ptrP1</span> <span class=o>=</span> <span class=k>new</span> <span class=n>MovablePoint</span><span class=p>(</span><span class=mi>11</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>14</span><span class=p>);</span>   <span class=c1>// upcast
+</span></span></span><span class=line><span class=ln>12</span><span class=cl><span class=c1></span>   <span class=n>ptrP1</span><span class=o>-&gt;</span><span class=n>print</span><span class=p>();</span> <span class=c1>// MovablePoint @ (11,12) Speed=(13,14)
+</span></span></span><span class=line><span class=ln>13</span><span class=cl><span class=c1></span>                   <span class=c1>//   - Run subclass version!!
+</span></span></span><span class=line><span class=ln>14</span><span class=cl><span class=c1></span>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>   <span class=k>delete</span> <span class=n>ptrP1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>
+</span></span><span class=line><span class=ln>17</span><span class=cl>   <span class=c1>// Using Object Reference
+</span></span></span><span class=line><span class=ln>18</span><span class=cl><span class=c1></span>   <span class=n>MovablePoint</span> <span class=n>mp2</span><span class=p>(</span><span class=mi>21</span><span class=p>,</span> <span class=mi>22</span><span class=p>,</span> <span class=mi>23</span><span class=p>,</span> <span class=mi>24</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>   <span class=n>Point</span> <span class=o>&amp;</span> <span class=n>p2</span> <span class=o>=</span> <span class=n>mp2</span><span class=p>;</span>  <span class=c1>// upcast
+</span></span></span><span class=line><span class=ln>20</span><span class=cl><span class=c1></span>   <span class=n>p2</span><span class=p>.</span><span class=n>print</span><span class=p>();</span>     <span class=c1>// MovablePoint @ (21,22) Speed=(23,24)
+</span></span></span><span class=line><span class=ln>21</span><span class=cl><span class=c1></span>                   <span class=c1>//   - Run subclass version!!
+</span></span></span><span class=line><span class=ln>22</span><span class=cl><span class=c1></span>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>23</span><span class=cl>
+</span></span><span class=line><span class=ln>24</span><span class=cl>   <span class=c1>// Using object with explicit constructor
+</span></span></span><span class=line><span class=ln>25</span><span class=cl><span class=c1></span>   <span class=n>Point</span> <span class=n>p3</span> <span class=o>=</span> <span class=n>MovablePoint</span><span class=p>(</span><span class=mi>31</span><span class=p>,</span> <span class=mi>32</span><span class=p>,</span> <span class=mi>33</span><span class=p>,</span> <span class=mi>34</span><span class=p>);</span>  <span class=c1>// upcast
+</span></span></span><span class=line><span class=ln>26</span><span class=cl><span class=c1></span>   <span class=n>p3</span><span class=p>.</span><span class=n>print</span><span class=p>();</span>     <span class=c1>// Point @ (31,32) - Run superclass version!!
+</span></span></span><span class=line><span class=ln>27</span><span class=cl><span class=c1></span>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>28</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p><strong>向上转型和向下转型</strong></p><p>通常情况下，C++不允许我们将一种类型的地址赋值给另一种类型的指针（或引用）。例如：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl><span class=kt>double</span> <span class=o>*</span><span class=n>ptr1</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>i</span><span class=p>;</span> <span class=c1>// error: cannot convert &#39;int*&#39; to &#39;double*&#39; in initialization
+</span></span></span><span class=line><span class=ln>3</span><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=ln>4</span><span class=cl><span class=kt>double</span> <span class=o>&amp;</span><span class=n>d</span> <span class=o>=</span> <span class=n>i</span><span class=p>;</span> <span class=c1>// error: invalid initialication of reference of type &#39;double&amp;&#39; from expression of type &#39;int&#39;
+</span></span></span></code></pre></div><p>然而，父类指针或引用能够存放子类对象，而不需要显式的转型：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=n>MovablePoint</span> <span class=nf>mp</span><span class=p>(......);</span>
+</span></span><span class=line><span class=ln>2</span><span class=cl><span class=n>Point</span> <span class=o>*</span><span class=n>ptrP1</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>mp</span><span class=p>;</span> <span class=c1>// Okay - Implicit upcast
+</span></span></span><span class=line><span class=ln>3</span><span class=cl><span class=c1></span><span class=n>Point</span> <span class=o>&amp;</span> <span class=n>p2</span> <span class=o>=</span> <span class=n>mp</span><span class=p>;</span>    <span class=c1>// Okay - Implicit upcast
 </span></span></span></code></pre></div><p>将子类对象转成父类引用或父类指针被称为向上转型。在 public 继承中，向上转型是一定被允许的，而且不需要显式的转型操作。因为
-public 继承是&quot;is-a&quot;关系。子类实例也是父类的一个实例。</p>
-<p>相反，将一个父类对象转成子类引用或指针被称为向下转型。向下转型需要显式操作：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;MovablePoint&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="c1">// Object Pointer
-</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span>	<span class="n">Pointer</span> <span class="o">*</span><span class="n">ptrp1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MovablePoint</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="c1">// Upcast is always permissible and safe
-</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>	<span class="n">ptrP1</span><span class="o">-&gt;</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">
-</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="c1">// MovablePoint *ptrMP1 = ptrP1; // error
-</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span>	<span class="n">MovablePoint</span> <span class="o">*</span><span class="n">ptrMp1</span> <span class="o">=</span> <span class="p">(</span><span class="n">MovablePoint</span> <span class="o">*</span><span class="p">)</span> <span class="n">ptrP1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="c1">// Downcase requires explicit casting operator
-</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1"></span>	<span class="k">delete</span> <span class="n">ptrP1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p><strong>dynamic_cast 操作符</strong></p>
-<p>C++提供了一种新的操作符，叫做<code>dynamic_cast&lt;type&gt;(value)</code>，如果操作失败的话，会返回空指针。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">MovablePoint</span> <span class="o">*</span><span class="n">ptrMP1</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">MovablePoint</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">ptrP1</span><span class="p">);</span>
-</span></span></code></pre></div><p><strong>typeid 操作符</strong></p>
-<p><code>typeid</code>操作符返回一个<code>type_info</code>的对象（在头文件<typeinfo>中定义）的引用，其中包含了它操作的对象的信息。你可以使用
-<code>type_info</code>的成员方法<code>name()</code>来获取所操作的类型名称：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cm">/* Test typeid operator, which return an object of type_info (TestTypeID.cpp) */</span>
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;typeinfo&gt;       // Need for typeid operator</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;MovablePoint.h&#34; // included &#34;Point.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">   <span class="c1">// Object Pointer
-</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span>   <span class="n">Point</span> <span class="o">*</span> <span class="n">ptrP1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MovablePoint</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">);</span>  <span class="c1">// upcast
-</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="k">typeid</span><span class="p">(</span><span class="o">*</span><span class="n">ptrP1</span><span class="p">).</span><span class="n">name</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>   <span class="c1">// 12MovablePoint
-</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">   <span class="n">MovablePoint</span> <span class="o">*</span> <span class="n">ptrMP1</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">MovablePoint</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">ptrP1</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="k">typeid</span><span class="p">(</span><span class="o">*</span><span class="n">ptrMP1</span><span class="p">).</span><span class="n">name</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>  <span class="c1">// 12MovablePoint
-</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="c1"></span>   <span class="k">delete</span> <span class="n">ptrP1</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">
-</span></span><span class="line"><span class="ln">16</span><span class="cl">   <span class="n">Point</span> <span class="n">p2</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="k">typeid</span><span class="p">(</span><span class="n">p2</span><span class="p">).</span><span class="n">name</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>  <span class="c1">// 5Point
-</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">   <span class="n">MovablePoint</span> <span class="n">mp2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">20</span><span class="cl">   <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="k">typeid</span><span class="p">(</span><span class="n">mp2</span><span class="p">).</span><span class="n">name</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 12MovablePoint
-</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><p>说明：返回的类型名前的数字是该字符串的长度。</p>
-<h2 id="23-纯虚函数和抽象父类">2.3 纯虚函数和抽象父类<a class="anchor ms-1" href="#23-纯虚函数和抽象父类"><i class="fas fa-link"></i></a></h2>
-<p>纯虚函数的声明语法如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">virtual</span> <span class="kt">double</span> <span class="nf">getArea</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span></span></code></pre></div><p>纯虚函数通常没有函数体，因为该类不确定如何实现这个函数。一个包含一个或多个纯虚函数的类被成为抽象类。我们不能直接对抽象类进行实例化，因为它的定义是不完整的。</p>
-<p>抽象类只能作为父类，然后派生出子类，重写并实现所有的纯虚函数。</p>
-<p>C++允许纯虚函数有函数体，那么这时候<code>=0</code>就仅仅是使该类为抽象类而已。但是，对于这样的抽象类，你依然不能直接实例化。</p>
-<h2 id="24-示例">2.4 示例<a class="anchor ms-1" href="#24-示例"><i class="fas fa-link"></i></a></h2>
-<p><img class="img-fluid" alt="" src="/images/2018-03-05/ClassDiagram_Shape.png" loading="lazy"
-   width="574" height="495"
-   />
-
-</p>
-<p>Shape.h</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#define SHAPE_H
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#define SHAPE_H
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="k">class</span> <span class="nc">Shape</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="k">private</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="n">string</span> <span class="n">color</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="k">public</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="n">Shape</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">color</span> <span class="o">=</span> <span class="s">&#34;red&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="n">string</span> <span class="nf">getColor</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="kt">void</span> <span class="nf">setColor</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">color</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="k">virtual</span> <span class="kt">void</span> <span class="nf">print</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="c1">// Purge virtual, to be implemented by subclass
-</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span>	<span class="c1">// You cannot create instance of Shape
-</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>	<span class="k">virtual</span> <span class="kt">double</span> <span class="nf">getArea</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">
-</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="cp">#endif
-</span></span></span></code></pre></div><p>Shape.cpp</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;Shape.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">Shape</span><span class="o">::</span><span class="n">Shape</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">color</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="k">this</span><span class="o">-&gt;</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="n">string</span> <span class="n">Shape</span><span class="o">::</span><span class="n">getColor</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">
-</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="kt">void</span> <span class="n">Shape</span><span class="o">::</span><span class="n">setColor</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">color</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="k">this</span><span class="o">-&gt;</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">
-</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="kt">void</span> <span class="n">Shape</span><span class="o">::</span><span class="n">print</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Shape of color = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">color</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Circle.h</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#ifndef CIRCLE_H
-</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#define CIRCLE_H
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;Shape.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="k">class</span> <span class="nc">Circle</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Shape</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="k">private</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="kt">int</span> <span class="n">radius</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="k">public</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="n">Circle</span><span class="p">(</span><span class="kt">int</span> <span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="k">const</span> <span class="n">String</span> <span class="o">&amp;</span><span class="n">color</span> <span class="o">=</span> <span class="s">&#34;red&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="kt">int</span> <span class="nf">getRadius</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="kt">void</span> <span class="nf">setRadius</span><span class="p">(</span><span class="kt">int</span> <span class="n">radius</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="kt">void</span> <span class="nf">print</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="kt">double</span> <span class="nf">getArea</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">
-</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="cp">#endif
-</span></span></span></code></pre></div><p>Circle.cpp</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cm">/* Implementation for Circle (Circle.cpp) */</span>
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;Circle.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp">#define PI 3.14159265
-</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1">// Constructor
-</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"></span><span class="n">Circle</span><span class="o">::</span><span class="n">Circle</span><span class="p">(</span><span class="kt">int</span> <span class="n">radius</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span> <span class="n">color</span><span class="p">)</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">   <span class="o">:</span> <span class="n">Shape</span><span class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">radius</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
-</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1">// Getters
-</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="n">Circle</span><span class="o">::</span><span class="n">getRadius</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">   <span class="k">return</span> <span class="n">radius</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">
-</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1">// Setters
-</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="n">Circle</span><span class="o">::</span><span class="n">setRadius</span><span class="p">(</span><span class="kt">int</span> <span class="n">radius</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">   <span class="k">this</span><span class="o">-&gt;</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">
-</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="kt">void</span> <span class="n">Circle</span><span class="o">::</span><span class="n">print</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">21</span><span class="cl">   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Circle radius=&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">radius</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;, subclass of &#34;</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">22</span><span class="cl">   <span class="n">Shape</span><span class="o">::</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">24</span><span class="cl">
-</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1">// Implement virtual function inherited for superclass Shape
-</span></span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="c1"></span><span class="kt">double</span> <span class="n">Circle</span><span class="o">::</span><span class="n">getArea</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">27</span><span class="cl">   <span class="k">return</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">PI</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Rectangle.h</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cm">/* Header for Rectangle class (Rectangle.h) */</span>
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#ifndef RECTANGLE_H
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp">#define RECTANGLE_H
-</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;Shape.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1">// The class Rectangle is a subclass of Shape
-</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span><span class="k">class</span> <span class="nc">Rectangle</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Shape</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="k">private</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">   <span class="kt">int</span> <span class="n">length</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">   <span class="kt">int</span> <span class="n">width</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">
-</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="k">public</span><span class="o">:</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">   <span class="n">Rectangle</span><span class="p">(</span><span class="kt">int</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&#34;red&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">   <span class="kt">int</span> <span class="nf">getLength</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">   <span class="kt">void</span> <span class="nf">setLength</span><span class="p">(</span><span class="kt">int</span> <span class="n">length</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl">   <span class="kt">int</span> <span class="nf">getWidth</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl">   <span class="kt">void</span> <span class="nf">setWidth</span><span class="p">(</span><span class="kt">int</span> <span class="n">width</span><span class="p">);</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">   <span class="kt">void</span> <span class="nf">print</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>      <span class="c1">// Override the virtual function
-</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="c1"></span>   <span class="kt">double</span> <span class="nf">getArea</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>  <span class="c1">// to implement virtual function
-</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1"></span><span class="p">};</span>
-</span></span><span class="line"><span class="ln">22</span><span class="cl">
-</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="cp">#endif
-</span></span></span></code></pre></div><p>Rectangle.cpp</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cm">/* Implementation for Rectangle (Rectangle.cpp) */</span>
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;Rectangle.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1">// Constructor
-</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span><span class="n">Rectangle</span><span class="o">::</span><span class="n">Rectangle</span><span class="p">(</span><span class="kt">int</span> <span class="n">length</span><span class="p">,</span> <span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span> <span class="n">color</span><span class="p">)</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="o">:</span> <span class="n">Shape</span><span class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">length</span><span class="p">(</span><span class="n">length</span><span class="p">),</span> <span class="n">width</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1">// Getters
-</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="n">Rectangle</span><span class="o">::</span><span class="n">getLength</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">   <span class="k">return</span> <span class="n">length</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="kt">int</span> <span class="n">Rectangle</span><span class="o">::</span><span class="n">getWidth</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">   <span class="k">return</span> <span class="n">width</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">16</span><span class="cl">
-</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1">// Setters
-</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="n">Rectangle</span><span class="o">::</span><span class="n">setLength</span><span class="p">(</span><span class="kt">int</span> <span class="n">length</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl">   <span class="k">this</span><span class="o">-&gt;</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="kt">void</span> <span class="n">Rectangle</span><span class="o">::</span><span class="n">setWidth</span><span class="p">(</span><span class="kt">int</span> <span class="n">width</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">22</span><span class="cl">   <span class="k">this</span><span class="o">-&gt;</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">24</span><span class="cl">
-</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="kt">void</span> <span class="n">Rectangle</span><span class="o">::</span><span class="n">print</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">26</span><span class="cl">   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Rectangle length=&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">length</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; width=&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">width</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;, subclass of &#34;</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">27</span><span class="cl">   <span class="n">Shape</span><span class="o">::</span><span class="n">print</span><span class="p">();</span>
-</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="ln">29</span><span class="cl">
-</span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="c1">// Implement virtual function inherited from superclass Shape
-</span></span></span><span class="line"><span class="ln">31</span><span class="cl"><span class="c1"></span><span class="kt">double</span> <span class="n">Rectangle</span><span class="o">::</span><span class="n">getArea</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-</span></span><span class="line"><span class="ln">32</span><span class="cl">   <span class="k">return</span> <span class="n">length</span> <span class="o">*</span> <span class="n">width</span><span class="p">;</span>
-</span></span><span class="line"><span class="ln">33</span><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div></div><div class="modal fade" id="rewardModal" tabindex="-1" aria-labelledby="rewardModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content surface">
-      <div class="modal-header">
-        <h5 class="modal-title" id="rewardModalLabel"><i class="fas fa-fw fa-coffee"></i>打赏</h5>
-        <a href="#" data-bs-dismiss="modal" class="btn btn-sm btn-outline-primary" aria-label="Close"><i class="fas fa-times"></i></a>
-      </div>
-      <div class="modal-body">
-        <ul class="nav nav-tabs mb-3" role="tablist"><li class="nav-item text-nowrap" role="presentation">
-            <a class="nav-link active" id="reward-alipay-tab" data-bs-toggle="tab" href="#reward-alipay" role="tab" aria-controls="reward-alipay" aria-selected="true">
-              <i class="fab fa-fw fa-alipay"></i>支付宝
-            </a>
-          </li><li class="nav-item text-nowrap" role="presentation">
-            <a class="nav-link" id="reward-wechat-tab" data-bs-toggle="tab" href="#reward-wechat" role="tab" aria-controls="reward-wechat" aria-selected="true">
-              <i class="fab fa-fw fa-weixin"></i>微信
-            </a>
-          </li></ul>
-        <div class="tab-content" id="rewardTabContent"><div class="tab-pane fade post-reward-content show active" id="reward-alipay" role="tabpanel" aria-labelledby="reward-alipay-tab">
-            <img class="img-fluid post-reward-img" src="/images/reward/alipay.png" loading="lazy" />
-          </div><div class="tab-pane fade post-reward-content show" id="reward-wechat" role="tabpanel" aria-labelledby="reward-wechat-tab">
-            <img class="img-fluid post-reward-img" src="/images/reward/wechat.png" loading="lazy" />
-          </div></div>
-      </div>
-    </div>
-  </div>
-</div></div>
-  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
-    <i class="fas fa-fw fa-chevron-left"></i>
-    <a href="/zh-cn/posts/cpp/2018-03-02-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8Boop%E7%A4%BA%E4%BE%8B/">C&#43;&#43;编程之OOP示例
-</a>
-  </div><div class="post-nav post-next">
-    <a href="/zh-cn/posts/cpp/2018-03-14-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%A8%A1%E6%9D%BF%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B/">C&#43;&#43;编程之模板和泛型编程
-</a>
-    <i class="fas fa-fw fa-chevron-right"></i>
-  </div></div></div>
-</article><div class="post-copyright mb-3 row card component" id="post-copyright">
-    <div class="card-header">
-        <h2 class="card-title">版权</h2>
-    </div>
-    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
-  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
-  CC BY-NC-ND 4.0 
-</a>
-
-
-    </div>
-</div><section class="related-posts row card component">
-    <div class="card-header">
-      <h2 class="card-title">相关文章</h2>
-    </div>
-    <div class="card-body">
-      <ul class="post-list"><li>
-          <a href="/zh-cn/posts/cpp/2018-03-02-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8Boop%E7%A4%BA%E4%BE%8B/">C&#43;&#43;编程之OOP示例
-</a>
-          <span class="float-end post-date">2018-03-02
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/cpp/2018-02-23-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%8C%87%E9%92%88%E5%BC%95%E7%94%A8%E5%92%8C%E5%86%85%E5%AD%98%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/">C&#43;&#43;编程之指针，引用和内存动态分配
-</a>
-          <span class="float-end post-date">2018-02-23
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/cpp/2018-02-13-c&#43;&#43;%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">C&#43;&#43;编程之面向对象
-</a>
-          <span class="float-end post-date">2018-02-13
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/php/2017-11-29-php7%E8%99%9A%E6%8B%9F%E6%9C%BA/">Php7虚拟机
-</a>
-          <span class="float-end post-date">2017-11-29
-</span>
-        </li><li>
-          <a href="/zh-cn/posts/php/2017-10-12-php%E5%92%8C%E7%BA%BF%E7%A8%8B/">Php和线程
-</a>
-          <span class="float-end post-date">2017-10-12
-</span>
-        </li></ul>
-    </div>
-  </section><div class="card component row post-comments" id="post-comments">
-  <div class="card-header">
-    <h2 class="card-title">评论</h2>
-  </div>
-  <div class="card-body"><script src="https://utteranc.es/client.js"
-  repo="liubang/blog"
-  issue-term="pathname"
-  label="comment"
-  theme="github-light"
-  crossorigin="anonymous"
-  async>
-</script></div>
-</div></div>
-</div><aside class="col-lg-4 sidebar d-flex">
-  <div class="container d-flex flex-column">
-    
-    <section class="card row text-center profile component">
-  <div class="card-body">
-    <div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt="liubang" src="/images/profile.webp" loading="lazy"
-   width="1000" height="1000"
-   />
-</div>
-    <div class="col-12 profile-meta"><div class="profile-name">liubang</div><div class="profile-bio">Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class="profile-company"><i class="fas fa-fw fa-building"></i>Baidu</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
-      <i class="fas fa-fw fa-2x fa-envelope"></i>
-    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-github"></i>
-      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-weibo"></i>
-      </a></nav>
-</div>
-  </div>
-</section>
-  <div class="post-toc row mb-4 card component" id="postTOC">
-  <div class="card-header">
-    <h2 class="card-title">目录</h2>
-  </div>
-  <div class="card-body">
-    <nav id="TableOfContents">
-  <ul>
-    <li><a href="#11-术语">1.1 术语</a></li>
-    <li><a href="#12-一个示例">1.2 一个示例</a></li>
-    <li><a href="#13-示例父类有-protected-成员">1.3 示例：父类有 protected 成员</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#22-多态性">2.2 多态性</a></li>
-    <li><a href="#23-纯虚函数和抽象父类">2.3 纯虚函数和抽象父类</a></li>
-    <li><a href="#24-示例">2.4 示例</a></li>
-  </ul>
-</nav>
-  </div>
-</div><section class="recent-posts row card component">
-  <div class="card-header">
-    <h2 class="card-title">最近文章</h2>
-  </div>
-  <div class="card-body">
-    <ul class="post-list"><li>
-        <a href="/zh-cn/posts/cpp/2022-03-18-c&#43;&#43;17-constexpr_if/">C&#43;&#43;17:constexpr If
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/cpp/2022-03-15-c&#43;&#43;20-designated_initializers/">C&#43;&#43;20:Designated Initializers
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/cpp/2022-02-22-c&#43;&#43;%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/">C&#43;&#43;元编程之遍历tuple
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/cpp/2022-02-14-c&#43;&#43;17%E4%B9%8Bstring_view/">C&#43;&#43;17:string_view
-</a>
-      </li><li>
-        <a href="/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/">LevelDB 源码阅读之 Compaction
-</a>
-      </li></ul>
-  </div>
-</section><section class="categories-taxonomies row card component">
-      <div class="card-header">
-        <h2 class="card-title">
-          <a href="/zh-cn/categories">分类</a>
-        </h2>
-      </div>
-      <div class="card-body">
-        <div class="py-2"><a href="/zh-cn/categories/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
-            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/categories/php/" class="badge rounded post-taxonomy" title="php">
-            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/categories/sp/" class="badge rounded post-taxonomy" title="sp">
-            sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/zh-cn/categories/java/" class="badge rounded post-taxonomy" title="java">
-            java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/categories/compiler/" class="badge rounded post-taxonomy" title="compiler">
-            compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/ds/" class="badge rounded post-taxonomy" title="ds">
-            ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/inf/" class="badge rounded post-taxonomy" title="inf">
-            inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/categories/storage/" class="badge rounded post-taxonomy" title="storage">
-            storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
-      </div>
-    </section><section class="tags-taxonomies row card component">
-      <div class="card-header">
-        <h2 class="card-title">
-          <a href="/zh-cn/tags">标签</a>
-        </h2>
-      </div>
-      <div class="card-body">
-        <div class="py-2"><a href="/zh-cn/tags/c/" class="badge rounded post-taxonomy" title="c">
-            c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/zh-cn/tags/c&#43;&#43;/" class="badge rounded post-taxonomy" title="c&#43;&#43;">
-            c&#43;&#43;<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/zh-cn/tags/php/" class="badge rounded post-taxonomy" title="php">
-            php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href="/zh-cn/tags/sp/" class="badge rounded post-taxonomy" title="sp">
-            sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/zh-cn/tags/java/" class="badge rounded post-taxonomy" title="Java">
-            Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/jni/" class="badge rounded post-taxonomy" title="JNI">
-            JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/zh-cn/tags/c&#43;&#43;17/" class="badge rounded post-taxonomy" title="c&#43;&#43;17">
-            c&#43;&#43;17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/compiler/" class="badge rounded post-taxonomy" title="compiler">
-            compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/zh-cn/tags/algorithm/" class="badge rounded post-taxonomy" title="algorithm">
-            algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href="/zh-cn/tags/c&#43;&#43;20/" class="badge rounded post-taxonomy" title="c&#43;&#43;20">
-            c&#43;&#43;20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
-      </div>
-    </section>
-    
-  </div>
-</aside>
-</div>
-    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:it.liubang@gmail.com" title="Email">
-      <i class="fas fa-fw fa-2x fa-envelope"></i>
-    </a><a class="nav-link social-link" target="_blank" href="https://github.com/liubang" title="GitHub" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-github"></i>
-      </a><a class="nav-link social-link" target="_blank" href="https://weibo.com/2113750192" title="Weibo" rel="noopener noreferrer">
-        <i class="fa-fw fa-2x fab fa-weibo"></i>
-      </a></nav>
-<div class="copyright mb-2">
-  Copyright © 2016-2022 LiuBang. All Rights Reserved.
-</div>
-<div class="powered-by mb-2">
-  Powered by <a href="https://gohugo.io" target="_blank" rel="noopener noreferrer">Hugo</a> and the <a href="https://github.com/razonyang/hugo-theme-bootstrap" target="_blank" rel="noopener noreferrer">Bootstrap</a> theme.
-</div>
-
-
-
-</footer>
-<script src="/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js" integrity="sha256-aJTp8Icy&#43;VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin="anonymous" defer></script><script src="/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js" integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin="anonymous" defer></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('\/service-worker.js').then(function(reg) {
-      console.log('Successfully registered service worker', reg);
-    }).catch(function(err) {
-      console.warn('Error whilst registering service worker', err);
-    });
-  });
-}
-</script><script src="/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js" integrity="sha256-Vs2p5NUlCvakrAMEy/36Od&#43;5KIyDFnmExO1/vipUw00=" crossorigin="anonymous" defer></script><script defer src="/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js" integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin="anonymous"></script>
-<script defer src="/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js" integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg&#43;8Q53c4bN/Kc7hJD7w=" crossorigin="anonymous"></script>
-
-</body>
-</html>
+public 继承是"is-a"关系。子类实例也是父类的一个实例。</p><p>相反，将一个父类对象转成子类引用或指针被称为向下转型。向下转型需要显式操作：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;MovablePoint&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>	<span class=c1>// Object Pointer
+</span></span></span><span class=line><span class=ln> 8</span><span class=cl><span class=c1></span>	<span class=n>Pointer</span> <span class=o>*</span><span class=n>ptrp1</span> <span class=o>=</span> <span class=k>new</span> <span class=n>MovablePoint</span><span class=p>(</span><span class=mi>11</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>14</span><span class=p>);</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>	<span class=c1>// Upcast is always permissible and safe
+</span></span></span><span class=line><span class=ln>10</span><span class=cl><span class=c1></span>	<span class=n>ptrP1</span><span class=o>-&gt;</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>
+</span></span><span class=line><span class=ln>12</span><span class=cl>	<span class=c1>// MovablePoint *ptrMP1 = ptrP1; // error
+</span></span></span><span class=line><span class=ln>13</span><span class=cl><span class=c1></span>	<span class=n>MovablePoint</span> <span class=o>*</span><span class=n>ptrMp1</span> <span class=o>=</span> <span class=p>(</span><span class=n>MovablePoint</span> <span class=o>*</span><span class=p>)</span> <span class=n>ptrP1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>	<span class=c1>// Downcase requires explicit casting operator
+</span></span></span><span class=line><span class=ln>15</span><span class=cl><span class=c1></span>	<span class=k>delete</span> <span class=n>ptrP1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p><strong>dynamic_cast 操作符</strong></p><p>C++提供了一种新的操作符，叫做<code>dynamic_cast&lt;type>(value)</code>，如果操作失败的话，会返回空指针。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=n>MovablePoint</span> <span class=o>*</span><span class=n>ptrMP1</span> <span class=o>=</span> <span class=k>dynamic_cast</span><span class=o>&lt;</span><span class=n>MovablePoint</span> <span class=o>*&gt;</span><span class=p>(</span><span class=n>ptrP1</span><span class=p>);</span>
+</span></span></code></pre></div><p><strong>typeid 操作符</strong></p><p><code>typeid</code>操作符返回一个<code>type_info</code>的对象（在头文件<typeinfo>中定义）的引用，其中包含了它操作的对象的信息。你可以使用
+<code>type_info</code>的成员方法<code>name()</code>来获取所操作的类型名称：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cm>/* Test typeid operator, which return an object of type_info (TestTypeID.cpp) */</span>
+</span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;typeinfo&gt;       // Need for typeid operator</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;MovablePoint.h&#34; // included &#34;Point.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>   <span class=c1>// Object Pointer
+</span></span></span><span class=line><span class=ln> 9</span><span class=cl><span class=c1></span>   <span class=n>Point</span> <span class=o>*</span> <span class=n>ptrP1</span> <span class=o>=</span> <span class=k>new</span> <span class=n>MovablePoint</span><span class=p>(</span><span class=mi>11</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>14</span><span class=p>);</span>  <span class=c1>// upcast
+</span></span></span><span class=line><span class=ln>10</span><span class=cl><span class=c1></span>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=k>typeid</span><span class=p>(</span><span class=o>*</span><span class=n>ptrP1</span><span class=p>).</span><span class=n>name</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>   <span class=c1>// 12MovablePoint
+</span></span></span><span class=line><span class=ln>11</span><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>   <span class=n>MovablePoint</span> <span class=o>*</span> <span class=n>ptrMP1</span> <span class=o>=</span> <span class=k>dynamic_cast</span><span class=o>&lt;</span><span class=n>MovablePoint</span> <span class=o>*&gt;</span><span class=p>(</span><span class=n>ptrP1</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=k>typeid</span><span class=p>(</span><span class=o>*</span><span class=n>ptrMP1</span><span class=p>).</span><span class=n>name</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>  <span class=c1>// 12MovablePoint
+</span></span></span><span class=line><span class=ln>14</span><span class=cl><span class=c1></span>   <span class=k>delete</span> <span class=n>ptrP1</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>
+</span></span><span class=line><span class=ln>16</span><span class=cl>   <span class=n>Point</span> <span class=n>p2</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=k>typeid</span><span class=p>(</span><span class=n>p2</span><span class=p>).</span><span class=n>name</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span>  <span class=c1>// 5Point
+</span></span></span><span class=line><span class=ln>18</span><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>   <span class=n>MovablePoint</span> <span class=n>mp2</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>20</span><span class=cl>   <span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=k>typeid</span><span class=p>(</span><span class=n>mp2</span><span class=p>).</span><span class=n>name</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=n>endl</span><span class=p>;</span> <span class=c1>// 12MovablePoint
+</span></span></span><span class=line><span class=ln>21</span><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></div><p>说明：返回的类型名前的数字是该字符串的长度。</p><h2 id=23-纯虚函数和抽象父类>2.3 纯虚函数和抽象父类<a class="anchor ms-1" href=#23-纯虚函数和抽象父类><i class="fas fa-link"></i></a></h2><p>纯虚函数的声明语法如下：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln>1</span><span class=cl><span class=k>virtual</span> <span class=kt>double</span> <span class=nf>getArea</span><span class=p>()</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span></code></pre></div><p>纯虚函数通常没有函数体，因为该类不确定如何实现这个函数。一个包含一个或多个纯虚函数的类被成为抽象类。我们不能直接对抽象类进行实例化，因为它的定义是不完整的。</p><p>抽象类只能作为父类，然后派生出子类，重写并实现所有的纯虚函数。</p><p>C++允许纯虚函数有函数体，那么这时候<code>=0</code>就仅仅是使该类为抽象类而已。但是，对于这样的抽象类，你依然不能直接实例化。</p><h2 id=24-示例>2.4 示例<a class="anchor ms-1" href=#24-示例><i class="fas fa-link"></i></a></h2><p><img class=img-fluid alt src=/images/2018-03-05/ClassDiagram_Shape.png loading=lazy width=574 height=495></p><p>Shape.h</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#define SHAPE_H
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#define SHAPE_H
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;string&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp></span><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=k>class</span> <span class=nc>Shape</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl><span class=k>private</span><span class=o>:</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>	<span class=n>string</span> <span class=n>color</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>	<span class=n>Shape</span><span class=p>(</span><span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span><span class=n>color</span> <span class=o>=</span> <span class=s>&#34;red&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>	<span class=n>string</span> <span class=nf>getColor</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>	<span class=kt>void</span> <span class=nf>setColor</span><span class=p>(</span><span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span><span class=n>color</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>	<span class=k>virtual</span> <span class=kt>void</span> <span class=nf>print</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>	<span class=c1>// Purge virtual, to be implemented by subclass
+</span></span></span><span class=line><span class=ln>16</span><span class=cl><span class=c1></span>	<span class=c1>// You cannot create instance of Shape
+</span></span></span><span class=line><span class=ln>17</span><span class=cl><span class=c1></span>	<span class=k>virtual</span> <span class=kt>double</span> <span class=nf>getArea</span><span class=p>()</span> <span class=k>const</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>
+</span></span><span class=line><span class=ln>20</span><span class=cl><span class=cp>#endif
+</span></span></span></code></pre></div><p>Shape.cpp</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;Shape.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=n>Shape</span><span class=o>::</span><span class=n>Shape</span><span class=p>(</span><span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span><span class=n>color</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl>	<span class=k>this</span><span class=o>-&gt;</span><span class=n>color</span> <span class=o>=</span> <span class=n>color</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>
+</span></span><span class=line><span class=ln> 8</span><span class=cl><span class=n>string</span> <span class=n>Shape</span><span class=o>::</span><span class=n>getColor</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>	<span class=k>return</span> <span class=n>color</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>
+</span></span><span class=line><span class=ln>12</span><span class=cl><span class=kt>void</span> <span class=n>Shape</span><span class=o>::</span><span class=n>setColor</span><span class=p>(</span><span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span><span class=n>color</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>	<span class=k>this</span><span class=o>-&gt;</span><span class=n>color</span> <span class=o>=</span> <span class=n>color</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>
+</span></span><span class=line><span class=ln>16</span><span class=cl><span class=kt>void</span> <span class=n>Shape</span><span class=o>::</span><span class=n>print</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>	<span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Shape of color = &#34;</span> <span class=o>&lt;&lt;</span> <span class=n>color</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Circle.h</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cp>#ifndef CIRCLE_H
+</span></span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#define CIRCLE_H
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;Shape.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=k>class</span> <span class=nc>Circle</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Shape</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=k>private</span><span class=o>:</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>	<span class=kt>int</span> <span class=n>radius</span><span class=p>;</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>	<span class=n>Circle</span><span class=p>(</span><span class=kt>int</span> <span class=n>radius</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=k>const</span> <span class=n>String</span> <span class=o>&amp;</span><span class=n>color</span> <span class=o>=</span> <span class=s>&#34;red&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>	<span class=kt>int</span> <span class=nf>getRadius</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>	<span class=kt>void</span> <span class=nf>setRadius</span><span class=p>(</span><span class=kt>int</span> <span class=n>radius</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl>	<span class=kt>void</span> <span class=nf>print</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>	<span class=kt>double</span> <span class=nf>getArea</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>
+</span></span><span class=line><span class=ln>17</span><span class=cl><span class=cp>#endif
+</span></span></span></code></pre></div><p>Circle.cpp</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cm>/* Implementation for Circle (Circle.cpp) */</span>
+</span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;Circle.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp>#define PI 3.14159265
+</span></span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 6</span><span class=cl><span class=c1>// Constructor
+</span></span></span><span class=line><span class=ln> 7</span><span class=cl><span class=c1></span><span class=n>Circle</span><span class=o>::</span><span class=n>Circle</span><span class=p>(</span><span class=kt>int</span> <span class=n>radius</span><span class=p>,</span> <span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span> <span class=n>color</span><span class=p>)</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>   <span class=o>:</span> <span class=n>Shape</span><span class=p>(</span><span class=n>color</span><span class=p>),</span> <span class=n>radius</span><span class=p>(</span><span class=n>radius</span><span class=p>)</span> <span class=p>{</span> <span class=p>}</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl>
+</span></span><span class=line><span class=ln>10</span><span class=cl><span class=c1>// Getters
+</span></span></span><span class=line><span class=ln>11</span><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>Circle</span><span class=o>::</span><span class=n>getRadius</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>   <span class=k>return</span> <span class=n>radius</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>
+</span></span><span class=line><span class=ln>15</span><span class=cl><span class=c1>// Setters
+</span></span></span><span class=line><span class=ln>16</span><span class=cl><span class=c1></span><span class=kt>void</span> <span class=n>Circle</span><span class=o>::</span><span class=n>setRadius</span><span class=p>(</span><span class=kt>int</span> <span class=n>radius</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>   <span class=k>this</span><span class=o>-&gt;</span><span class=n>radius</span> <span class=o>=</span> <span class=n>radius</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>
+</span></span><span class=line><span class=ln>20</span><span class=cl><span class=kt>void</span> <span class=n>Circle</span><span class=o>::</span><span class=n>print</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>21</span><span class=cl>   <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Circle radius=&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>radius</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;, subclass of &#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>22</span><span class=cl>   <span class=n>Shape</span><span class=o>::</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>23</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>24</span><span class=cl>
+</span></span><span class=line><span class=ln>25</span><span class=cl><span class=c1>// Implement virtual function inherited for superclass Shape
+</span></span></span><span class=line><span class=ln>26</span><span class=cl><span class=c1></span><span class=kt>double</span> <span class=n>Circle</span><span class=o>::</span><span class=n>getArea</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>27</span><span class=cl>   <span class=k>return</span> <span class=n>radius</span> <span class=o>*</span> <span class=n>radius</span> <span class=o>*</span> <span class=n>PI</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>28</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Rectangle.h</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cm>/* Header for Rectangle class (Rectangle.h) */</span>
+</span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#ifndef RECTANGLE_H
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp>#define RECTANGLE_H
+</span></span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;Shape.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 6</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl><span class=c1>// The class Rectangle is a subclass of Shape
+</span></span></span><span class=line><span class=ln> 8</span><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>Rectangle</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Shape</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln> 9</span><span class=cl><span class=k>private</span><span class=o>:</span>
+</span></span><span class=line><span class=ln>10</span><span class=cl>   <span class=kt>int</span> <span class=n>length</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>   <span class=kt>int</span> <span class=n>width</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl>
+</span></span><span class=line><span class=ln>13</span><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>   <span class=n>Rectangle</span><span class=p>(</span><span class=kt>int</span> <span class=n>length</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=kt>int</span> <span class=n>width</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span> <span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span> <span class=n>color</span> <span class=o>=</span> <span class=s>&#34;red&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl>   <span class=kt>int</span> <span class=nf>getLength</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>   <span class=kt>void</span> <span class=nf>setLength</span><span class=p>(</span><span class=kt>int</span> <span class=n>length</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>17</span><span class=cl>   <span class=kt>int</span> <span class=nf>getWidth</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>18</span><span class=cl>   <span class=kt>void</span> <span class=nf>setWidth</span><span class=p>(</span><span class=kt>int</span> <span class=n>width</span><span class=p>);</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>   <span class=kt>void</span> <span class=nf>print</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>      <span class=c1>// Override the virtual function
+</span></span></span><span class=line><span class=ln>20</span><span class=cl><span class=c1></span>   <span class=kt>double</span> <span class=nf>getArea</span><span class=p>()</span> <span class=k>const</span><span class=p>;</span>  <span class=c1>// to implement virtual function
+</span></span></span><span class=line><span class=ln>21</span><span class=cl><span class=c1></span><span class=p>};</span>
+</span></span><span class=line><span class=ln>22</span><span class=cl>
+</span></span><span class=line><span class=ln>23</span><span class=cl><span class=cp>#endif
+</span></span></span></code></pre></div><p>Rectangle.cpp</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=ln> 1</span><span class=cl><span class=cm>/* Implementation for Rectangle (Rectangle.cpp) */</span>
+</span></span><span class=line><span class=ln> 2</span><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;Rectangle.h&#34;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 3</span><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=ln> 4</span><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=ln> 5</span><span class=cl><span class=c1>// Constructor
+</span></span></span><span class=line><span class=ln> 6</span><span class=cl><span class=c1></span><span class=n>Rectangle</span><span class=o>::</span><span class=n>Rectangle</span><span class=p>(</span><span class=kt>int</span> <span class=n>length</span><span class=p>,</span> <span class=kt>int</span> <span class=n>width</span><span class=p>,</span> <span class=k>const</span> <span class=n>string</span> <span class=o>&amp;</span> <span class=n>color</span><span class=p>)</span>
+</span></span><span class=line><span class=ln> 7</span><span class=cl>  <span class=o>:</span> <span class=n>Shape</span><span class=p>(</span><span class=n>color</span><span class=p>),</span> <span class=n>length</span><span class=p>(</span><span class=n>length</span><span class=p>),</span> <span class=n>width</span><span class=p>(</span><span class=n>width</span><span class=p>)</span> <span class=p>{</span> <span class=p>}</span>
+</span></span><span class=line><span class=ln> 8</span><span class=cl>
+</span></span><span class=line><span class=ln> 9</span><span class=cl><span class=c1>// Getters
+</span></span></span><span class=line><span class=ln>10</span><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>Rectangle</span><span class=o>::</span><span class=n>getLength</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>11</span><span class=cl>   <span class=k>return</span> <span class=n>length</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>12</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>13</span><span class=cl><span class=kt>int</span> <span class=n>Rectangle</span><span class=o>::</span><span class=n>getWidth</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>14</span><span class=cl>   <span class=k>return</span> <span class=n>width</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>15</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>16</span><span class=cl>
+</span></span><span class=line><span class=ln>17</span><span class=cl><span class=c1>// Setters
+</span></span></span><span class=line><span class=ln>18</span><span class=cl><span class=c1></span><span class=kt>void</span> <span class=n>Rectangle</span><span class=o>::</span><span class=n>setLength</span><span class=p>(</span><span class=kt>int</span> <span class=n>length</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>19</span><span class=cl>   <span class=k>this</span><span class=o>-&gt;</span><span class=n>length</span> <span class=o>=</span> <span class=n>length</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>20</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>21</span><span class=cl><span class=kt>void</span> <span class=n>Rectangle</span><span class=o>::</span><span class=n>setWidth</span><span class=p>(</span><span class=kt>int</span> <span class=n>width</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>22</span><span class=cl>   <span class=k>this</span><span class=o>-&gt;</span><span class=n>width</span> <span class=o>=</span> <span class=n>width</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>23</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>24</span><span class=cl>
+</span></span><span class=line><span class=ln>25</span><span class=cl><span class=kt>void</span> <span class=n>Rectangle</span><span class=o>::</span><span class=n>print</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>26</span><span class=cl>   <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Rectangle length=&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>length</span> <span class=o>&lt;&lt;</span> <span class=s>&#34; width=&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>width</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;, subclass of &#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>27</span><span class=cl>   <span class=n>Shape</span><span class=o>::</span><span class=n>print</span><span class=p>();</span>
+</span></span><span class=line><span class=ln>28</span><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=ln>29</span><span class=cl>
+</span></span><span class=line><span class=ln>30</span><span class=cl><span class=c1>// Implement virtual function inherited from superclass Shape
+</span></span></span><span class=line><span class=ln>31</span><span class=cl><span class=c1></span><span class=kt>double</span> <span class=n>Rectangle</span><span class=o>::</span><span class=n>getArea</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
+</span></span><span class=line><span class=ln>32</span><span class=cl>   <span class=k>return</span> <span class=n>length</span> <span class=o>*</span> <span class=n>width</span><span class=p>;</span>
+</span></span><span class=line><span class=ln>33</span><span class=cl><span class=p>}</span>
+</span></span></code></pre></div></div><div class="modal fade" id=rewardModal tabindex=-1 aria-labelledby=rewardModalLabel aria-hidden=true><div class=modal-dialog><div class="modal-content surface"><div class=modal-header><h5 class=modal-title id=rewardModalLabel><i class="fas fa-fw fa-coffee"></i>打赏</h5><a href=# data-bs-dismiss=modal class="btn btn-sm btn-outline-primary" aria-label=Close><i class="fas fa-times"></i></a></div><div class=modal-body><ul class="nav nav-tabs mb-3" role=tablist><li class="nav-item text-nowrap" role=presentation><a class="nav-link active" id=reward-alipay-tab data-bs-toggle=tab href=#reward-alipay role=tab aria-controls=reward-alipay aria-selected=true><i class="fab fa-fw fa-alipay"></i>支付宝</a></li><li class="nav-item text-nowrap" role=presentation><a class=nav-link id=reward-wechat-tab data-bs-toggle=tab href=#reward-wechat role=tab aria-controls=reward-wechat aria-selected=true><i class="fab fa-fw fa-weixin"></i>微信</a></li></ul><div class=tab-content id=rewardTabContent><div class="tab-pane fade post-reward-content show active" id=reward-alipay role=tabpanel aria-labelledby=reward-alipay-tab><img class="img-fluid post-reward-img" src=/images/reward/alipay.png loading=lazy></div><div class="tab-pane fade post-reward-content show" id=reward-wechat role=tabpanel aria-labelledby=reward-wechat-tab><img class="img-fluid post-reward-img" src=/images/reward/wechat.png loading=lazy></div></div></div></div></div></div></div><div class=card-footer><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev"><i class="fas fa-fw fa-chevron-left"></i>
+<a href=/zh-cn/posts/cpp/2018-03-02-c++%E7%BC%96%E7%A8%8B%E4%B9%8Boop%E7%A4%BA%E4%BE%8B/>C++编程之OOP示例</a></div><div class="post-nav post-next"><a href=/zh-cn/posts/cpp/2018-03-14-c++%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%A8%A1%E6%9D%BF%E5%92%8C%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B/>C++编程之模板和泛型编程</a>
+<i class="fas fa-fw fa-chevron-right"></i></div></div></div></article><div class="post-copyright mb-3 row card component" id=post-copyright><div class=card-header><h2 class=card-title>版权</h2></div><div class=card-body><a class="d-flex align-items-center flex-column" target=_blank rel="license noopener noreferrer" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh><span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+CC BY-NC-ND 4.0</a></div></div><section class="related-posts row card component"><div class=card-header><h2 class=card-title>相关文章</h2></div><div class=card-body><ul class=post-list><li><a href=/zh-cn/posts/cpp/2018-03-02-c++%E7%BC%96%E7%A8%8B%E4%B9%8Boop%E7%A4%BA%E4%BE%8B/>C++编程之OOP示例</a>
+<span class="float-end post-date">2018-03-02</span></li><li><a href=/zh-cn/posts/cpp/2018-02-23-c++%E7%BC%96%E7%A8%8B%E4%B9%8B%E6%8C%87%E9%92%88%E5%BC%95%E7%94%A8%E5%92%8C%E5%86%85%E5%AD%98%E5%8A%A8%E6%80%81%E5%88%86%E9%85%8D/>C++编程之指针，引用和内存动态分配</a>
+<span class="float-end post-date">2018-02-23</span></li><li><a href=/zh-cn/posts/cpp/2018-02-13-c++%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/>C++编程之面向对象</a>
+<span class="float-end post-date">2018-02-13</span></li><li><a href=/zh-cn/posts/php/2017-11-29-php7%E8%99%9A%E6%8B%9F%E6%9C%BA/>Php7虚拟机</a>
+<span class="float-end post-date">2017-11-29</span></li><li><a href=/zh-cn/posts/php/2017-10-12-php%E5%92%8C%E7%BA%BF%E7%A8%8B/>Php和线程</a>
+<span class="float-end post-date">2017-10-12</span></li></ul></div></section><div class="card component row post-comments" id=post-comments><div class=card-header><h2 class=card-title>评论</h2></div><div class=card-body><script src=https://utteranc.es/client.js repo=liubang/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></div></div></div></div><aside class="col-lg-4 sidebar d-flex"><div class="container d-flex flex-column"><section class="card row text-center profile component"><div class=card-body><div class="col-12 d-flex align-items-center justify-content-center"><img class="profile-avatar rounded-circle" alt=liubang src=/images/profile.webp loading=lazy width=1000 height=1000></div><div class="col-12 profile-meta"><div class=profile-name>liubang</div><div class=profile-bio>Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class=profile-company><i class="fas fa-fw fa-building"></i>Baidu</div><div class=profile-location><i class="fas fa-fw fa-map-marker-alt"></i>Beijing</div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href=mailto:it.liubang@gmail.com title=Email><i class="fas fa-fw fa-2x fa-envelope"></i>
+</a><a class="nav-link social-link" target=_blank href=https://github.com/liubang title=GitHub rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-github"></i>
+</a><a class="nav-link social-link" target=_blank href=https://weibo.com/2113750192 title=Weibo rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-weibo"></i></a></nav></div></div></section><div class="post-toc row mb-4 card component" id=postTOC><div class=card-header><h2 class=card-title>目录</h2></div><div class=card-body><nav id=TableOfContents><ul><li><a href=#11-术语>1.1 术语</a></li><li><a href=#12-一个示例>1.2 一个示例</a></li><li><a href=#13-示例父类有-protected-成员>1.3 示例：父类有 protected 成员</a></li></ul><ul><li><a href=#22-多态性>2.2 多态性</a></li><li><a href=#23-纯虚函数和抽象父类>2.3 纯虚函数和抽象父类</a></li><li><a href=#24-示例>2.4 示例</a></li></ul></nav></div></div><section class="recent-posts row card component"><div class=card-header><h2 class=card-title>最近文章</h2></div><div class=card-body><ul class=post-list><li><a href=/zh-cn/posts/cpp/2022-03-18-c++17-constexpr_if/>C++17:constexpr If</a></li><li><a href=/zh-cn/posts/cpp/2022-03-15-c++20-designated_initializers/>C++20:Designated Initializers</a></li><li><a href=/zh-cn/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/>C++元编程之遍历tuple</a></li><li><a href=/zh-cn/posts/cpp/2022-02-14-c++17%E4%B9%8Bstring_view/>C++17:string_view</a></li><li><a href=/zh-cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/>LevelDB 源码阅读之 Compaction</a></li></ul></div></section><section class="categories-taxonomies row card component"><div class=card-header><h2 class=card-title><a href=/zh-cn/categories>分类</a></h2></div><div class=card-body><div class=py-2><a href=/zh-cn/categories/c++/ class="badge rounded post-taxonomy" title=c++>c++<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href=/zh-cn/categories/php/ class="badge rounded post-taxonomy" title=php>
+php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href=/zh-cn/categories/sp/ class="badge rounded post-taxonomy" title=sp>
+sp<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href=/zh-cn/categories/java/ class="badge rounded post-taxonomy" title=java>
+java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href=/zh-cn/categories/compiler/ class="badge rounded post-taxonomy" title=compiler>
+compiler<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/categories/ds/ class="badge rounded post-taxonomy" title=ds>
+ds<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/categories/inf/ class="badge rounded post-taxonomy" title=inf>
+inf<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/categories/storage/ class="badge rounded post-taxonomy" title=storage>
+storage<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div></div></section><section class="tags-taxonomies row card component"><div class=card-header><h2 class=card-title><a href=/zh-cn/tags>标签</a></h2></div><div class=card-body><div class=py-2><a href=/zh-cn/tags/c/ class="badge rounded post-taxonomy" title=c>c<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href=/zh-cn/tags/c++/ class="badge rounded post-taxonomy" title=c++>
+c++<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href=/zh-cn/tags/php/ class="badge rounded post-taxonomy" title=php>
+php<span class="badge badge-sm text-white bg-accent ms-1">8</span></a><a href=/zh-cn/tags/sp/ class="badge rounded post-taxonomy" title=sp>
+sp<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href=/zh-cn/tags/java/ class="badge rounded post-taxonomy" title=Java>
+Java<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href=/zh-cn/tags/jni/ class="badge rounded post-taxonomy" title=JNI>
+JNI<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href=/zh-cn/tags/c++17/ class="badge rounded post-taxonomy" title=c++17>
+c++17<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href=/zh-cn/tags/compiler/ class="badge rounded post-taxonomy" title=compiler>
+compiler<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href=/zh-cn/tags/algorithm/ class="badge rounded post-taxonomy" title=algorithm>
+algorithm<span class="badge badge-sm text-white bg-accent ms-1">1</span></a><a href=/zh-cn/tags/c++20/ class="badge rounded post-taxonomy" title=c++20>
+c++20<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div></div></section></div></aside></div></main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href=mailto:it.liubang@gmail.com title=Email><i class="fas fa-fw fa-2x fa-envelope"></i>
+</a><a class="nav-link social-link" target=_blank href=https://github.com/liubang title=GitHub rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-github"></i>
+</a><a class="nav-link social-link" target=_blank href=https://weibo.com/2113750192 title=Weibo rel="noopener noreferrer"><i class="fa-fw fa-2x fab fa-weibo"></i></a></nav><div class="copyright mb-2">Copyright © 2016-2022 LiuBang. All Rights Reserved.</div><div class="powered-by mb-2">Powered by <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> and the <a href=https://github.com/razonyang/hugo-theme-bootstrap target=_blank rel="noopener noreferrer">Bootstrap</a> theme.</div></footer><script src=/js/main.6894e9f08732f95413a84b46fe3820cd75dfaab3cd7235ca5518ea5376666801.js integrity="sha256-aJTp8Icy+VQTqEtG/jggzXXfqrPNcjXKVRjqU3ZmaAE=" crossorigin=anonymous defer></script><script src=/js/icons.min.9d2ffa3761d1fc3f2b70b7d0727df781314311765f60541ec864acf5e84e3acb.js integrity="sha256-nS/6N2HR/D8rcLfQcn33gTFDEXZfYFQeyGSs9ehOOss=" crossorigin=anonymous defer></script>
+<script>"serviceWorker"in navigator&&window.addEventListener("load",()=>{navigator.serviceWorker.register("/service-worker.js").then(function(e){console.log("Successfully registered service worker",e)}).catch(function(e){console.warn("Error whilst registering service worker",e)})})</script><script src=/js/viewer.min.56cda9e4d5250af6a4ac0304cbfdfa39dfb9288c83167984c4ed7fbe2a54c34d.js integrity="sha256-Vs2p5NUlCvakrAMEy/36Od+5KIyDFnmExO1/vipUw00=" crossorigin=anonymous defer></script><script defer src=/js/katex.min.30210cbd721d9d3089e7b0b0f71cd47592d29fb0d76a2d987116479aa953b118.js integrity="sha256-MCEMvXIdnTCJ57Cw9xzUdZLSn7DXai2YcRZHmqlTsRg=" crossorigin=anonymous></script>
+<script defer src=/js/mermaid.min.d150a14f745398a69a2abfee2cb0ed3cecd883ef10e777386cdfca73b8490fbc.js integrity="sha256-0VChT3RTmKaaKr/uLLDtPOzYg+8Q53c4bN/Kc7hJD7w=" crossorigin=anonymous></script></body></html>
