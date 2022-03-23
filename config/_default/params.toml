@@ -2,16 +2,16 @@ mainSections = ["posts"]
 
 titleSeparator = "-" # Title separator. 
 
-description = "An extreme fast, responsive and feature-rich blog theme for Hugo"
-keywords = "Hugo, Bootstrap, Blog Theme"
+description = "刘邦的博客"
+keywords = "c++,java,storage,kv"
 # images = ["site-feature-image.jpg"]
 
 # metaRobots = "noindex, nofollow" # Default value for Meta Tag "robots"
 # metaRobots = "" # disable Meta Tag "robots"
 
 # logo = "images/logo.png" # Logo image. Default to "images/logo.webp".
-# logo = false # Disable Logo
-brand = "LIUBANG"
+logo = false # Disable Logo
+brand = "HIGHKYCK"
 
 palette = "blue gray" # Default palette. Optional. You'll need to clear the browser cache after modifying this.
 # palettes = ["blue", "blue gray", "brown"] # Available palettes. Default to ALL.
@@ -29,15 +29,15 @@ googleAdsense = ""
 
 math = true # Enable math globally.
 toc = true # Disable TOC globally.
-# breadcrumb = false # Disable breadcrumb
+breadcrumb = true # Disable breadcrumb
 diagram = true
 # socialShare = false # disable social network sharing
 # searchBar = false # disable search-bar
 
 poweredBy = true # Whether to show powered by.
 
-# readingTime = false # Whether to display the reading time.
-# postDate = false # Whether to display the post date in the post meta section.
+readingTime = true # Whether to display the reading time.
+postDate = true # Whether to display the post date in the post meta section.
 
 # featuredPostCount = 10 # The number of featured posts shown in sidebar. Turn off by setting it to false.
 # recentPostCount = 10 # The number of recent posts shown in sidebar. Turn off by setting it to false.
