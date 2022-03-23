@@ -49,6 +49,7 @@ relatedPostCount = 5 # The number of related posts. Turn off by setting it to fa
 taxonomyPostCount = 20 # The number of taxonomy's posts. Turn off by setting it to false.
 countTaxonomyPosts = true # Count posts of taxonomy.
 
+# 侧边栏分类
 sidebarTaxonomies = ["tags", "series"] # The order of taxonomies on the sidebar.
 
 pinnedPost = true # Turn on/off pinned posts.
