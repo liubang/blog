@@ -147,3 +147,5 @@ VTable indices for 'A' (2 entries).
 ### 静态多态 (Static Polymorphism)
 
 ## 示例分析
+
+
