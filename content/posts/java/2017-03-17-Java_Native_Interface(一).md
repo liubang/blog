@@ -8,17 +8,17 @@ date: 2017-03-17
 
 最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来可以巩固所学，二来能将其迁移到本地
 
-# 1 简介
+## 1 简介
 
 有时候，使用 native code(c/c++)来克服 Java 中的内存管理和性能的局限性是很有必要的。Java 支持 native codes，被称作 Java Native Interface(JNI)。
 
 JNI 非常难，毕竟它牵涉到了两种编程语言。假设聪明的你对 Java 和 C/C++以及 GCC 编译器已经有所了解。那么下面就一起来一步步学习 JNI 吧。
 
-# 2 开始
+## 2 开始
 
-## 2.1 用 c 语言实现第一个 JNI 程序
+### 2.1 用 c 语言实现第一个 JNI 程序
 
-**Step 1:** 创建一个名字为 JNITest.java 的文件
+**Step1:** 创建一个名字为 JNITest.java 的文件
 
 ```java
 public class JNITest {
@@ -53,7 +53,7 @@ public class JNITest {
 javac JNITest.java
 ```
 
-**Step 2:**生成 C/C++头文件 JNITest.h
+**Step2:** 生成 C/C++头文件 JNITest.h
 
 ```
 javah JNITest
@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_JNITest_greet
 - JNIEnv \*: 指向 JNI 执行环境的指针，通过它可以访问到所有的 JNI 方法
 - jobject: 指向 Java 中的"this"
 
-**Step 3:**用 c 语言实现头文件中的函数 - jnitest.c
+**Step3:**用 c 语言实现头文件中的函数 - jnitest.c
 
 ```c
 #include <stdio.h>
@@ -106,13 +106,13 @@ JNIEXPORT void JNICALL Java_JNITest_greet(JNIEnv *env, jobject obj) {
 }
 ```
 
-**Step 4:**编译动态链接库
+**Step4:**编译动态链接库
 
 ```
 gcc -fPIC -shared -I /opt/app/java/include/ -I /opt/app/java/include/linux/ jnitest.c -o mynativelib.so
 ```
 
-**Step 5:**运行 Java 程序
+**Step5:**运行 Java 程序
 
 ```
 java JNITest
@@ -125,7 +125,7 @@ this is implemented by c and called by java!
 
 于是第一个 c 语言实现的 JNI 程序就跑起来了，是不是很简单。别着急，这只是个开始！
 
-# 2 JNI in Package
+## 2 JNI in Package
 
 通常情况下，几乎所有的 Java 类都有自己的 package 而不是直接使用默认的无名的 package。那么对于使用了 package 的 Java 类如何来创建 JNI 程序呢，其实跟开始的例子几乎是一样的。
 

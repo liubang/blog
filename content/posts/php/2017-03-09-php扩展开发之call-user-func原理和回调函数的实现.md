@@ -1,12 +1,12 @@
 ---
 layout: article
-title: php扩展开发之call_user_func原理和回调函数的实现
+title: PHP扩展开发之call_user_func原理和回调函数的实现
 categories: ["php"]
 tags: [c, php]
 date: 2017-03-09
 ---
 
-# 函数调用
+## 函数调用
 
 很多时候，我们需要通过函数名来调用函数，并传递参数，或者把匿名函数作为函数的参数传递，实现回调。当我们在遇到这样的需求的时候，用 php 代码实现起来肯定是非常容易和简单的。但是，当我们在用 c 语言编写 php 扩展的时候，如何来实现这样的功能呢？下面就一起来深入了解 php 内核，看看如何实现。
 
@@ -44,7 +44,7 @@ typedef struct _zend_fcall_info {
 > Note that you don't have to specify both function_table and object; either will do. If you want to call a method, you have to supply the object that contains this method, in which case call_user_function()automatically sets the function table to this object's function table. Otherwise, you only need to specify function_table and can set object to NULL.
 > Next is the parameter count as integer and an array containing all necessary parameters. The last argument specifies whether the function should perform zval separation - this should always be set to 0. If set to 1, the function consumes less memory but fails if any of the parameters need separation.
 
-# 实现自己的 call_user_func 函数
+## 实现自己的 call_user_func 函数
 
 废话不多说，下面就来动手实现一个自己的`call_user_func`函数;
 这个函数是一个比较特殊的函数，因为他除了第一个参数是一个字符串之外，剩余的参数都是可变参数，而且没有固定的个数，所以想到这里是不是发现又遇到了一些小小的困难。不过没关系，遇到一切问题首先要想到查阅官方文档，于是在[php 官方文档](http://php.net/manual/en/internals2.funcs.php)中找到了答案，在该文档页中，向我们列举了所有的 Type Specifiers:
@@ -128,7 +128,7 @@ hello world
 hello liubang
 ```
 
-# 回调函数
+## 回调函数
 
 有了上面的铺垫，我想到这里写一个回调函数已经是一件非常简单的事情了，只不过在`call_user_func`之前或者之后来做一些其他的操作。废话不多说，直接上代码：
 
@@ -222,6 +222,6 @@ PHP_FUNCTION(demo_callback_o)
 
 效果和上边是一样的，所以这里就不再测试了。
 
-# 总结
+## 总结
 
 看到这里，也许你会觉得，这东西到底有什么用呢，是的，单纯地这么来看确实没有用，可是如果你也是一个对开源代码感兴趣的人，也许你也发现了在 php 著名的开源框架`swoole`中，就有很多地方使用到了类似的技巧，不同的是，`swoole`中是把所有的回调函数注册到一张表(也就是一个 zval 的数组)中，在请求的恰当阶段再来调用，于是就有了我们看到的类似于事件驱动的效果。所以，有了这些知识，假设你已经掌握了 linux 系统下的 TCP/IP 网络编程，那么你创造一个类似于`swoole`的产品又有何难。

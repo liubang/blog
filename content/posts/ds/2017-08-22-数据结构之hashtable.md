@@ -21,7 +21,7 @@ key 的类型是可变的，而 hash code 是一个整型。
 链式 hash 表从本质上来讲，就是一个存放了一组链表的数组。每个链表可以看做是一个槽，我们把元素通过 hash 函数找到一个 hash 值，然后把元素的值
 放入到数组中与改 hash 值对应的槽中。
 
-![chained hashtable](/images/2017-08-23/chained_hashtable.png)
+![chained hashtable](/images/2017-08-23/chained_hashtable.png#center)
 
 #### Collision Resolution
 

@@ -6,7 +6,7 @@ tags: [Java, JNI]
 date: 2017-03-20
 ---
 
-# JNI 基础
+## 1、JNI 基础
 
 JNI 中定义了一下类型来对应到相应的 Java 的数据类型:
 
@@ -35,9 +35,9 @@ native 函数接收和返回上述的 JNI 类型数据。如果 native 函数需
 
 JNI 是一个 c 语言的接口，c 语言并不支持 OOP 的特性(严格的说，OOP 是一种理念，这里只是从语言本身来说 c 语言不支持面向对象，实际上用 c 语言也可以写出面向对象风格的程序！)，所以他们之间并不是真的通过对象来传递。
 
-# 在 Java 程序和 native 程序之间传递参数
+## 2、在 Java 程序和 native 程序之间传递参数
 
-## 传递基本类型
+### 2.1 传递基本类型
 
 传递 Java 中的基本数据类型是非常简单的。一个`jxxx`类型被定义在 native 环境中，直接对应着 Java 中`xxx`基本类型。
 
@@ -96,7 +96,7 @@ In Java, the summary is 5.0
 
 上面的例子是传递整型类型的情况，比较简单，不需要做转换处理，那么下面我们来看看传递字符串类型的情况。
 
-## 传递 String
+### 2.2 传递 String
 
 由于编译方式几乎每次都一样，所以接下来的例子只呈现代码，不再描述具体的编译操作，如果有问题请阅读 Java Native Interface（一）。
 
@@ -150,7 +150,7 @@ Enter a String: liubang
 In Java, the result is liubang
 ```
 
-## 传递数组
+### 2.3 传递数组
 
 TestJNIArray.java
 
@@ -209,9 +209,9 @@ In Java the sum is 45.0
 In java the avg is 15.0
 ```
 
-# 访问对象的成员变量和回调函数
+## 3、访问对象的成员变量和回调函数
 
-## 访问成员变量
+### 3.1 访问成员变量
 
 TestObjVariable.java
 
@@ -296,7 +296,7 @@ My name is 钟灵 and I am 22 years old
 
 更新实例对象的成员变量，则调用`SetObjectField`或者`Set<primitive-type>Field`函数。
 
-## 访问静态成员
+### 3.2 访问静态成员
 
 访问静态成员同访问成员变量很相似，不同的是使用的 JNI 函数为`GetStaticFieldID`, `Get|SetStaticObjectField`, `Get|SetStatic<Primitive-type>Field`。
 
@@ -344,7 +344,7 @@ JNIEXPORT void JNICALL Java_TestObjStaticVariable_setNameAndAge(JNIEnv *env, job
 }
 ```
 
-## 调用实例方法和静态方法
+### 3.3 调用实例方法和静态方法
 
 TestInstanceMethod.java
 
@@ -442,9 +442,9 @@ In C, the returned string is hello zhongling
 
 上述代码非常简单，主要使用`GetMethodID`函数来获取想要调用的成员方法的 methodID，这里需要解释的一点就是，对于函数的参数和返回值使用的是`(参数)返回值`的形式来做描述符，这里的类型描述符跟前面讲到获取对象成员时候的规则是一样的，这里不再赘述。
 
-## 创建对象和对象数组
+## 4、创建对象和对象数组
 
-### 使用构造方法创建对象
+### 4.1 使用构造方法创建对象
 
 TestCreateObj.java
 
@@ -496,7 +496,7 @@ In C: the number is 1000
 In Java, the number is :1000
 ```
 
-## 创建对象数组
+### 4.2 创建对象数组
 
 TestObjArr.java
 

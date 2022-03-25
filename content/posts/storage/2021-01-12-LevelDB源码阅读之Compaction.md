@@ -6,7 +6,7 @@ categories: ["storage"]
 date: 2021-01-12
 ---
 
-# 1. 概览
+## 1. 概览
 
 要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为：
 
@@ -17,7 +17,7 @@ date: 2021-01-12
 5. 当 Level i 达到一定条件后，就会和 Level i + 1 层的 sstable 进行合并，从而触发 Compaction 过程，并在 Level
    n + 1 层生成一个新的 sstable 文件
 
-# 2. Compaction 分类
+## 2. Compaction 分类
 
 在 LevelDB 中，Compaction 大体上可以分为两类，分别是：
 
@@ -77,9 +77,9 @@ Compaction* VersionSet::PickCompaction() {
 }
 ```
 
-# 3. Immutable memtable Compaction
+## 3. Immutable memtable Compaction
 
-## 3.1 触发条件
+### 3.1 触发条件
 
 由于`immutable memtable compaction`是当存在**Immutable memtable**的时候才会触发，因此，`immutable memtable compaction`的触发于数据的写入有着密切的关联。追踪整个数据写入的逻辑，不难发现整个调用的链路为：`DBImpl::Put` -> `DB::Put` -> `DBImpl::Write` -> `DBImpl::MakeRoomForWrite`。
 
@@ -134,7 +134,7 @@ Status DBImpl::MakeRoomForWrite(bool force) {
 4. 如果不存在还未 compaction 的 immutable memtable，则判断当前 Level 0 层的的文件数是否达到了 `kL0_StopWritesTrigger (default: 12)`设置的数量，如果达到了则等待后台的 compaction 任务执行完成，并且直到满足条件
 5. 如果当前 Level 0 层的文件数没有达到阈值，则将当前的 mutable memtable 设置成 immutable mentable，并创建一个新的 mutable memtable，然后触发 compaction
 
-## 3.2 执行过程
+### 3.2 执行过程
 
 Immutable memtable compaction 的执行过程逻辑在`DBImpl::CompactMemTable` -> `DBImpl::WriteLevel0Table`中，整个流程分为 3 个步骤：
 
@@ -170,13 +170,13 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 下图是`VersionSet::PickLevelForMemTableOutput`的流程图
 
-![](/images/2021-01-12/PickLevelForMemTableOutput.jpg)
+![](/images/2021-01-12/PickLevelForMemTableOutput.jpg#center)
 
-# 4. Sstable Compaction
+## 4. Sstable Compaction
 
 Sstable Compaction 就是将不同层级的 sst 文件进行合并的，主要是为了均衡各个 level 的数据，保证读性能，同时也会合并 delete 数据，释放磁盘空间。
 
-## 4.1 Manual Compaction
+### 4.1 Manual Compaction
 
 Manual Compaction 的核心逻辑在 `VersionSet::CompactRange` 中，执行流程为：
 
@@ -190,18 +190,18 @@ Manual Compaction 的核心逻辑在 `VersionSet::CompactRange` 中，执行流�
    5. 在不改变 Level + 1 层 compaction 文件个数的情况下，尝试增加 Level 层 compaction 文件的数量
    6. 获取 Level + 2 层中与上述获取的最终 key range 有交集的 sst 文件
 
-## 4.2 Size Compaction
+### 4.2 Size Compaction
 
 Size Compaction 的执行条件是 LevelDB 会计算每个 Level 的总文件大小，从而计算出一个 score，最后根据 score，来选择一个合适的 level 来进行 compaction。
 score 的计算逻辑主要在`VersionSet::Finalize`中：当$Level = 0$时，$score = files.size() / 4$，当 $Level > 0$时，$score
 = levelbytes / (1048576.0 * 10^level)$。通过遍历每一层的所有 sstable 文件，根据对应的公式计算出来$score$，然后挑选出最大的$score$以及对应的 Level。
 
-## 4.3 Seek Compaction
+### 4.3 Seek Compaction
 
 在`FileMetaData`中，有一个字段是`allowed_seeks`，是用来保存当前 sst 文件，允许容忍的 seek miss 最大值，每次调用 Get，并且触发 seek miss 的时候，就会对对应的 sst 文件的`allowed_seeks`执行减 1。`allowed_seeks`的初始值为：$sstsize / 16384$，且最小为 100。
 如果某个 sst 文件的`allowed_seeks`减到 0 的时候，则会将该 sst 文件赋值给`Version::file_to_compact_`，同时将该 sst 的 level 赋值给`Version::file_to_compact_level_`。
 
-## 4.4 Do Compaction Work
+### 4.4 Do Compaction Work
 
 前面的逻辑属于 Compaction 策略，而这一步可以说是真正执行 Compaction 的过程了，核心逻辑都在`DBImpl::DoCompactionWork`中：
 

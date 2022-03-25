@@ -1,6 +1,6 @@
 ---
 layout: article
-title: php扩展开发之打造一个简易的ArrayBuffer
+title: PHP扩展开发之打造一个简易的ArrayBuffer
 categories: ["php"]
 tags: [c, php]
 date: 2017-08-25
