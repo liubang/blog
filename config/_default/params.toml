@@ -123,9 +123,9 @@ rss = "home" # link the RSS button to homepage all the times.
     # distance = 100
     # useExtendedSearch = true
 
-# [reward]
-#   alipay = "images/reward/alipay.png"
-#   wechat = "images/reward/wechat.png"
+[reward]
+  alipay = "images/reward/alipay.jpg"
+  wechat = "images/reward/wechat.jpg"
 
 [share]
   addThis = "ra-5e89c5f05bb0c6ec" # AddThis pubid.
