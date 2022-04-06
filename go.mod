@@ -1,4 +1,4 @@
-module github.com/razonyang/hugo-theme-bootstrap/exampleSite
+module github.com/liubang/blog
 
 go 1.17
 
