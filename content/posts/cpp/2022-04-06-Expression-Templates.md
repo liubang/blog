@@ -211,3 +211,8 @@ int main(int argc, char* argv[])
 call    MyVector<double, std::vector<double, std::allocator<double> > >& MyVector<double, std::vector<double, std::allocator<double> > >::operator=<double, MyVectorAdd<double, MyVectorAdd<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > >, MyVectorMul<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > > > >(MyVector<double, MyVectorAdd<double, MyVectorAdd<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > >, MyVectorMul<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > > > > const&)
 
 ```
+
+![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center)
+
+**参考文档**
+[https://www.modernescpp.com/index.php/avoiding-temporaries-with-expression-templates](https://www.modernescpp.com/index.php/avoiding-temporaries-with-expression-templates)
