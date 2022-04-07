@@ -214,7 +214,7 @@ call    MyVector<double, std::vector<double, std::allocator<double> > >& MyVecto
 
 ![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center)
 
-![Expression](/images/2022-04-07/Expression.png#center)
+![Exression](/images/2022-04-07/Exression.png#center)
 
 ## 参考文档
 
