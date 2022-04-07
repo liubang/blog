@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
 
 我们能发现，对于`x + x + y * y`这行来说，执行的过程为:
 
+![my_vector1.1](/images/2022-04-07/my_vector1.1.png#center)
+
 1. `temp1 = x + x`
 2. `temp2 = y * y`
 3. `temp3 = temp1 + temp2`
