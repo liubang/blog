@@ -104,7 +104,12 @@ int main(int argc, char* argv[])
 ## 优化后的版本
 
 在上面的实现中，虽然实现起来很简单，但是会造成一些额外的临时变量。是的，这是我们不能容忍的。
-于是我们需要探索出一个更好的实现：
+于是我们需要探索出一个更好的实现，如下图所示：
+
+![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center)
+
+这里不需要为表达式`result[i] = x[i] + x[i] + y[i] * y[i]`
+创建临时变量，赋值操作会直接触发运算的执行。
 
 ```cpp
 #include <cassert>
@@ -207,12 +212,9 @@ int main(int argc, char* argv[])
 
 对于这个实现，同样的使用[godbold](https://godbolt.org/z/qfc3rjxMb)来分析：
 
-```asm
-call    MyVector<double, std::vector<double, std::allocator<double> > >& MyVector<double, std::vector<double, std::allocator<double> > >::operator=<double, MyVectorAdd<double, MyVectorAdd<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > >, MyVectorMul<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > > > >(MyVector<double, MyVectorAdd<double, MyVectorAdd<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > >, MyVectorMul<double, std::vector<double, std::allocator<double> >, std::vector<double, std::allocator<double> > > > > const&)
+![my_vector2.2](/images/2022-04-07/my_vector2.2.png#center)
 
-```
-
-![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center)
+汇编代码片段中表达式虽然很长，但是仔细看还是能看清它的结构。下面是一个简化版的代码生成图，用来说明模板的生成过程：
 
 ![Exression](/images/2022-04-07/Exression.png#center)
 
