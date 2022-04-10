@@ -1,5 +1,4 @@
 ---
-layout: article
 title: LevelDB 源码阅读之 Compaction
 tags: [leveldb, storage]
 categories: ["storage"]

@@ -38,8 +38,8 @@ pygmentsUseClasses = true
 
 # 分类
 [taxonomies]
-  # category = "categories"
-  # series = "series"
+  category = "categories"
+  series = "series"
   tag = "tags"
 
 [build]
