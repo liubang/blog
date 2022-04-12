@@ -33,3 +33,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: publish
+          user_name: 'iliubang'
+          user_email: 'it.liubang@gmail.com'
