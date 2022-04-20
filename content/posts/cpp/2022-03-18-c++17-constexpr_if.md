@@ -1,7 +1,7 @@
 ---
 layout: article
 title: c++17:constexpr if
-categories: ["c++"]
+categories: [programming]
 tags: [c++, c++17]
 date: 2022-03-18
 ---

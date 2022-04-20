@@ -1,7 +1,7 @@
 ---
 layout: article
 title: c++17:string_view
-categories: ["c++"]
+categories: [programming]
 tags: [c++, c++17]
 date: 2022-02-14
 ---

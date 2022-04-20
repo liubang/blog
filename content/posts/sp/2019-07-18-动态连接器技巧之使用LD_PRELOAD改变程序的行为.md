@@ -2,7 +2,7 @@
 layout: article
 title: 动态连接器技巧之使用LD_PRELOAD改变程序的行为
 tags: [c, sp]
-categories: ["sp"]
+categories: [programming]
 date: 2019-07-18
 ---
 

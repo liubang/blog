@@ -1,7 +1,7 @@
 ---
 layout: article
 title: Java Native Interface（二）
-categories: ["java"]
+categories: [programming]
 tags: [Java, JNI]
 date: 2017-03-20
 ---

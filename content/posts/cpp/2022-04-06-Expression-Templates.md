@@ -1,6 +1,6 @@
 ---
 title: Expression Templates
-categories: [c++]
+categories: [programming]
 tags: [c++, template]
 date: 2022-04-06
 ---

@@ -1,7 +1,7 @@
 ---
 layout: article
 title: Spring Boot With BDD
-categories: ["java"]
+categories: [programming]
 tags: [Java, SpringBoot, BDD]
 published: false
 date: 2019-03-15

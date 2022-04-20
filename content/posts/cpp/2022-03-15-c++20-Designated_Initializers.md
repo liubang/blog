@@ -1,7 +1,7 @@
 ---
 layout: article
 title: c++20:Designated Initializers
-categories: ["c++"]
+categories: [programming]
 tags: [c++, c++20]
 date: 2022-03-15
 ---
