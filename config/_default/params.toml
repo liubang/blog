@@ -62,7 +62,7 @@ customJS = []
 
 tocWordCount = 1 # TOC is displayed only if the post's word count exceeds this value.
 
-titleCase = true # Capitalized title.
+titleCase = false # Capitalized title.
 
 viewer = true # Image Viewer
 
