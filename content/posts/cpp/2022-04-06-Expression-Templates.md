@@ -7,14 +7,12 @@ date: 2022-04-06
 
 ## 什么是 Expression Templates
 
-Expression Templates 是一种 C++
-模板元编程技术，它通过在编译时构建计算表达式，这些计算表达式只会在需要的时候才会真正执行，从而生成高效的代码。
-简单来说，通过 Expression Templates，我们可以实现惰性求值和消除因为中间结果而创建的临时变量。
+Expression Templates 是一种 C++ 模板元编程技术，它通过在编译时构建按需执行的计算表达式，从而生成高效的代码。简单来说，通过 Expression Templates，我们可以实现惰性求值和消除因为中间结果而创建的临时变量。
 
 ## 一个常规示例
 
 我们构造了一个`MyVector`类，并且重载了`MyVector`的`+`和`*`操作符，实现两个`MyVector`中相同下标元素的`+`和`*`操作。
-通常对于这样的需求我们很容易做出一个简单的实现：
+对于这样的需求我们很容易写出形如下面代码的一个简单的实现：
 
 ```cpp
 #include <cassert>
@@ -89,11 +87,11 @@ int main(int argc, char* argv[])
 }
 ```
 
-上面的实现平淡无奇，相信每个人都能随手写出来。在[godbolt](https://godbolt.org/z/zTenMfe6G)上编译成汇编来分析：
+这个实现平淡无奇，相信每个人都能随手写出来。在[godbolt](https://godbolt.org/z/zTenMfe6G)上编译成汇编来分析：
 
 ![my_vector1](/images/2022-04-07/my_vector1.png#center)
 
-我们能发现，对于`x + x + y * y`这行来说，执行的过程为:
+我们能发现，对于`x + x + y * y`这行代码，执行的过程为:
 
 ![my_vector1.1](/images/2022-04-07/my_vector1.1.png#center)
 
@@ -103,13 +101,11 @@ int main(int argc, char* argv[])
 
 ## 优化后的版本
 
-在上面的实现中，虽然实现起来很简单，但是会造成一些额外的临时变量。是的，这是我们不能容忍的。
-于是我们需要探索出一个更好的实现，如下图所示：
+在上面的版本中，虽然实现起来很简单，但是会造成一些额外的临时变量。是的，这是我们不能容忍的。于是我们需要探索出一个如下图所示的更好的实现：
 
 ![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center)
 
-这里不需要为表达式`result[i] = x[i] + x[i] + y[i] * y[i]`
-创建临时变量，赋值操作会直接触发运算的执行。
+在这个优化的版本中，不需要为表达式`result[i] = x[i] + x[i] + y[i] * y[i]`创建临时变量，赋值操作会直接触发运算的执行。
 
 ```cpp
 #include <cassert>
@@ -210,7 +206,7 @@ int main(int argc, char* argv[])
 }
 ```
 
-对于这个实现，同样的使用[godbold](https://godbolt.org/z/qfc3rjxMb)来分析：
+对于这个实现，同样在[godbold](https://godbolt.org/z/qfc3rjxMb)中进行分析：
 
 ![my_vector2.2](/images/2022-04-07/my_vector2.2.png#center)
 
