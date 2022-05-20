@@ -16,13 +16,13 @@ date: 2022-05-15
 std::list listA{1, 2, 3};
 std::list listB{4, 5, 6};
 
-auto it = listA.begin(); // Iterator to 1
+auto it = listA.begin();   // Iterator to 1
 
 // Append listA to listB
 listB.splice(listB.end(), listA);
 
 // All listA elements transferred to listB
-std::cout << listB.size() << " " << listA.size() << std::endl; // 6 0
+std::cout << listB.size() << " " << listA.size() << std::endl;   // 6 0
 
 // Prints Below: 4 5 6 1 2 3
 for (auto i : listB) {
@@ -31,10 +31,10 @@ for (auto i : listB) {
 std::cout << std::endl;
 
 // Iterator still valid
-std::cout << *it << std::endl; // 1
+std::cout << *it << std::endl;   // 1
 ```
 
-当然，我们也可以在不使用拼接的情况下将一个 list 中的元素转移到另一个 list 中，但是需要将原 list 中的元素删除，并在目标 list 中插入新的元素。删除和新增元素对于较小的对象（例如 int）是可以接受的，但是对于较大的对象来说，由于需要调用拷贝/移动构造和析构函数，所以成本会很高。
+当然，我们也可以在不使用`splice`的情况下将一个 list 中的元素转移到另一个 list 中，但是需要将原 list 中的元素删除，并在目标 list 中插入新的元素。删除和新增元素对于较小的对象（例如 int）是可以接受的，但是对于较大的对象来说，由于需要调用拷贝/移动构造和析构函数，所以成本会很高。
 
 `splice`函数有一些重载，用于传输所有节点、或者特定节点或者一系列节点。这些函数可以将节点从一个列表转移到另一个列表，或者修改节点在列表中的位置。除了将一系列节点（并非所有）从一个列表转移到另一个列表这一种情况，其他所有情况下`splice`函数的时间复杂度均为常数 O(1)。
 
@@ -75,40 +75,38 @@ Cache，他可以添加 KV，也可以通过给定的 K 来检索，以及删除
 ```cpp
 // Note: c++17 required.
 
-template<typename K, typename V, std::size_t Capacity>
-class LRUCache
+template<typename K, typename V, std::size_t Capacity> class LRUCache
 {
 public:
-  // Assert that Max size is greater than 0
-  static_assert(Capacity > 0);
+    // Assert that Max size is greater than 0
+    static_assert(Capacity > 0);
 
-  // Adds a <key, Val> item, Returns false if key already exists
-  bool put(const K& k, const V& v);
+    // Adds a <key, Val> item, Returns false if key already exists
+    bool put(const K& k, const V& v);
 
-  // Gets the value for a key.
-  // Returns empty std::optional if not found.
-  // The returned item becomes most-recently-used
-  std::optional<V> get(const K& k);
+    // Gets the value for a key.
+    // Returns empty std::optional if not found.
+    // The returned item becomes most-recently-used
+    std::optional<V> get(const K& k);
 
-  // Erases an item
-  void erase(const K& k);
+    // Erases an item
+    void erase(const K& k);
 
-  // Utility function.
-  // Calls callback for each {key, value}
-  template<typename C>
-  void forEach(const C& cb) const
-  {
-    for (auto& [k, v] : items) {
-      cb(k, v);
+    // Utility function.
+    // Calls callback for each {key, value}
+    template<typename C> void forEach(const C& cb) const
+    {
+        for (auto& [k, v] : items) {
+            cb(k, v);
+        }
     }
-  }
 
 private:
-  // std::list stores items (pair<K, V>) in most-recently-used to least-recently-used order
-  std::list<std::pair<K, V>> items;
+    // std::list stores items (pair<K, V>) in most-recently-used to least-recently-used order
+    std::list<std::pair<K, V>> items;
 
-  // unordered_map acts as an index to the items store above.
-  std::unordered_map<K, typename std::list<std::pair<K, V>>::iterator> index;
+    // unordered_map acts as an index to the items store above.
+    std::unordered_map<K, typename std::list<std::pair<K, V>>::iterator> index;
 };
 ```
 
@@ -118,25 +116,25 @@ private:
 template<typename K, typename V, std::size_t Capacity>
 bool LRUCache<K, V, Capacity>::put(const K& k, const V& v)
 {
-  // Return false if the key already exists
-  if (index.count(k)) {
-    return false;
-  }
+    // Return false if the key already exists
+    if (index.count(k)) {
+        return false;
+    }
 
-  // Check if cache is full
-  if (items.size() == Capacity) {
-    // Delete the LRU item
-    index.erase(items.back().first); // Erase the last item key from the map
-    items.pop_back(); // Evict last item from the list
-  }
+    // Check if cache is full
+    if (items.size() == Capacity) {
+        // Delete the LRU item
+        index.erase(items.back().first);   // Erase the last item key from the map
+        items.pop_back();                  // Evict last item from the list
+    }
 
-  // Insert the new item at front of the list
-  items.emplace_front(k, v);
+    // Insert the new item at front of the list
+    items.emplace_front(k, v);
 
-  // Insert {Key->item_iterator} in the map
-  index.emplace(k, items.begin());
+    // Insert {Key->item_iterator} in the map
+    index.emplace(k, items.begin());
 
-  return true;
+    return true;
 }
 ```
 
@@ -146,18 +144,18 @@ bool LRUCache<K, V, Capacity>::put(const K& k, const V& v)
 template<typename K, typename V, std::size_t Capacity>
 std::optional<V> LRUCache<K, V, Capacity>::get(const K& k)
 {
-  auto itr = index.find(k);
-  if (itr == index.end()) {
-    // empty std::optional
-    return {};
-  }
+    auto itr = index.find(k);
+    if (itr == index.end()) {
+        // empty std::optional
+        return {};
+    }
 
-  // Use list splice to transfer this item to the first position,
-  // which makes the item most-recently-used. Iterators still stay valid
-  items.splice(items.begin(), items, itr->second);
+    // Use list splice to transfer this item to the first position,
+    // which makes the item most-recently-used. Iterators still stay valid
+    items.splice(items.begin(), items, itr->second);
 
-  // Return the value in a std::optional
-  return itr->second->second;
+    // Return the value in a std::optional
+    return itr->second->second;
 }
 ```
 
@@ -167,16 +165,16 @@ std::optional<V> LRUCache<K, V, Capacity>::get(const K& k)
 template<typename K, typename V, std::size_t Capacity>
 void LRUCache<K, V, Capacity>::erase(const K& k)
 {
-  auto itr = index.find(k);
-  if (itr == index.end()) {
-    return;
-  }
+    auto itr = index.find(k);
+    if (itr == index.end()) {
+        return;
+    }
 
-  // Erase from the list
-  items.erase(itr->second);
+    // Erase from the list
+    items.erase(itr->second);
 
-  // Erase from the map
-  index.erase(itr);
+    // Erase from the map
+    index.erase(itr);
 }
 ```
 
@@ -187,41 +185,38 @@ void LRUCache<K, V, Capacity>::erase(const K& k)
 ```cpp
 // Prints all items of an LRUCache in a line
 // Items are printed in MRU -> LRU order
-template<typename C>
-void printlnCache(const C& cache)
+template<typename C> void printlnCache(const C& cache)
 {
-  cache.forEach([](auto& k, auto& v) {
-    std::cout << k << "=>" << v << " ";
-  });
-  std::cout << std::endl;
+    cache.forEach([](auto& k, auto& v) { std::cout << k << "=>" << v << " "; });
+    std::cout << std::endl;
 }
 
 int main()
 {
-  // City -> Population in millions (Max size 3)
-  LRUCache<std::string, double, 3> cache;
+    // City -> Population in millions (Max size 3)
+    LRUCache<std::string, double, 3> cache;
 
-  // Add 3 entries
-  cache.put("London", 8.4);
-  cache.put("Toronto", 2.5);
-  cache.put("Sydney", 5.2);
+    // Add 3 entries
+    cache.put("London", 8.4);
+    cache.put("Toronto", 2.5);
+    cache.put("Sydney", 5.2);
 
-  // Sydney=>5.2 Toronto=>2.5 London=>8.4
-  printlnCache(cache);
+    // Sydney=>5.2 Toronto=>2.5 London=>8.4
+    printlnCache(cache);
 
-  // Make "London" the most recently accessed
-  std::cout << "London =>" << cache.get("London").value_or(-1) << std::endl;
+    // Make "London" the most recently accessed
+    std::cout << "London =>" << cache.get("London").value_or(-1) << std::endl;
 
-  // London=>8.4 Sydney=>5.2 Toronto=>2.5
-  printlnCache(cache);
+    // London=>8.4 Sydney=>5.2 Toronto=>2.5
+    printlnCache(cache);
 
-  // This would remove the LRU item (Toronto)
-  cache.put("Tokyo", 9.4);
+    // This would remove the LRU item (Toronto)
+    cache.put("Tokyo", 9.4);
 
-  // Tokyo=>9.4 London=>8.4 Sydney=>5.2
-  printlnCache(cache);
+    // Tokyo=>9.4 London=>8.4 Sydney=>5.2
+    printlnCache(cache);
 
-  return 0;
+    return 0;
 }
 ```
 
