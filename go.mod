@@ -2,4 +2,4 @@ module github.com/liubang/blog
 
 go 1.17
 
-require github.com/razonyang/hugo-theme-bootstrap v0.71.0 // indirect
+require github.com/razonyang/hugo-theme-bootstrap v1.0.0-alpha.1 // indirect
