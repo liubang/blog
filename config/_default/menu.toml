@@ -1,86 +1,67 @@
-# [[main]]
-#   name = "Support"
-#   identifier = "support"
-#   weight = 40
-#   pre = '<i class="fas fa-fw fa-chevron-circle-down"></i>'
-# [[main]]
-#   name = "Repository"
-#   identifier = "repository"
-#   parent = "support"
-#   url = ""
-#   weight = 1
-# [[main]]
-#   name = "Discussions"
-#   identifier = "discussions"
-#   parent = "support"
-#   url = ""
-#   weight = 2
-# [[main]]
-#   name = "Features Request"
-#   identifier = "feature-request"
-#   parent = "support"
-#   url = ""
-#   weight = 3
-# [[main]]
-#   parent = "support"
-#   weight = 4
-#   [main.params]
-#     divider = true
+[[main]]
+  parent = "categories"
+  name = "Programing"
+  url = "categories/programming"
+  pre = '<i class="fas fa-fw fa-code me-1"></i>'
+  weight = 1
+[[main]]
+  parent = "categories"
+  name = "Reading"
+  url = "categories/reading"
+  pre = '<i class="fas fa-fw fa-book-reader me-1"></i>'
+  weight = 2
+[[main]]
+  parent = "categories"
+  name = "Linux"
+  url = "categories/linux"
+  pre = '<i class="fab fa-fw fa-linux me-1"></i>'
+  weight = 3
+[[main]]
+  parent = "categories"
+  name = "所有分类"
+  url = "categories"
+  pre = '<i class="fas fa-fw fa-folder me-1"></i>'
+  weight = 100
 
-# [[footer]]
-#   name = "Support"
-#   identifier = "support"
-#   weight = 1
-# [[footer]]
-#   name = "Repository"
-#   identifier = "repository"
-#   parent = "support"
-#   url = ""
-#   weight = 1
-#   pre = '<i class="fab fa-fw fa-github"></i>'
-# [[footer]]
-#   name = "Discussions"
-#   identifier = "discussions"
-#   parent = "support"
-#   url = ""
-#   weight = 2
-#   pre = '<i class="fas fa-fw fa-comments"></i>'
-# [[footer]]
-#   name = "Features Request"
-#   identifier = "feature-request"
-#   parent = "support"
-#   url = ""
-#   weight = 3
-# [[footer]]
-#   name = "Bug Report"
-#   identifier = "bug-report"
-#   parent = "support"
-#   url = ""
-#   weight = 4
-#
-# [[footer]]
-#   name = "Docs"
-#   identifier = "docs"
-#   weight = 2
-#
-# [[footer]]
-#   name = "Features"
-#   identifier = "features"
-#   weight = 3
-
-# [[footer]]
-#   identifier = "demo"
-#   name = "Demo"
-#   weight = 4
-# [[footer]]
-#   identifier = "demo-netlify"
-#   parent = "demo"
-#   name = "Netlify"
-#   weight = 1
-#   url = ""
-# [[footer]]
-#   identifier = "demo-name"
-#   parent = "demo"
-#   name = "China"
-#   weight = 2
-#   url = ""
+[[main]]
+  name = "标签"
+  identifier = "tags"
+  weight = 30
+  url = "tags"
+  pre = '<i class="fas fa-fw fa-tags me-1"></i>'
+[[main]]
+  parent = "tags"
+  name = "Algorithm"
+  url = "tags/algorithm"
+  pre = '<i class="fas fa-fw fa-square-root-alt me-1"></i>'
+  weight = 1
+[[main]]
+  parent = "tags"
+  name = "C++"
+  url = "tags/c++"
+  pre = '<i class="fab fa-fw fa-google me-1"></i>'
+  weight = 2
+[[main]]
+  parent = "tags"
+  name = "Go"
+  url = "tags/go"
+  pre = '<i class="fab fa-fw fa-google me-1"></i>'
+  weight = 3
+[[main]]
+  parent = "tags"
+  name = "Java"
+  url = "tags/java"
+  pre = '<i class="fab fa-fw fa-java me-1"></i>'
+  weight = 4
+[[main]]
+  parent = "tags"
+  name = "Storage"
+  url = "tags/storage"
+  pre = '<i class="fas fa-fw fa-database me-1"></i>'
+  weight = 5
+[[main]]
+  parent = "tags"
+  name = "所有标签"
+  url = "tags"
+  pre = '<i class="fas fa-fw fa-tags me-1"></i>'
+  weight = 100
