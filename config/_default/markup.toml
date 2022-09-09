@@ -1,15 +1,3 @@
-[highlight]
-  anchorLineNos = false
-  codeFences = true
-  guessSyntax = true
-  hl_Lines = ""
-  lineAnchors = ""
-  lineNoStart = 1
-  lineNos = true
-  lineNumbersInTable = false
-  noClasses = false
-  tabWidth = 2
-
 [goldmark]
 [goldmark.extensions]
 definitionList = true
