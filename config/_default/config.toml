@@ -1,12 +1,12 @@
 baseURL = "https://iliubang.cn"
 title = "liubang's blog"
-theme = "github.com/razonyang/hugo-theme-bootstrap" 
+theme = "github.com/razonyang/hugo-theme-bootstrap"
 copyright = "Copyright © 2016-{year} LiuBang. All Rights Reserved."
 
 # Multilingual mode
 defaultContentLanguage = "zh-cn"
 defaultContentLanguageInSubdir = false
-disableLanguages = ["fr", "zh-tw"] 
+disableLanguages = ["fr", "zh-tw"]
 
 # Pagination
 paginate = 10
@@ -26,7 +26,7 @@ pygmentsUseClasses = true
 [mediaTypes]
   [mediaTypes."application/manifest+json"]
     suffixes = ["json"]
-  
+
 [outputFormats]
   [outputFormats.MANIFEST]
     name = "manifest"

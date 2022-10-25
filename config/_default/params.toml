@@ -1,6 +1,6 @@
-mainSections = ["posts"] 
+mainSections = ["posts", "blog"]
 
-titleSeparator = "-" # Title separator. 
+titleSeparator = "-" # Title separator.
 
 description = "刘邦的博客"
 keywords = "c++,java,storage,kv"

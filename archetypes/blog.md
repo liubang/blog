@@ -1,7 +1,7 @@
 +++
-type = "docs"
 title = "{{ replace .Name "-" " " | title }}"
 date = {{ .Date }}
+# description = ""
 featured = false
 draft = true
 comment = true
