@@ -73,6 +73,6 @@
     "copy-webpack-plugin": "^10.2.4",
     "webpack-cli": "^4.9.1"
   },
-  "name": "exampleSite",
+  "name": "blog",
   "version": "0.1.0"
 }

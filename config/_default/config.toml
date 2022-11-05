@@ -10,31 +10,26 @@ disableLanguages = ["fr", "zh-tw"]
 
 # Pagination
 paginate = 10
+
 paginatePath = "page"
 
 enableRobotsTXT = true
 
 enableEmoji = true
 
+enableGitInfo = true
+
 hasCJKLanguage = true # Uncomment it if your content contains Chinese/Japanese/Korean Languages.
 
 pygmentsUseClasses = true
 
+timeout = "120s"
+
 [blackfriday]
   hrefTargetBlank = true
 
-[mediaTypes]
-  [mediaTypes."application/manifest+json"]
-    suffixes = ["json"]
-
-[outputFormats]
-  [outputFormats.MANIFEST]
-    name = "manifest"
-    baseName = "manifest"
-    mediaType = "application/manifest+json"
-
 [outputs]
-  home = ["HTML", "RSS", "JSON", "MANIFEST"]
+  home = ["HTML", "RSS"]
 
 # 分类
 [taxonomies]

@@ -13,7 +13,7 @@ logo = "images/apple-touch-icon.png" # Logo image. Default to "images/logo.webp"
 # logo = false # Disable Logo
 brand = "HIGHKYCK"
 
-palette = "blue gray" # Default palette. Optional. You'll need to clear the browser cache after modifying this.
+palette = "blue gray"
 # palettes = ["blue", "blue gray", "brown"] # Available palettes. Default to ALL.
 # palettes = [] # Disable palette switcher.
 
@@ -29,6 +29,7 @@ googleAdsense = ""
 
 math = true # Enable math globally.
 toc = true # Disable TOC globally.
+tocPosition = "content"
 breadcrumb = true # Disable breadcrumb
 diagram = true
 socialShare = true # disable social network sharing
@@ -73,9 +74,31 @@ rss = "home" # link the RSS button to homepage all the times.
   maxLines = 128
   lineNos = true # true/false represents that show/hide the line numbers by default.
 
+[sidebar]
+  fixed = false
+  # archives = true # Enable archives widget
+  # taxonomiesToggle = false # Disable taxonomy toggle
+  # taxonomiesToggleArchives = false # Don't show the archives on taxonomies toggle widget.
+  # categories = true # Enable categories widget
+  # tags = true # Enable tags widget
+  # series = true # Enable series widget
+  # authors = true # Enable authors widget
+  # postsToggle = false # Disable posts toggle
+  # featuredPosts = true # Enable featured posts widget
+  # recentPosts = true # Enable featured posts widget
+  collapsed = true # Collapse sidebar widgets by default on small screens.
+
 [post]
+  featuredImage = true
   copyright = true # Whether to display copyright section on each post.
   plainifyExcerpt = true # Format excerpt in HTML if false.
+  numberifyHeadings = true
+  numberifyHeadingsSeparator = "."
+  imageTitleAsCaption = true
+
+[docs]
+  [docs.nav]
+    # expand = true # Expand docs navigations.
 
 [archive]
   paginate = 20 # Archive pagination. Default to 100.
@@ -106,7 +129,7 @@ rss = "home" # link the RSS button to homepage all the times.
   #label = "comment"
   # By default, light and dark mode correspond to github-light and github-dark, respectively.
   # Optional values: github-light, github-dark, preferred-color-scheme, github-dark-orange, icy-dark, dark-blue, photon-dark.
-  #theme = "" 
+  #theme = ""
 
 [search]
   paginate = 5 # Pagination. Default to 10.
@@ -125,8 +148,8 @@ rss = "home" # link the RSS button to homepage all the times.
   alipay = "images/reward/alipay.jpg"
   wechat = "images/reward/wechat.jpg"
 
-[share]
-  addThis = "ra-5e89c5f05bb0c6ec" # AddThis pubid.
+# [share]
+  # addThis = "ra-5e89c5f05bb0c6ec" # AddThis pubid.
 
 #[fontSize] # Comment or remove this settings to disable font size switcher.
   # extraSmall = ".8rem"
