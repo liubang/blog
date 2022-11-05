@@ -13,9 +13,23 @@ logo = "images/apple-touch-icon.png" # Logo image. Default to "images/logo.webp"
 # logo = false # Disable Logo
 brand = "HIGHKYCK"
 
-palette = "blue gray"
-# palettes = ["blue", "blue gray", "brown"] # Available palettes. Default to ALL.
-# palettes = [] # Disable palette switcher.
+palette = "blue-gray"
+# Available palettes. Default to ALL. Empty array means disable.
+# palettes:
+#  - blue
+#  - blue-gray
+#  - brown
+#  - cyan
+#  - green
+#  - indigo
+#  - orange
+#  - pink
+#  - purple
+#  - red
+#  - teal
+#  - yellow
+
+palettes = [] # Disable palette switcher.
 
 # color = "dark" # light, dark or dynamic. Default to dynamic.
 
@@ -32,7 +46,7 @@ toc = true # Disable TOC globally.
 tocPosition = "content"
 breadcrumb = true # Disable breadcrumb
 diagram = true
-socialShare = true # disable social network sharing
+socialShare = false # disable social network sharing
 searchBar = true # disable search-bar
 
 poweredBy = true # Whether to show powered by.

@@ -1,15 +1,50 @@
-.sidebar {
-    &:not(.docs-sidebar) {
-        .post-toc {
-            position: sticky;
-            top: 84px;
-        }
-    }
-}
-article {
-  .card-header {
-    a {
-      color: rgba(0, 0, 0, 0.87);
-    }
-  }
-}
+// a {
+//   color: rgba(0, 0, 0, 0.87);
+//   text-decoration-color: rgba(0, 0, 0, 0.54);
+// }
+//
+// #taxonomies-toggle, #posts-toggle {
+//   .nav-item {
+//     .active {
+//       background-color: rgb(55, 71, 79);
+//     }
+//   }
+// }
+//
+// .pagination {
+//   .active {
+//     a {
+//       background-color: rgb(55, 71, 79);
+//     }
+//   }
+// }
+
+// .sidebar {
+//   &:not(.docs-sidebar) {
+//     .post-toc {
+//       position: sticky;
+//       top: 84px;
+//     }
+//   }
+// }
+// article {
+//   .card-header {
+//     a {
+//       color: rgba(0, 0, 0, 0.87);
+//     }
+//   }
+// }
+//
+// nav {
+//   .breadcrumb-item {
+//     a {
+//       color: rgba(0, 0, 0, 0.87);
+//     }
+//   }
+// }
+//
+// .postTOC {
+//   a {
+//     color: rgba(0, 0, 0, 0.87);
+//   }
+// }

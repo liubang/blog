@@ -4,29 +4,44 @@ on:
     branches:
       - main
   pull_request:
+permissions:
+  contents: write
 
 jobs:
-  deploy:
-    runs-on: ubuntu-20.04
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
         with:
           submodules: true
           fetch-depth: 0
+      - name: Setup Hugo
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
           extended: true
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+
       - name: Build
-        run: npm install && hugo --minify
-      - name: Deploy
+        run: hugo --minify --gc --enableGitInfo -b https://iliubang.cn
+
+      - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:

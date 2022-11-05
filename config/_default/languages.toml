@@ -7,7 +7,6 @@
     keywords = "blog,博客"
     [zh-cn.params.archive]
       dateFormat = "01-02"
-
 [en]
   languageName = "English"
   weight = 1
