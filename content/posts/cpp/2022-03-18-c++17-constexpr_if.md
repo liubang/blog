@@ -1,5 +1,4 @@
 ---
-layout: article
 title: c++17:constexpr if
 categories: [programming]
 tags: [c++, c++17]

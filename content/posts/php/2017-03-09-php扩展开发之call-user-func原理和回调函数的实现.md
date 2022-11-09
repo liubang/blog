@@ -1,5 +1,4 @@
 ---
-layout: article
 title: PHP扩展开发之call_user_func原理和回调函数的实现
 categories: [programming]
 tags: [c, php]

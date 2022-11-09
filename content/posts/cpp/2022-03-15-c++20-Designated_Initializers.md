@@ -1,5 +1,4 @@
 ---
-layout: article
 title: c++20:Designated Initializers
 categories: [programming]
 tags: [c++, c++20]
