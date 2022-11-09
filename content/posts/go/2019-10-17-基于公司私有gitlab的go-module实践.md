@@ -1,5 +1,4 @@
 ---
-layout: article
 title: 基于公司私有gitlab的go module实践
 published: false
 categories: ["go"]

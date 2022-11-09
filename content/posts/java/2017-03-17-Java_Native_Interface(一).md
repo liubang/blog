@@ -1,5 +1,4 @@
 ---
-layout: article
 title: Java Native Interface（一）
 categories: [programming]
 tags: [Java, JNI]

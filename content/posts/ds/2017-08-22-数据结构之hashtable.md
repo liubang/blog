@@ -1,5 +1,4 @@
 ---
-layout: article
 title: 数据结构之hashtable
 categories: [programming]
 tags: [ds, algorithm]
