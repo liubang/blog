@@ -1,9 +1,7 @@
 +++
 type = "docs"
-title = "链表"
-navWeight = 92
+title = "队列"
+navWeight = 91
 +++
 
 ## 基本概念
-
-

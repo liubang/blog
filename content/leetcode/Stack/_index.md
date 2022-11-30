@@ -1,9 +1,8 @@
 +++
 type = "docs"
-title = "链表"
-navWeight = 92
+title = "堆栈"
+navWeight = 90
 +++
 
 ## 基本概念
-
 

@@ -1,5 +1,5 @@
 +++
 type = "docs"
 title = "排序"
-navWeight = 100
+navWeight = 80
 +++
