@@ -104,38 +104,31 @@ rss = "home" # link the RSS button to homepage all the times.
 
 [post]
   featuredImage = true
-  copyright = true # Whether to display copyright section on each post.
-  plainifyExcerpt = true # Format excerpt in HTML if false.
+  plainifyExcerpt = false # Format excerpt in HTML if false.
   numberifyHeadings = true
   numberifyHeadingsSeparator = "."
   imageTitleAsCaption = true
+  copyright = true # Whether to display copyright section on each post.
 
 [docs]
   [docs.nav]
-    # expand = true # Expand docs navigations.
+    expand = false # Expand docs navigations.
 
 [archive]
-  paginate = 20 # Archive pagination. Default to 100.
+  basePath = "/archives" # The base path of archive pages.
   dateFormat = "01-02" # Archive date format. Default to "Jan 2".
-
-[analytics]
-  # baidu = "" # Baidu Analytics
-
-# Site verification
-[siteVerification]
-  google = ""
-  bing = ""
-  baidu = ""
-  baiduUnion = "" # Baidu Union
-  so = ""
-  sogou = ""
-  shenma = ""
 
 [creativeCommons]
   by = true # Credit must be given to you, the creator.
   nc = true # Only noncommercial use of your work is permitted.
   nd = true # No derivatives or adaptations of your work are permitted.
   sa = true # Adaptations must be shared under the same terms.
+
+
+[repo]
+  url = "https://github.com/liubang/blog"
+  branch = "main"
+  subPath = "/"
 
 [utterances]
   repo = "liubang/blog" # Replace with your repository.
@@ -146,14 +139,14 @@ rss = "home" # link the RSS button to homepage all the times.
   #theme = ""
 
 [search]
-  paginate = 5 # Pagination. Default to 10.
+  paginate = 10 # Pagination. Default to 10.
   # resultContentWordCount = 240 # The maximum word count of result content for displaying.
   # Fuse.js options. See https://fusejs.io/api/options.html.
   [search.fuse]
     # ignoreLocation = true
     # location = 0
     # isCaseSensitive = false
-    # minMatchCharLength = 1
+    minMatchCharLength = 3
     threshold = 0.1
     # distance = 100
     # useExtendedSearch = true
@@ -161,9 +154,6 @@ rss = "home" # link the RSS button to homepage all the times.
 [reward]
   alipay = "images/reward/alipay.jpg"
   wechat = "images/reward/wechat.jpg"
-
-# [share]
-  # addThis = "ra-5e89c5f05bb0c6ec" # AddThis pubid.
 
 #[fontSize] # Comment or remove this settings to disable font size switcher.
   # extraSmall = ".8rem"
@@ -174,8 +164,6 @@ rss = "home" # link the RSS button to homepage all the times.
 [pwa]
   [pwa.manifest]
     short_name = "LB"
-
-[contact]
 
 [topAppBar]
   [topAppBar.social]
