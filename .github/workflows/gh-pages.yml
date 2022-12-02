@@ -20,7 +20,7 @@ jobs:
       - name: Setup Hugo
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
@@ -35,7 +35,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: 'latest'
+          hugo-version: "latest"
           extended: true
 
       - name: Build
@@ -48,5 +48,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: publish
-          user_name: 'liubang'
-          user_email: 'it.liubang@gmail.com'
+          user_name: ${{ github.repository_owner }}
+          user_email: "it.liubang@gmail.com"
