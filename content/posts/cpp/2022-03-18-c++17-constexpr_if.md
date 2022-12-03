@@ -3,6 +3,7 @@ title: c++17:constexpr if
 categories: [programming]
 tags: [c++, c++17]
 date: 2022-03-18
+authors: ['liubang']
 ---
 
 constexpr 是 c++11 引入的关键字，用于编译时常量和常量表达式。而 c++17 将这一特性做了增强，引入了 `constexpr if` ，

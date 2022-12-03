@@ -3,6 +3,7 @@ title: 数据结构之hashtable
 categories: [programming]
 tags: [ds, algorithm]
 date: 2017-08-22
+authors: ['liubang']
 ---
 
 ## hashtable

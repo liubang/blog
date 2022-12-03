@@ -1,16 +1,8 @@
 mainSections = ["posts", "blog"]
-
 titleSeparator = "-" # Title separator.
-
 description = "刘邦的博客"
 keywords = "c++,java,storage,kv"
-# images = ["site-feature-image.jpg"]
-
-# metaRobots = "noindex, nofollow" # Default value for Meta Tag "robots"
-# metaRobots = "" # disable Meta Tag "robots"
-
 logo = "images/apple-touch-icon.png" # Logo image. Default to "images/logo.webp".
-# logo = false # Disable Logo
 brand = "HIGHKYCK"
 
 palette = "blue-gray"
@@ -56,7 +48,7 @@ postDate = true # Whether to display the post date in the post meta section.
 
 featuredPostCount = 5 # The number of featured posts shown in sidebar. Turn off by setting it to false.
 recentPostCount = 5 # The number of recent posts shown in sidebar. Turn off by setting it to false.
-relatedPostCount = 5 # The number of related posts. Turn off by setting it to false.
+relatedPostCount = false # The number of related posts. Turn off by setting it to false.
 # categoryCount = 10 # The number of categories shown in sidebar. Turn off by setting it to false.
 # tagCount = 10 # The number of tags shown in sidebar. Turn off by setting it to false.
 # seriesCount = 20 # The number of series shown in sidebar. Turn off by setting it to false.
@@ -110,25 +102,16 @@ rss = "home" # link the RSS button to homepage all the times.
   imageTitleAsCaption = true
   copyright = true # Whether to display copyright section on each post.
 
-[docs]
-  [docs.nav]
-    expand = false # Expand docs navigations.
-
-[archive]
-  basePath = "/archives" # The base path of archive pages.
-  dateFormat = "01-02" # Archive date format. Default to "Jan 2".
-
 [creativeCommons]
-  by = true # Credit must be given to you, the creator.
-  nc = true # Only noncommercial use of your work is permitted.
-  nd = true # No derivatives or adaptations of your work are permitted.
-  sa = true # Adaptations must be shared under the same terms.
+  # by = true # Credit must be given to you, the creator.
+  # nc = true # Only noncommercial use of your work is permitted.
+  # nd = true # No derivatives or adaptations of your work are permitted.
+  # sa = true # Adaptations must be shared under the same terms.
 
 
 [repo]
   url = "https://github.com/liubang/blog"
   branch = "main"
-  subPath = "/"
 
 [utterances]
   repo = "liubang/blog" # Replace with your repository.
@@ -154,12 +137,6 @@ rss = "home" # link the RSS button to homepage all the times.
 [reward]
   alipay = "images/reward/alipay.jpg"
   wechat = "images/reward/wechat.jpg"
-
-#[fontSize] # Comment or remove this settings to disable font size switcher.
-  # extraSmall = ".8rem"
-  # small = ".9rem"
-  # large = "1.1rem"
-  # extraLarge = "1.2rem"
 
 [pwa]
   [pwa.manifest]

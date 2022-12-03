@@ -3,6 +3,7 @@ title: Expression Templates
 categories: [programming]
 tags: [c++, template]
 date: 2022-04-06
+authors: ['liubang']
 ---
 
 ## 什么是 Expression Templates

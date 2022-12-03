@@ -3,6 +3,7 @@ title: 深入理解 enable_shared_from_this
 categories: [programming]
 tags: [c++11, c++14, c++17]
 date: 2022-05-03
+authors: ['liubang']
 ---
 
 ## 关于 shared_ptr

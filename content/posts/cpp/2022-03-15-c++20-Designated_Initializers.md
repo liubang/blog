@@ -3,6 +3,7 @@ title: c++20:Designated Initializers
 categories: [programming]
 tags: [c++, c++20]
 date: 2022-03-15
+authors: ['liubang']
 ---
 
 对于熟悉 c99 的人来说，Designated Initializers 并不算是什么新鲜事物，然而 c++直到 c++20 才正式支持这一特性。

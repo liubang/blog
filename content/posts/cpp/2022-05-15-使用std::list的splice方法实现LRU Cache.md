@@ -3,6 +3,7 @@ title: 使用std::list的splice方法实现LRU Cache
 categories: [programming]
 tags: [c++, c++11]
 date: 2022-05-15
+authors: ['liubang']
 ---
 
 ## std::list splice 简介
