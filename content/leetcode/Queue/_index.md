@@ -1,7 +1,7 @@
 +++
 type = "docs"
 title = "队列"
-navWeight = 91
+navWeight = 98
 +++
 
 ## 基本概念
