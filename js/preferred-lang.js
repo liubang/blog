@@ -1,0 +1,1 @@
+(()=>{var n={fallback:"https://iliubang.cn/en/",homes:{en:"https://iliubang.cn/en/","zh-cn":"https://iliubang.cn/"}};(()=>{let a=navigator.language||navigator.userLanguage;if(a in n.homes){window.location.href=n.homes[a];return}let i=a.split("-");for(let o in n.homes)if(o.indexOf(i[0])===0){window.location.href=n.homes[o];return}window.location.href=n.fallback})();})();
