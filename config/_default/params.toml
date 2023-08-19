@@ -1,7 +1,7 @@
 mainSections = ["posts", "blog"]
 titleSeparator = "-" # Title separator.
 description = "刘邦的博客"
-keywords = "c++,java,storage,kv"
+keywords = "c++,java,go,kv,storage"
 logo = "images/apple-touch-icon.png" # Logo image. Default to "images/logo.webp".
 brand = "HIGHKYCK"
 
