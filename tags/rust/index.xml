@@ -1,1 +1,65 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Rust on liubang's blog</title><link>https://iliubang.cn/tags/rust/</link><description>Recent content in Rust on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/rust/index.xml" rel="self" type="application/rss+xml"/><item><title>Rust和C++: 泛型和特例化</title><link>https://iliubang.cn/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/</link><pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/</guid><description>Ref: https://www.tangramvision.com/blog/c-rust-generics-and-specialization 泛型入门：输入的类型 C++和 Rust 中的泛型都是一种将其他类型作为其定义的一部分的类型。泛型是通过在类型定义中指定占位符的一种方式，然后可以 使</description></item><item><title>Rust和C++: 可变性、移动和所有权</title><link>https://iliubang.cn/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/</link><pubDate>Tue, 01 Nov 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/</guid><description>Ref: https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership C++和 Rust 中的不变性(constness) 值 Rust 和 C++有两个非常相似的概念，即 Rust 中的 mutability/immutability 和 C++中的 constness/non-constness. 在 Rust 中，一个给定的值要么是可变的(m</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Rust on liubang's blog</title><link>https://iliubang.cn/tags/rust/</link><description>Recent content in Rust on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/rust/index.xml" rel="self" type="application/rss+xml"/><item><title>Rust和C++: 泛型和特例化</title><link>https://iliubang.cn/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/</link><pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/</guid><description><![CDATA[<blockquote>
+<p>Ref: <a href="https://www.tangramvision.com/blog/c-rust-generics-and-specialization" target="_blank" rel="noopener noreferrer">https://www.tangramvision.com/blog/c-rust-generics-and-specialization<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
+</blockquote>
+
+<h2 id="泛型入门输入的类型" data-numberify>泛型入门：输入的类型<a class="anchor ms-1" href="#泛型入门输入的类型"></a></h2>
+<p>C++和 Rust 中的泛型都是一种将其他类型作为其定义的一部分的类型。泛型是通过在类型定义中指定占位符的一种方式，然后可以
+使用更具体的类型来替换，例如在 C++中可以这定义一个泛型类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MyArray</span> {
+</span></span><span style="display:flex;"><span>    T<span style="color:#f92672">*</span> raw_array;
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>size_t size;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>对于这个泛型结构而言，<code>MyArray&lt;int&gt;</code>和<code>MyArray&lt;std::string&gt;</code>是不同的类型。我们可以通过指定具体的<code>T</code>类型，来复用<code>MyArray</code>这个泛型结构体。这里的<code>MyArray&lt;T&gt;</code>就像一个“模板”一样。
+泛型不仅仅局限于结构体，我们同样也能写出泛型函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>T timestwo(T number) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> number <span style="color:#f92672">+</span> number;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上面我们定义了一个非常简单的函数，用来将数值加倍。同理，用具体类型实例化的<code>timestwo&lt;int&gt;</code>和<code>timestwo&lt;double&gt;</code>也不是同一个函数。</p>
+<p>而要在 Rust 中实现上面的函数，可能稍微复杂一点：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> std::ops::Add;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">timestwo</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>(number: <span style="color:#a6e22e">T</span>) -&gt; <span style="color:#f92672">&lt;</span>T <span style="color:#66d9ef">as</span> Add<span style="color:#f92672">&gt;</span>::Output
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">where</span>
+</span></span><span style="display:flex;"><span>    T: <span style="color:#a6e22e">Add</span> <span style="color:#f92672">+</span> Copy,
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    number <span style="color:#f92672">+</span> number
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>很显然，上面 Rust 版本和 C++版本的实现相比看上去多了很多额外的语法。其中主要的区别是我们调用了特征边界检查，也就是<code>T: Add + Copy</code>，
+或者用更通俗的话来说，<code>T</code>类型必须实现<code>Add</code>和<code>Copy</code> 特征(trait)。</p>
+
+<h3 id="特征traits" data-numberify>特征(traits)<a class="anchor ms-1" href="#特征traits"></a></h3>
+<p>Rust 中使用<code>trait</code>作为我们在程序中与类型交互的方式。<code>trait</code>是与实现<code>trait</code>的类型相关联的一组属性、函数或者类型。例如
+<code>Add</code> 是一个允许执行添加操作的接口。它表示一个类型具有“添加”到其他类型的特征。其定义大致如下：</p>]]></description></item><item><title>Rust和C++: 可变性、移动和所有权</title><link>https://iliubang.cn/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/</link><pubDate>Tue, 01 Nov 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/</guid><description><![CDATA[<blockquote>
+<p>Ref: <a href="https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership" target="_blank" rel="noopener noreferrer">https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
+</blockquote>
+
+<h2 id="c和-rust-中的不变性constness" data-numberify>C++和 Rust 中的不变性(constness)<a class="anchor ms-1" href="#c和-rust-中的不变性constness"></a></h2>
+
+<h3 id="值" data-numberify>值<a class="anchor ms-1" href="#值"></a></h3>
+<p>Rust 和 C++有两个非常相似的概念，即 Rust 中的 mutability/immutability 和 C++中的 constness/non-constness.
+在 Rust 中，一个给定的值要么是可变的(mutable)，要么是不可变的(immutable)，正如这些限定符名称所代表的含义，可变的值可以被修改，不可变的值不能被修改。
+然而与 C++不同的是，Rust 中不可变的值可以被移动(move)，就像下面的代码实例那样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">foo</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, x)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> x <span style="color:#f92672">=</span> x;
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">*=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">&#34;</span>, x);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在 C++中，给定的值要么是常量(const)，要么是非常量(non-const)。但是 C++中的常量值不能被移动(move)。在 C++中，对一个 const 限定符修饰的值
+进行<code>std::move</code>操作，实际上会触发拷贝构造，这一点在&quot;Effective Modern C++&ldquo;这本书中作者也有提到：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Annotation</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">explicit</span> Annotation(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>string text)
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">:</span> value(std<span style="color:#f92672">::</span>move(text)) <span style="color:#75715e">//here we want to call string(string&amp;&amp;),
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                              <span style="color:#75715e">//but because text is const,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                              <span style="color:#75715e">//the return type of std::move(text) is const std::string&amp;&amp;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                              <span style="color:#75715e">//so we actually called string(const string&amp;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                              <span style="color:#75715e">//it is a bug which is very hard to find out
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string value;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>我们也可以自己写一段程序来验证一下：</p>]]></description></item></channel></rss>

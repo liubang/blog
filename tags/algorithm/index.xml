@@ -1,1 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Algorithm on liubang's blog</title><link>https://iliubang.cn/tags/algorithm/</link><description>Recent content in Algorithm on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 22 Aug 2017 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/algorithm/index.xml" rel="self" type="application/rss+xml"/><item><title>数据结构之hashtable</title><link>https://iliubang.cn/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/</link><pubDate>Tue, 22 Aug 2017 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/</guid><description>hashtable 哈希表又叫散列表，是实现字典操作的中有效数据结构。通常来说，一个 hash table 包含了一个数据，其中的数据通过 index 来访问。 而 hash table 的基本原理就是通过 hash 函数</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Algorithm on liubang's blog</title><link>https://iliubang.cn/tags/algorithm/</link><description>Recent content in Algorithm on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 22 Aug 2017 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/algorithm/index.xml" rel="self" type="application/rss+xml"/><item><title>数据结构之hashtable</title><link>https://iliubang.cn/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/</link><pubDate>Tue, 22 Aug 2017 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/</guid><description><![CDATA[<h2 id="hashtable" data-numberify>hashtable<a class="anchor ms-1" href="#hashtable"></a></h2>
+<p>哈希表又叫散列表，是实现字典操作的中有效数据结构。通常来说，一个 hash table 包含了一个数据，其中的数据通过 index 来访问。
+而 hash table 的基本原理就是通过 hash 函数建立起所有可能的 index 与其对应的位置的联系。一个 hash 函数接收一个 key，返回其 hash code，
+key 的类型是可变的，而 hash code 是一个整型。</p>
+<p>由于计算一个 hash 值和通过 index 访问一个数据都是常量级的时间复杂度，所以我们可以通过这中特性实现常量级时间复杂度的查找。
+如果一个 hash 函数能够保证不会有两个不同的 key 生成相同的 hash 值，那么这样的 hash table 就被称为是直接定址。然而，这只是一想法而已，
+实际上这种 hash table 在现实中却是不常用的。</p>
+
+<h3 id="chained-hash-table" data-numberify>Chained Hash Table<a class="anchor ms-1" href="#chained-hash-table"></a></h3>
+<p>链式 hash 表从本质上来讲，就是一个存放了一组链表的数组。每个链表可以看做是一个槽，我们把元素通过 hash 函数找到一个 hash 值，然后把元素的值
+放入到数组中与改 hash 值对应的槽中。</p>
+<p><picture><img class="img-fluid mx-auto d-block" alt="chained hashtable" src="https://iliubang.cn/images/2017-08-23/chained_hashtable.png#center?v=7fdc4e1b5785be32c88d453deb32ca63" loading="lazy" width="320" height="267" />
+</picture>
+
+</p>
+
+<h4 id="collision-resolution" data-numberify>Collision Resolution<a class="anchor ms-1" href="#collision-resolution"></a></h4>
+<p>当有两个 key 被 hash 到了同一个位置，就会产生冲突。链式 hash 表有一种简单的冲突解决办法：当冲突产生时，元素被简单的放在同一个槽里。这样做可能带来的问题就是，
+如果在同一个位置上出现很多冲突，这个槽就会变得越来越长，这样当我们访问这个槽中的元素的时候，所花的时间也就会越来越长。</p>]]></description></item></channel></rss>

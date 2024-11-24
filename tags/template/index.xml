@@ -1,1 +1,107 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Template on liubang's blog</title><link>https://iliubang.cn/tags/template/</link><description>Recent content in Template on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Wed, 06 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/template/index.xml" rel="self" type="application/rss+xml"/><item><title>Expression Templates</title><link>https://iliubang.cn/posts/cpp/2022-04-06-expression-templates/</link><pubDate>Wed, 06 Apr 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-04-06-expression-templates/</guid><description>什么是 Expression Templates Expression Templates 是一种 C++ 模板元编程技术，它通过在编译时构建按需执行的计算表达式，从而生成高效的代码。简单来说，通过 Expression Templates，我们可</description></item><item><title>c++元编程之遍历tuple</title><link>https://iliubang.cn/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</link><pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</guid><description>对于一个标准的 c++容器来说，我们可以很容易在运行时使用迭代器和 range-based for loop 来遍历其中的每一个元素。但是对于std::tuple，却不能像普通的容</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Template on liubang's blog</title><link>https://iliubang.cn/tags/template/</link><description>Recent content in Template on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Wed, 06 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/template/index.xml" rel="self" type="application/rss+xml"/><item><title>Expression Templates</title><link>https://iliubang.cn/posts/cpp/2022-04-06-expression-templates/</link><pubDate>Wed, 06 Apr 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-04-06-expression-templates/</guid><description><![CDATA[<h2 id="什么是-expression-templates" data-numberify>什么是 Expression Templates<a class="anchor ms-1" href="#什么是-expression-templates"></a></h2>
+<p>Expression Templates 是一种 C++ 模板元编程技术，它通过在编译时构建按需执行的计算表达式，从而生成高效的代码。简单来说，通过 Expression Templates，我们可以实现惰性求值和消除因为中间结果而创建的临时变量。</p>
+
+<h2 id="一个常规示例" data-numberify>一个常规示例<a class="anchor ms-1" href="#一个常规示例"></a></h2>
+<p>我们构造了一个<code>MyVector</code>类，并且重载了<code>MyVector</code>的<code>+</code>和<code>*</code>操作符，实现两个<code>MyVector</code>中相同下标元素的<code>+</code>和<code>*</code>操作。
+对于这样的需求我们很容易写出形如下面代码的一个简单的实现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;cassert&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyVector</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    MyVector(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>size_t n)
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:</span> vec_(n)
+</span></span><span style="display:flex;"><span>    {}
+</span></span><span style="display:flex;"><span>    MyVector(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>size_t n, <span style="color:#66d9ef">const</span> T initvalues)
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:</span> vec_(n, initvalues)
+</span></span><span style="display:flex;"><span>    {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>size_t size() <span style="color:#66d9ef">const</span> { <span style="color:#66d9ef">return</span> vec_.size(); }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    T <span style="color:#66d9ef">operator</span>[](<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>size_t i) <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        assert(i <span style="color:#f92672">&lt;</span> size());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> vec_[i];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    T<span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">operator</span>[](<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>size_t i)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        assert(i <span style="color:#f92672">&lt;</span> size());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> vec_[i];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> vec_;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">+</span>(<span style="color:#66d9ef">const</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&amp;</span> a, <span style="color:#66d9ef">const</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&amp;</span> b)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    assert(a.size() <span style="color:#f92672">==</span> b.size());
+</span></span><span style="display:flex;"><span>    MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> result(a.size());
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (std<span style="color:#f92672">::</span>size_t i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> a.size(); <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>        result[i] <span style="color:#f92672">=</span> a[i] <span style="color:#f92672">+</span> b[i];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">*</span>(<span style="color:#66d9ef">const</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&amp;</span> a, <span style="color:#66d9ef">const</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&amp;</span> b)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    assert(a.size() <span style="color:#f92672">==</span> b.size());
+</span></span><span style="display:flex;"><span>    MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> result(a.size());
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (std<span style="color:#f92672">::</span>size_t i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> a.size(); <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>        result[i] <span style="color:#f92672">=</span> a[i] <span style="color:#f92672">*</span> b[i];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> result;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> std<span style="color:#f92672">::</span>ostream<span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">&lt;&lt;</span>(std<span style="color:#f92672">::</span>ostream<span style="color:#f92672">&amp;</span> os, <span style="color:#66d9ef">const</span> MyVector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&amp;</span> vec)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#39;\n&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (std<span style="color:#f92672">::</span>size_t i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> vec.size(); <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>        os <span style="color:#f92672">&lt;&lt;</span> vec[i] <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#39; &#39;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    os <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#39;\n&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> os;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> argv[])
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    MyVector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">double</span><span style="color:#f92672">&gt;</span> x(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">5.4</span>);
+</span></span><span style="display:flex;"><span>    MyVector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">double</span><span style="color:#f92672">&gt;</span> y(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">10.3</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">auto</span>             ret <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> x <span style="color:#f92672">+</span> y <span style="color:#f92672">*</span> y;
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> ret <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这个实现平淡无奇，相信每个人都能随手写出来。在<a href="https://godbolt.org/z/zTenMfe6G" target="_blank" rel="noopener noreferrer">godbolt<i class="fas fa-external-link-square-alt ms-1"></i></a>上编译成汇编来分析：</p>]]></description></item><item><title>c++元编程之遍历tuple</title><link>https://iliubang.cn/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</link><pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</guid><description><![CDATA[<p>对于一个标准的 c++容器来说，我们可以很容易在运行时使用迭代器和 range-based for
+loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，却不能像普通的容器那样去遍历它。</p>
+
+<h2 id="stdtuple-简介" data-numberify>std::tuple 简介<a class="anchor ms-1" href="#stdtuple-简介"></a></h2>
+<p><code>std::tuple</code>是一个具有固定大小，包含不同类型值的集和。与之相似的是<code>std::pair</code>，只不过<code>std::pair</code>只能容纳两个元素，
+而<code>std::tuple</code>可以容纳许多元素：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>std<span style="color:#f92672">::</span>tuple<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">double</span>, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*&gt;</span> tup {<span style="color:#ae81ff">42</span>, <span style="color:#ae81ff">10.5</span>, <span style="color:#e6db74">&#34;hello&#34;</span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// or with CTAD(class template argument deduction), C++17:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>std<span style="color:#f92672">::</span>tuple deducedTup {<span style="color:#ae81ff">42</span>, <span style="color:#ae81ff">10.5</span>, <span style="color:#e6db74">&#34;hello&#34;</span>}; <span style="color:#75715e">// 自动推导类型
+</span></span></span></code></pre></div><p>访问<code>std::pair</code>中的元素只需要访问<code>.first</code>和<code>.second</code>成员即可:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>std<span style="color:#f92672">::</span>pair p <span style="color:#f92672">=</span> {<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">10.5</span>};
+</span></span><span style="display:flex;"><span>p.first <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span>;
+</span></span></code></pre></div><p>然而<code>std::tuple</code>并没有类似于<code>.first</code>
+<code>.second</code>的成员，标准库中我们只能通过<code>std::get</code>来直接访问其中的元素:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>std<span style="color:#f92672">::</span>tuple tp {<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;hello&#34;</span>, <span style="color:#e6db74">&#34;world&#34;</span>, <span style="color:#ae81ff">10.5</span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// by index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>std<span style="color:#f92672">::</span>get<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">0</span><span style="color:#f92672">&gt;</span>(tp) <span style="color:#f92672">+=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>std<span style="color:#f92672">::</span>get<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&gt;</span>(tp) <span style="color:#f92672">*=</span> <span style="color:#ae81ff">20</span>;
+</span></span><span style="display:flex;"><span>std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>get<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;</span>(tp) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#39;\n&#39;</span>; <span style="color:#75715e">// hello
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>get<span style="color:#f92672">&lt;</span><span style="color:#ae81ff">3</span><span style="color:#f92672">&gt;</span>(tp) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#39;\n&#39;</span>; <span style="color:#75715e">// world
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// by type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>get<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">double</span><span style="color:#f92672">&gt;</span>(tp) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#39;\n&#39;</span>; <span style="color:#75715e">// 10.5
+</span></span></span></code></pre></div>
+<h2 id="如何遍历-tuple" data-numberify>如何遍历 tuple<a class="anchor ms-1" href="#如何遍历-tuple"></a></h2>
+<p>对 tuple 有了初步的了解，也知道了如何去获取 tuple 中的元素，那么接下来我们就来一步步构造对 tuple 遍历的方法。</p>
+
+<h3 id="准备工作" data-numberify>准备工作<a class="anchor ms-1" href="#准备工作"></a></h3>
+<p>首先我们来编写下面这样一段代码，通过向模板中传递一系列想要访问的元素下标，来完成对<code>tuple</code>的遍历：</p>]]></description></item></channel></rss>

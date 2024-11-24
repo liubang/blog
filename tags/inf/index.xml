@@ -1,1 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Inf on liubang's blog</title><link>https://iliubang.cn/tags/inf/</link><description>Recent content in Inf on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Mon, 25 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/inf/index.xml" rel="self" type="application/rss+xml"/><item><title>分布式协议</title><link>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</guid><description>拜占庭将军问题 简介 在可能存在叛军的情况下，采用合适的通讯协议，让多个将军达成共识，执行统一的作战计划 二忠一叛难题 它是分布式领域最复杂的容错模</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Inf on liubang's blog</title><link>https://iliubang.cn/tags/inf/</link><description>Recent content in Inf on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Mon, 25 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/inf/index.xml" rel="self" type="application/rss+xml"/><item><title>分布式协议</title><link>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</guid><description><![CDATA[<h2 id="拜占庭将军问题" data-numberify>拜占庭将军问题<a class="anchor ms-1" href="#拜占庭将军问题"></a></h2>
+
+<h3 id="简介" data-numberify>简介<a class="anchor ms-1" href="#简介"></a></h3>
+<ul>
+<li>在可能存在叛军的情况下，采用合适的通讯协议，让多个将军达成共识，执行统一的作战计划</li>
+<li>二忠一叛难题</li>
+<li>它是分布式领域最复杂的容错模型</li>
+<li>莱斯利·兰伯特（Leslie Lamport）<a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Byzantine-Generals-Problem.pdf" target="_blank" rel="noopener noreferrer">The Byzantine Generals Problem<i class="fas fa-external-link-square-alt ms-1"></i></a></li>
+</ul>
+
+<h3 id="二忠一叛难题" data-numberify>二忠一叛难题<a class="anchor ms-1" href="#二忠一叛难题"></a></h3>
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt1.png#center?v=7fdc4e1b5785be32c88d453deb32ca63" loading="lazy" width="1035" height="575" />
+</picture>
+
+</p>
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt2.png#center?v=7fdc4e1b5785be32c88d453deb32ca63" loading="lazy" width="1100" height="569" />
+</picture>
+
+</p>
+<ul>
+<li>总共有三个将军，其中一个作为指挥官</li>
+<li>通过信使相互传递作战指令，进攻或者撤退</li>
+<li>所有忠诚的将军必须执行统一的作战计划，忠诚的将军必须执行忠诚的指挥官发布的指令</li>
+<li>假如 LIEUTENANT2 叛变，LIEUTENANT1 收到的作战指令就是“进攻，撤退”</li>
+<li>假如 COMMANDER 叛变，LIEUTENANT1 和 LIEUTENANT2 收到的作战指令都是“进攻，撤退”</li>
+</ul>
+
+<h3 id="口信消息型解法" data-numberify>口信消息型解法<a class="anchor ms-1" href="#口信消息型解法"></a></h3>
+<ul>
+<li>叛变人数为 m 需要已知</li>
+<li>则所有参与者的人数至少为 3m+1</li>
+<li>第一轮由指挥官发送作战指令</li>
+<li>第二轮由各位将军相互发送指令</li>
+<li>收到指令的将军按照少数服从多数的原则执行指令</li>
+<li>按照这个公式，前面的例子叛军为 1 人的情况，则需要 1 个指挥官和 3 个将军</li>
+</ul>
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt3.png#center?v=7fdc4e1b5785be32c88d453deb32ca63" loading="lazy" width="1181" height="529" />
+</picture>
+
+</p>
+<p>假如 LIEUTENANT3 叛变了，那么首先指挥官向各位将军发送“进攻”的指令，由于 3 号将军叛变了，所以最终 1 号将军收到的指令是 2 个进攻，1 个撤退，2 号将军同样收到 2 个进攻，1 个撤退，这样忠诚的将军将会执行一致的指令</p>]]></description></item></channel></rss>

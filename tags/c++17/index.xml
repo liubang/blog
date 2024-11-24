@@ -1,1 +1,160 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>C++17 on liubang's blog</title><link>https://iliubang.cn/tags/c++17/</link><description>Recent content in C++17 on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 03 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/c++17/index.xml" rel="self" type="application/rss+xml"/><item><title>深入理解 enable_shared_from_this</title><link>https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/</link><pubDate>Tue, 03 May 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/</guid><description>关于 shared_ptr shared_ptr是一种共享所有权的智能指针，它允许我们安全地访问和管理对象的生命周期。shared_ptr的多个实例通过共享控制块</description></item><item><title>c++ 中 unique_ptr 的一些使用技巧</title><link>https://iliubang.cn/posts/cpp/2022-04-20-c++%E4%B8%ADunique_ptr%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</link><pubDate>Wed, 20 Apr 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-04-20-c++%E4%B8%ADunique_ptr%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</guid><description>前言 c++11 对智能指针做了很大的优化，废弃了 c++98 中的auto_ptr，引入了三种新的智能指针：unique_ptr，shared_ptr，weak_</description></item><item><title>c++17:constexpr if</title><link>https://iliubang.cn/posts/cpp/2022-03-18-c++17-constexpr_if/</link><pubDate>Fri, 18 Mar 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-03-18-c++17-constexpr_if/</guid><description>constexpr 是 c++11 引入的关键字，用于编译时常量和常量表达式。而 c++17 将这一特性做了增强，引入了 constexpr if ， 使得编译器在编译时(compile time)能够做分支判</description></item><item><title>c++17:string_view</title><link>https://iliubang.cn/posts/cpp/2022-02-14-c++17%E4%B9%8Bstring_view/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-02-14-c++17%E4%B9%8Bstring_view/</guid><description>string_view 简介 std::string_view是 c++17 中新增的一种类型。其核心理念是，能够让我们在传统的 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>C++17 on liubang's blog</title><link>https://iliubang.cn/tags/c++17/</link><description>Recent content in C++17 on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 03 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/c++17/index.xml" rel="self" type="application/rss+xml"/><item><title>深入理解 enable_shared_from_this</title><link>https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/</link><pubDate>Tue, 03 May 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-05-03-%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3enable_shared_from_this/</guid><description><![CDATA[<h2 id="关于-shared_ptr" data-numberify>关于 shared_ptr<a class="anchor ms-1" href="#关于-shared_ptr"></a></h2>
+<p><code>shared_ptr</code>是一种共享所有权的智能指针，它允许我们安全地访问和管理对象的生命周期。<code>shared_ptr</code>的多个实例通过共享控制块结构来控制对象的生命周期。
+控制块维护了引用计数(reference count)，弱引用计数(weak count)和其他必要的信息，通过这些信息，控制块能够确定一个对象在内存中是否可以被安全销毁。</p>
+<p>当使用原始指针构造或者初始化一个<code>shared_ptr</code>时，将会创建一个新的控制块。为了确保一个对象仅由一个共享的控制块管理，必须通过复制已存在的<code>shared_ptr</code>对象来创建一个新的<code>shared_ptr</code>实例，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">good</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> p{<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>(<span style="color:#ae81ff">10</span>)}; <span style="color:#75715e">// p is int*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// create additional shared_ptr from an existing shared_ptr
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> sp1{p};
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// sp2 shares control block with sp1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">auto</span> sp2{sp1};
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>而使用指向已由<code>shared_ptr</code>管理的对象的原始指针来初始化另一个<code>shared_ptr</code>时，会创建一个新的控制块来管理该对象，
+这样同一个对象就同时被多个控制块管理，这会导致 undefined behavior，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bad</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> p{<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>(<span style="color:#ae81ff">10</span>);};
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> sp1{p};
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> sp2{p}; <span style="color:#75715e">// Undefined behavior!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>通过原始指针的方式实例化<code>shared_ptr</code>很容易产生同一个原始指针实例化多个<code>shared_ptr</code>这样的编码疏忽，从而造成严重后果。
+因此尽量使用<code>std::make_shared</code>或者<code>std::allocate_shared</code>来降低出错的可能性。毕竟除非有人刻意为之，否则我们似乎很难遇到或写出这样的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> sp1 <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>make_shared<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> sp2{sp1.get()};
+</span></span></code></pre></div><p>但是在某些情况下，<code>shared_ptr</code>管理的对象需要为自己获取<code>shared_ptr</code>，我会在后面的篇幅中重点讲解这种情况。
+但是首先需要说明的是，类似于下面这样尝试从自身指针创建<code>shared_ptr</code>的方式是行不通的：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Egg</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span>Egg<span style="color:#f92672">&gt;</span> get_self_ptr()
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span>Egg<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">spam</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> sp1 <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>make_shared<span style="color:#f92672">&lt;</span>Egg<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> sp2 <span style="color:#f92672">=</span> sp1<span style="color:#f92672">-&gt;</span>get_self_ptr(); <span style="color:#75715e">// undefined behavior
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// sp1 and sp2 have two different control blocks managing same Egg
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>为了解决这个问题，我们就需要用到<code>std::enable_shared_from_this</code>。<code>public</code> 继承<code>std::enable_shared_from_this</code>
+的类可以通过调用<code>shared_from_this()</code>方法来获取自身的<code>shared_ptr</code>，下面是一个简单的例子：</p>]]></description></item><item><title>c++ 中 unique_ptr 的一些使用技巧</title><link>https://iliubang.cn/posts/cpp/2022-04-20-c++%E4%B8%ADunique_ptr%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</link><pubDate>Wed, 20 Apr 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-04-20-c++%E4%B8%ADunique_ptr%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/</guid><description><![CDATA[<h2 id="前言" data-numberify>前言<a class="anchor ms-1" href="#前言"></a></h2>
+<p>c++11 对智能指针做了很大的优化，废弃了 c++98 中的<code>auto_ptr</code>，引入了三种新的智能指针：<code>unique_ptr</code>，<code>shared_ptr</code>，<code>weak_ptr</code>。
+本文将针对<code>unique_ptr</code>的一些使用技巧做一些整理和归纳。在正式开始之前，我们首先来回顾一下<code>unique_ptr</code>的特点：一个<code>unique_ptr</code>对象内包含一个原始指针，该<code>unique_ptr</code>对象负责管理原始指针的生命周期。
+一个<code>unique_ptr</code>对象始终是其关联的原始指针的唯一拥有者。</p>
+<p>在了解了<code>unique_ptr</code>的特点之后，我们来具体看看日常开发中<code>unique_ptr</code>的一些使用场景和技巧。</p>
+
+<h2 id="一些场景" data-numberify>一些场景<a class="anchor ms-1" href="#一些场景"></a></h2>
+
+<h3 id="本地对象指针" data-numberify>本地对象指针<a class="anchor ms-1" href="#本地对象指针"></a></h3>
+<p>在开发中，我们经常会遇到或者写出类似于下面这样的逻辑：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">somefunc</span>() {
+</span></span><span style="display:flex;"><span>    Object obj <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#75715e">/* event 1 */</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">delete</span> obj;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#75715e">/* event 2 */</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">delete</span> obj;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">delete</span> obj;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>对于这样的代码，写起来很麻烦，看上去也及其丑陋。以前我们常用的一种优化手段就是使用<code>goto</code>，而在 c++11 之后，我们有了一种更加优雅简洁的方式，来对上面的代码进行优化，那就是使用<code>unique_ptr</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">somefunc</span>() {
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>unique_ptr<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span> obj <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>make_unique<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span>(); <span style="color:#75715e">// need c++14
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#75715e">/* event 1 */</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#75715e">/* event 2 */</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>只需要将本地指针对象用<code>unique_ptr</code>包装起来，后面无需关心指针释放的问题，整体逻辑看上去更加简洁。</p>]]></description></item><item><title>c++17:constexpr if</title><link>https://iliubang.cn/posts/cpp/2022-03-18-c++17-constexpr_if/</link><pubDate>Fri, 18 Mar 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-03-18-c++17-constexpr_if/</guid><description><![CDATA[<p>constexpr 是 c++11 引入的关键字，用于编译时常量和常量表达式。而 c++17 将这一特性做了增强，引入了 <code>constexpr if</code> ，
+使得编译器在编译时(compile time)能够做分支判断，从而有条件的编译代码。</p>
+<p>下面可以通过一个简单的例子来看看<code>constexpr if</code>的用法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;type_traits&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">auto</span> getValue(T t)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">constexpr</span> (std<span style="color:#f92672">::</span>is_pointer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;::</span>value) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>t;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> t;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> argv[])
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span>  a <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> b <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>a;
+</span></span><span style="display:flex;"><span>    getValue(a);
+</span></span><span style="display:flex;"><span>    getValue(b);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>其实和普通的条件判断区别不大，只不过<code>constexpr if</code>中的条件是常量表达式，可以在编译时确定条件表达式的结果，从而选择编译对应的分支代码。
+我们可以将上述代码编译成汇编来进一步分析：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> getValue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">int</span>)<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        push    rbp
+</span></span><span style="display:flex;"><span>        mov     rbp, rsp
+</span></span><span style="display:flex;"><span>        mov     DWORD PTR [rbp<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>], edi
+</span></span><span style="display:flex;"><span>        mov     eax, DWORD PTR [rbp<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>]
+</span></span><span style="display:flex;"><span>        pop     rbp
+</span></span><span style="display:flex;"><span>        ret
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> getValue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">*&gt;</span>(<span style="color:#66d9ef">int</span><span style="color:#f92672">*</span>)<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        push    rbp
+</span></span><span style="display:flex;"><span>        mov     rbp, rsp
+</span></span><span style="display:flex;"><span>        mov     QWORD PTR [rbp<span style="color:#f92672">-</span><span style="color:#ae81ff">8</span>], rdi
+</span></span><span style="display:flex;"><span>        mov     rax, QWORD PTR [rbp<span style="color:#f92672">-</span><span style="color:#ae81ff">8</span>]
+</span></span><span style="display:flex;"><span>        mov     eax, DWORD PTR [rax]
+</span></span><span style="display:flex;"><span>        pop     rbp
+</span></span><span style="display:flex;"><span>        ret
+</span></span><span style="display:flex;"><span>......
+</span></span></code></pre></div><p>这里可以看到，生成的<code>getValue&lt;int&gt;</code>和<code>getValue&lt;int*&gt;</code>两个版本的函数分别保留了对应类型的分支逻辑，而没有了条件判断。</p>]]></description></item><item><title>c++17:string_view</title><link>https://iliubang.cn/posts/cpp/2022-02-14-c++17%E4%B9%8Bstring_view/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2022-02-14-c++17%E4%B9%8Bstring_view/</guid><description><![CDATA[<h2 id="string_view-简介" data-numberify>string_view 简介<a class="anchor ms-1" href="#string_view-简介"></a></h2>
+<p><code>std::string_view</code>是 c++17 中新增的一种类型。其核心理念是，能够让我们在传统的 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点。
+在 C++17 标准之前，我们通常只能在粗糙的不严谨的模板实现和相对严谨但是有着冗长约束的模板之间做出选择。举个简单的例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">// c++03 style
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Widget</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string name_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> setName(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> new_name);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setName</span>(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>string<span style="color:#f92672">&amp;</span> new_name);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 不正确的欠约束的模板
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Widget</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string name_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> setName(T<span style="color:#f92672">&amp;&amp;</span> new_name);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 正确的但是约束但滑稽冗长的模板
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Widget</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string name_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span>, <span style="color:#66d9ef">class</span> <span style="color:#960050;background-color:#1e0010">= </span><span style="color:#a6e22e">decltype</span>(std<span style="color:#f92672">::</span>declval<span style="color:#f92672">&lt;</span>std<span style="color:#f92672">::</span>string<span style="color:#f92672">&amp;&gt;</span>() <span style="color:#f92672">=</span> std<span style="color:#f92672">::</span>declval<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&amp;&amp;&gt;</span>()) <span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#66d9ef">void</span> setName(T<span style="color:#f92672">&amp;&amp;</span> new_name);
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>而有了 <code>string_view</code> 之后，以上代码就可以简化成如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Widget</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>string name_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> setName(std<span style="color:#f92672">::</span>string_view name) { name_ <span style="color:#f92672">=</span> name; }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><code>string_view</code> 在替代<code>const std::string&amp;</code>参数上取得了巨大的成功，但是有人坚持尝试在任何地方
+使用<code>std::string_view</code>来替代<code>const std::string&amp;</code>，这是不对的，例如下面的例子：</p>]]></description></item></channel></rss>

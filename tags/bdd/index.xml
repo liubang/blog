@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>BDD on liubang's blog</title><link>https://iliubang.cn/tags/bdd/</link><description>Recent content in BDD on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Fri, 15 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/bdd/index.xml" rel="self" type="application/rss+xml"/><item><title>Spring Boot With BDD</title><link>https://iliubang.cn/posts/java/2019-03-15-spring_boot_with_bdd/</link><pubDate>Fri, 15 Mar 2019 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/java/2019-03-15-spring_boot_with_bdd/</guid><description><![CDATA[<h2 id="什么是-bdd" data-numberify>什么是 BDD<a class="anchor ms-1" href="#什么是-bdd"></a></h2>
+<p>BDD(Behavior Driven Development)，行为驱动开发，是一种敏捷软件开发的技术，它鼓励软件项目中的开发者、QA 和非技术人员或商业参与者之间的协作。</p>
+<p>BDD 的重点是通过与利益相关者的讨论取得对预期的软件行为的清醒认识。它通过用自然语言书写非程序员可读的测试用例扩展了测试驱动开发方法。行为驱动开发人员使用混合了领域中统一的语言的母语语言来描述他们的代码的目的。这让开发者得以把精力集中在代码应该怎么写，而不是技术细节上，而且也最大程度的减少了将代码编写者的技术语言与商业客户、用户、利益相关者、项目管理者等的领域语言之间来回翻译的代价。</p>
+
+<h2 id="具体怎么操作" data-numberify>具体怎么操作<a class="anchor ms-1" href="#具体怎么操作"></a></h2>
+<p>结合我们项目开发使用的 spring boot 2.x，下面我们来具体说明如何在实际项目中使用 BDD。</p>
+
+<h3 id="依赖的包" data-numberify>依赖的包<a class="anchor ms-1" href="#依赖的包"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;cucumber.version&gt;</span>4.2.5<span style="color:#f92672">&lt;/cucumber.version&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>io.cucumber<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>cucumber-junit<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>${cucumber.version}<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;scope&gt;</span>test<span style="color:#f92672">&lt;/scope&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>io.cucumber<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>cucumber-java<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>${cucumber.version}<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;scope&gt;</span>test<span style="color:#f92672">&lt;/scope&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>io.cucumber<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>cucumber-spring<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>${cucumber.version}<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;scope&gt;</span>test<span style="color:#f92672">&lt;/scope&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div>
+<h3 id="定义启动文件" data-numberify>定义启动文件<a class="anchor ms-1" href="#定义启动文件"></a></h3>
+<p>BDD 其实也是依赖 junit，然后调用<code>Cucumber</code>的 Runner 来运行相应的测试。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.weibo.ad.bp.st.ryujo.web.test;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> cucumber.api.CucumberOptions;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> cucumber.api.junit.Cucumber;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.junit.runner.RunWith;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@RunWith</span>(Cucumber.<span style="color:#a6e22e">class</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@CucumberOptions</span>(features <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;classpath:features&#34;</span>,
+</span></span><span style="display:flex;"><span>        tags <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;not @ignored&#34;</span>, <span style="color:#e6db74">&#34;@base&#34;</span>},
+</span></span><span style="display:flex;"><span>        plugin <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;pretty&#34;</span>, <span style="color:#e6db74">&#34;html:target/cucumber&#34;</span>, <span style="color:#e6db74">&#34;junit:target/junit-report.xml&#34;</span>},
+</span></span><span style="display:flex;"><span>        glue <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;classpath:com.weibo.ad.bp.st.ryujo.web.test.step&#34;</span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RunCucumberTest</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><code>@CucumberOptions</code>中的 features，用于指定我们项目中要运行的 feature 的目录</li>
+<li><code>@CucumberOptions</code>中的 format，用于指定我们项目中要运行时生成的报告，并指定之后可以在 target 目录中找到对应的测试报告</li>
+<li><code>@CucumberOptions</code>中的 glue，用于指定项目运行时查找实现 step 定义文件的目录</li>
+<li><code>@CucumberOptions</code>中的 tags,用来决定想要 Cucumber 执行哪个特定标签（以及场景），标签以“@”开头，如果是排除某个特定标签，用<code>&quot;not @ignored&quot;</code></li>
+</ul>
+
+<h3 id="定义-feature" data-numberify>定义 feature<a class="anchor ms-1" href="#定义-feature"></a></h3>
+<p>在项目模块的<code>test/resources/features</code>目录下新建一个<code>get_mid_info.feature</code> 文件</p>]]></description></item></channel></rss>

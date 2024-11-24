@@ -1,1 +1,18 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Storage on liubang's blog</title><link>https://iliubang.cn/tags/storage/</link><description>Recent content in Storage on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 12 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/storage/index.xml" rel="self" type="application/rss+xml"/><item><title>LevelDB 源码阅读之 Compaction</title><link>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</link><pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</guid><description>1. 概览 要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为： 数据先写入到 WAL 日志中，做持久化 然后数据同步到mut</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Storage on liubang's blog</title><link>https://iliubang.cn/tags/storage/</link><description>Recent content in Storage on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 12 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/storage/index.xml" rel="self" type="application/rss+xml"/><item><title>LevelDB 源码阅读之 Compaction</title><link>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</link><pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</guid><description><![CDATA[<h2 id="1-概览" data-numberify>1. 概览<a class="anchor ms-1" href="#1-概览"></a></h2>
+<p>要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为：</p>
+<ol>
+<li>数据先写入到 WAL 日志中，做持久化</li>
+<li>然后数据同步到<code>mutable memtable</code>中</li>
+<li>当<code>mutable memtable</code>大小达到<code>Options.write_buffer_size</code>设置的大小时，就会变成<code>immutable memtable</code>，并且创建一个新的<code>mutable memtable</code></li>
+<li>后台的 Compaction 线程会把<code>immutable memtable</code>dump 成 sstable 文件，并设置于 Level 0 层</li>
+<li>当 Level i 达到一定条件后，就会和 Level i + 1 层的 sstable 进行合并，从而触发 Compaction 过程，并在 Level
+n + 1 层生成一个新的 sstable 文件</li>
+</ol>
+
+<h2 id="2-compaction-分类" data-numberify>2. Compaction 分类<a class="anchor ms-1" href="#2-compaction-分类"></a></h2>
+<p>在 LevelDB 中，Compaction 大体上可以分为两类，分别是：</p>
+<ul>
+<li><code>immutable memtable compaction</code>，也叫做<strong>minor compaction</strong>，指的是将<code>immutable memtable</code>dump 到 sstable 文件的过程</li>
+<li><code>sstable compaction</code>，也叫做<strong>major compaction</strong>，指的是 sstable 文件之间的合并过程</li>
+</ul>
+<p>而对于<code>sstable compaction</code>又可以细分为三种：</p>]]></description></item></channel></rss>

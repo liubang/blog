@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Go on liubang's blog</title><link>https://iliubang.cn/categories/go/</link><description>Recent content in Go on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/categories/go/index.xml" rel="self" type="application/rss+xml"/><item><title>基于公司私有gitlab的go module实践</title><link>https://iliubang.cn/posts/go/2019-10-17-%E5%9F%BA%E4%BA%8E%E5%85%AC%E5%8F%B8%E7%A7%81%E6%9C%89gitlab%E7%9A%84go-module%E5%AE%9E%E8%B7%B5/</link><pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/go/2019-10-17-%E5%9F%BA%E4%BA%8E%E5%85%AC%E5%8F%B8%E7%A7%81%E6%9C%89gitlab%E7%9A%84go-module%E5%AE%9E%E8%B7%B5/</guid><description><![CDATA[<h2 id="背景" data-numberify>背景<a class="anchor ms-1" href="#背景"></a></h2>
+<p>我们 laser 存储为了更好的跟引擎对接，适应其他团队的技术生态，决定开发一套 golang 的公共库来给大家使用。于是我们在公司私有的 gitlab 上新建了一个项目:git.yourcomp.com/ad/ads_core/adgo，并且我们想使用单一的 codebase 来管理所有的公共 library.</p>
+<p>而且，为了更好的管理模块，我们统一使用了 go mod。</p>
+<p>按照平时我们在 github 上拉取 go library 的惯例，我本以为直接使用<code>go get git.yourcomp.com/ad/ads_core/adgo/xxx</code>就能直接拉取到相应的模块了，然而在开发完功能测试的时候却发现，事实并不是想象中那样。</p>
+
+<h2 id="遇到的问题和解决方案" data-numberify>遇到的问题和解决方案<a class="anchor ms-1" href="#遇到的问题和解决方案"></a></h2>
+
+<h3 id="1-仓库问题" data-numberify>1. 仓库问题<a class="anchor ms-1" href="#1-仓库问题"></a></h3>
+<p>执行<code>go get</code>后，实际上会请求&quot;https://git.yourcomp.com/ad/ads_core/adgo?go-get=1&quot;这个地址，如果使用<code>-insecure</code>选项，则会请求&quot;http://git.yourcomp.com/ad/ads_core/adgo?go-get=1&quot;，正常情况下回返回meta tag：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;go-import&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;git.yourcomp.com/ad/ads_core git http://git.yourcomp.com/ad/ads_core.git&#34;</span>
+</span></span><span style="display:flex;"><span>    /&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><p>这是 go remote import 的协议，meta tag 的格式一般为</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;go-import&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;import-prefix vcs repo-root&#34;</span> /&gt;
+</span></span></code></pre></div><p>由于 gitlab 的版本问题，如果使用了 subgroup，则不能正确返回 meta tag。也就是说，我们使用的 gitlab 版本只支持一层 namespace 下建的项目。而&quot;ad/ads_core/adgo&quot;就是两层 namespace，所以 meta tag 中返回的 repo 地址是&quot;http://git.yourcomp.com/ad/ads_core.git&quot;显然是错的。于是我们又对代码库进行了迁移。</p>]]></description></item></channel></rss>

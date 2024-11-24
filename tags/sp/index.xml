@@ -1,1 +1,233 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Sp on liubang's blog</title><link>https://iliubang.cn/tags/sp/</link><description>Recent content in Sp on liubang's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sun, 18 Aug 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/sp/index.xml" rel="self" type="application/rss+xml"/><item><title>使用c语言模拟lisp语法</title><link>https://iliubang.cn/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</link><pubDate>Sun, 18 Aug 2019 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</guid><description><![CDATA[使用 c 语言的 macro 操作，能够很简单的用 c 语言模拟 lisp 语法。 下面我们来定义 lisp.h 头文件 #ifndef LISP_H_OTE1HWPK #define LISP_H_OTE1HWPK #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #define define(ret, name, args, block) \ ret name args { return block; } #define if(expr, block1, block2) \ expr ? block1 : block2 #define eq(a,]]></description></item><item><title>动态连接器技巧之使用LD_PRELOAD改变程序的行为</title><link>https://iliubang.cn/posts/sp/2019-07-18-%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5%E5%99%A8%E6%8A%80%E5%B7%A7%E4%B9%8B%E4%BD%BF%E7%94%A8ld_preload%E6%94%B9%E5%8F%98%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%A1%8C%E4%B8%BA/</link><pubDate>Thu, 18 Jul 2019 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2019-07-18-%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5%E5%99%A8%E6%8A%80%E5%B7%A7%E4%B9%8B%E4%BD%BF%E7%94%A8ld_preload%E6%94%B9%E5%8F%98%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%A1%8C%E4%B8%BA/</guid><description><![CDATA[我们有这样一段简单的代码，用来输出 10 个[0, 100)的随机数： // random.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;time.h&gt; int main() { srand(time(NULL)); int i = 10; while (i--) printf(&#34;%d\n&#34;, rand() % 100); return 0; } 编译运行： liubang@venux-dev:~$ gcc random.c -o random liubang@venux-dev:~$ ./random 44 46]]></description></item><item><title>多线程编程</title><link>https://iliubang.cn/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</link><pubDate>Wed, 05 Dec 2018 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</guid><description>开始之前 这篇文章主要是为了帮助大家熟悉 POSIX 线程库以及在实际开发中使用它的特性。我们会具体讲解如何利用这个线程库定义的不同工具 来解决编程中的问题</description></item><item><title>理解c语言中的声明</title><link>https://iliubang.cn/posts/sp/2017-09-12-%E7%90%86%E8%A7%A3c%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E/</link><pubDate>Tue, 12 Sep 2017 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2017-09-12-%E7%90%86%E8%A7%A3c%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E/</guid><description>在阅读优秀的 c 语言开源程式的时候，我们经常会看到各种复杂的声明，顿时会让我们怀疑人生，怀疑自己是否真的看得懂 c 语言。然而冷静三秒钟，透过现象</description></item><item><title>彻底掌握malloc</title><link>https://iliubang.cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</link><pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</guid><description>说明：参考文献地址 A Malloc Tutorial 1 简介 malloc是干什么的？如果你连这个名字都没听过，那么你应该先去了解 Unix 环境下的 c 语言开发，然后再来阅读。对一个</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Sp on liubang's blog</title><link>https://iliubang.cn/tags/sp/</link><description>Recent content in Sp on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2016-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sun, 18 Aug 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/sp/index.xml" rel="self" type="application/rss+xml"/><item><title>使用c语言模拟lisp语法</title><link>https://iliubang.cn/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</link><pubDate>Sun, 18 Aug 2019 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</guid><description><![CDATA[<p>使用 c 语言的 macro 操作，能够很简单的用 c 语言模拟 lisp 语法。</p>
+
+<h3 id="下面我们来定义-lisph-头文件" data-numberify>下面我们来定义 lisp.h 头文件<a class="anchor ms-1" href="#下面我们来定义-lisph-头文件"></a></h3>
+<pre tabindex="0"><code>#ifndef LISP_H_OTE1HWPK
+#define LISP_H_OTE1HWPK
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define define(ret, name, args, block) \
+    ret name args { return block; }
+
+#define if(expr, block1, block2) \
+    expr ? block1 : block2
+
+#define eq(a, b) \
+    a == b
+
+#define neq(a, b) \
+    a != b
+
+#define sub(a, b) \
+    a - b
+
+#define mul(a, b) \
+    a * b
+
+#define add(a, b) \
+    a + b
+
+#define div(a, b) \
+    a / b
+
+#endif /* end of include guard: LISP_H_OTE1HWPK */
+</code></pre>
+<h3 id="然后来用类似于-lisp-的语法编写一段求阶乘的代码" data-numberify>然后来用类似于 lisp 的语法编写一段求阶乘的代码：<a class="anchor ms-1" href="#然后来用类似于-lisp-的语法编写一段求阶乘的代码"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#a6e22e">define</span>(<span style="color:#66d9ef">int</span>, factorial, (<span style="color:#66d9ef">int</span> n),
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">eq</span>(n, <span style="color:#ae81ff">0</span>),
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">mul</span>(n, <span style="color:#a6e22e">factorial</span>(<span style="color:#a6e22e">sub</span>(n, <span style="color:#ae81ff">1</span>)))))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">define</span>(<span style="color:#66d9ef">int</span>, main, (<span style="color:#66d9ef">void</span>),
+</span></span><span style="display:flex;"><span>       (<span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;10! = %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#a6e22e">factorial</span>(<span style="color:#ae81ff">10</span>)), EXIT_SUCCESS))
+</span></span></code></pre></div>
+<h3 id="编写-makefile" data-numberify>编写 Makefile:<a class="anchor ms-1" href="#编写-makefile"></a></h3>
+<pre tabindex="0"><code>CFLAGS = -Wall -include &#34;lisp.h&#34;
+
+TARGET=factorial
+
+all:
+	gcc -o $(TARGET) $(TARGET).c $(CFLAGS)
+
+clean:
+	rm -f $(TARGET)
+</code></pre>
+<h3 id="编译并运行" data-numberify>编译并运行：<a class="anchor ms-1" href="#编译并运行"></a></h3>
+<pre tabindex="0"><code>liubang@venux-dev:~$ make
+gcc -o factorial factorial.c -Wall -include &#34;lisp.h&#34;
+liubang@venux-dev:~$ ./factorial
+10! = 3628800
+</code></pre>]]></description></item><item><title>动态连接器技巧之使用LD_PRELOAD改变程序的行为</title><link>https://iliubang.cn/posts/sp/2019-07-18-%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5%E5%99%A8%E6%8A%80%E5%B7%A7%E4%B9%8B%E4%BD%BF%E7%94%A8ld_preload%E6%94%B9%E5%8F%98%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%A1%8C%E4%B8%BA/</link><pubDate>Thu, 18 Jul 2019 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2019-07-18-%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5%E5%99%A8%E6%8A%80%E5%B7%A7%E4%B9%8B%E4%BD%BF%E7%94%A8ld_preload%E6%94%B9%E5%8F%98%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%A1%8C%E4%B8%BA/</guid><description><![CDATA[<p>我们有这样一段简单的代码，用来输出 10 个[0, 100)的随机数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// random.c
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;time.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">srand</span>(<span style="color:#a6e22e">time</span>(NULL));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (i<span style="color:#f92672">--</span>) <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#a6e22e">rand</span>() <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>编译运行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>liubang@venux-dev:~$ gcc random.c -o random
+</span></span><span style="display:flex;"><span>liubang@venux-dev:~$ ./random
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">44</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">46</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">97</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">51</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">62</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">76</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">92</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">76</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">38</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><p>这个程序每次运行的结果都是不一样的，现在我们希望我们能够在不修改源码的情况下，控制程序的输出结果，例如我希望这段程序运行的结果是
+每次都能输出 10 个 10。由于不能修改源码，或者我们根本没有源码，面对这样一个编译后的可执行二进制文件，想要修改程序的运行结果，可能显
+得有些困难。然而，如果能够善用动态连接器的话，这都不是问题。</p>
+<p>下面我们来创建一段程序：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">// unrandom.c
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">rand</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>然后将它编译成动态链接库：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>liubang@venux-dev:~$ gcc -shared -fPIC unrandom.c -o libunrandom.so
+</span></span></code></pre></div><p>这样我们就得到了一个名为<code>libunrandom.so</code>的动态链接库，然后执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>liubang@venux-dev:~$ LD_PRELOAD<span style="color:#f92672">=</span>./libunrandom.so ./random
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><p>是不是发现原来程序的结果变成了 10 个 10，即使执行多次，结果都一样。为什么会这样呢？<code>LD_PRELOAD</code>到底做了什么事？
+下面我们来进一步了解其中的原理。</p>]]></description></item><item><title>多线程编程</title><link>https://iliubang.cn/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</link><pubDate>Wed, 05 Dec 2018 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</guid><description><![CDATA[<h2 id="开始之前" data-numberify>开始之前<a class="anchor ms-1" href="#开始之前"></a></h2>
+<p>这篇文章主要是为了帮助大家熟悉 POSIX 线程库以及在实际开发中使用它的特性。我们会具体讲解如何利用这个线程库定义的不同工具
+来解决编程中的问题。当然这里隐含了一个假设，就是读者已经了解过并行编程（或者多进程）的相关概念，如果没有这些背景知识
+的话，读者可能会感觉到很难理解。不过也没关系，我的另一篇教程里边有专门为只具备线性编程思维的读者提供了对并行编程理论
+和相关术语的讲解。</p>
+<p>同样的，我假设聪明的你已经熟悉了异步编程模型，那些经常使用桌面环境的人会更容易去接受多线程编程的理念。</p>
+<p>当我们谈到 POSIX 线程的时候，肯定会有人心生疑惑：“我们应该使用哪个标准下的 POSIX 线程？”。由于 POSIX 线程标准已经修订了好
+多年，人们会发现，依据不同标准的实现有不同的函数集，不同的默认值和不同的细微差别。所以在此说明的是，本教程使用的是 v0.5 版的 Linux 内核中的线程库，使用其他操作系统和使用其他版本的读者，需要阅读一下你们对应的系统文档来同本文中的实例进行对应。同时，有些示例代码中使用到了阻塞式的系统调用，它们不能再用户级的线程库中很好的工作（参考另一篇文章：<a href="http://www.actcom.co.il/~choo/lupg/tutorials/parallel-programming-theory/parallel-programming-theory.html#multi_thread_lib" target="_blank" rel="noopener noreferrer">parallel programming theory tutorial<i class="fas fa-external-link-square-alt ms-1"></i></a> 来获取详细信息）。好了，说了那么多，主要是为了能保证文章中的示例代码能够在其他系统中正常使用，从而提高跨平台性。</p>
+
+<h2 id="什么是线程为什么要使用线程" data-numberify>什么是线程？为什么要使用线程？<a class="anchor ms-1" href="#什么是线程为什么要使用线程"></a></h2>
+<p>线程是一个迷你版的进程，它们拥有自己的栈，能够执行给定的一段代码。但是不同于进程的是，线程通常与其他线程共享记忆体（而
+每个进程都拥有一个独立的记忆体区域）。一个线程组就是一个执行相同代码的线程的集合，他们共用记忆体，可以访问相同的全局变
+量，拥有同样的文件描述符等等，他们以并行的方式执行（可能是时间片的方式，或者对于多核心系统，他们会真正平行执行）。</p>
+<p>使用线程组而不是普通顺序执行程序的好处是多个操作可以同时进行，当一些事件产生的时候，他们能立马被处理（例如：如果我们有
+一个线程处理用户接口，另一个线程处理数据库查询，那么我们可以在处理很多用户查询的同时，依然能够响应用户的输入）。</p>
+<p>使用线程组而不是进程组的好处是线程间的上下文切换要比进程间的上下文切换要快很多（上下文切换是指系统从一个正在运行的线程或进程切换到去执行另一个线程或进程）。此外，线程间的通信也远远比进程间通信要高效很多。</p>
+<p>线程编程有利也有弊，由于线程组共享记忆体，如果一个线程破坏了记忆体，那么其他线程也要受到牵连。但是进程就不同了，操作系
+统会将进程之间隔离开，如果一个进程破坏了它的记忆体，那么其他进程不会受到影响。使用进程的另一个好处是，不同的进程可以运
+行在不同的机器上，但是线程必须运行在同一台机器上（至少通常情况下是这样的）。</p>
+
+<h2 id="创建和销毁线程" data-numberify>创建和销毁线程<a class="anchor ms-1" href="#创建和销毁线程"></a></h2>
+<p>当一个多线程程序启动执行到<code>main()</code>函数的时候，就会有一个线程运行，这是一个全程线程（full-fledged thread，或者叫主线程），如果想创建一个新的线程，程序中需要使用<code>pthread_create()</code>函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;pthread.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">do_loop</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>data)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> i; <span style="color:#75715e">// counter, to print numbers
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> j; <span style="color:#75715e">// counter, for delay
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> me <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>((<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>)data);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span>; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">50000</span>; j<span style="color:#f92672">++</span>) <span style="color:#75715e">// delay loop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            ;
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;&#39;%d&#39; - Got &#39;%d&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, me, i);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// terminate the thread
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">pthread_exit</span>(NULL);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(<span style="color:#66d9ef">int</span> argc, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>argv[])
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span>       thr_id;    <span style="color:#75715e">// thread ID for the newly created thread
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">pthread_t</span> p_thread;  <span style="color:#75715e">// thread&#39;s structure
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;           <span style="color:#75715e">// thread 1 identifying number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> b <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;           <span style="color:#75715e">// thread 2 identifying number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// create a new thread that will execute &#39;do_loop()&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    thr_id <span style="color:#f92672">=</span> <span style="color:#a6e22e">pthread_create</span>(<span style="color:#f92672">&amp;</span>p_thread, NULL, do_loop, (<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>a);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// run &#39;do_loop&#39; in the main thread as well
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">do_loop</span>((<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>)<span style="color:#f92672">&amp;</span>b);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>上述这段代码需要特殊说明的是：</p>]]></description></item><item><title>理解c语言中的声明</title><link>https://iliubang.cn/posts/sp/2017-09-12-%E7%90%86%E8%A7%A3c%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E/</link><pubDate>Tue, 12 Sep 2017 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2017-09-12-%E7%90%86%E8%A7%A3c%E8%AF%AD%E8%A8%80%E4%B8%AD%E7%9A%84%E5%A3%B0%E6%98%8E/</guid><description><![CDATA[<p>在阅读优秀的 c 语言开源程式的时候，我们经常会看到各种复杂的声明，顿时会让我们怀疑人生，怀疑自己是否真的看得懂 c 语言。然而冷静三秒钟，透过现象看本质，发现牛人写的代码并不是“天书”，
+也是很好懂的，关键是要冷静和耐心去阅读。</p>
+
+<h2 id="从c-traps-and-pitfallshttpwwwliterateprogrammingcomctrapspdf中的一个例子说起" data-numberify>从中的一个例子说起<a class="anchor ms-1" href="#从c-traps-and-pitfallshttpwwwliterateprogrammingcomctrapspdf中的一个例子说起"></a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>(<span style="color:#f92672">*</span>(<span style="color:#66d9ef">void</span>(<span style="color:#f92672">*</span>)())<span style="color:#ae81ff">0</span>)()
+</span></span></code></pre></div><p>下面我们来一步步分析：</p>
+<p>我们知道变量的声明方式为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> a;
+</span></span></code></pre></div><p>函数的声明方式为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">fn</span>();
+</span></span></code></pre></div><p>指针的声明方式为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span></code></pre></div><p>函数指针的声明方式为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> (<span style="color:#f92672">*</span>fn)(); <span style="color:#75715e">//fn 是一个指向返回int型的函数的指针
+</span></span></span></code></pre></div><p>函数指针的调用方式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#a6e22e">int</span> (<span style="color:#f92672">*</span>fn_type)();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">fn</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fn_type a <span style="color:#f92672">=</span> fn;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#a6e22e">a</span>());
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//或者
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, (<span style="color:#f92672">*</span>)<span style="color:#a6e22e">a</span>());
+</span></span></code></pre></div><p>最简单的类型转换：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>)p;
+</span></span></code></pre></div><p>在 c 语言中，去掉变量名，就是变量类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> (<span style="color:#f92672">*</span>fn)();<span style="color:#75715e">//fn 是一个指向返回int型的函数的指针
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> (<span style="color:#f92672">*</span>)(); <span style="color:#75715e">//表示指向返回int型的函数的指针类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 还可以用typedef
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#a6e22e">int</span> (<span style="color:#f92672">*</span>fn_type)(); <span style="color:#75715e">// fn_type 就是指向返回int型的函数指针类型
+</span></span></span></code></pre></div><p>回到上面的声明，我们先分析里边的部分<code>(void(*)())0</code>，很显然<code>void (*)()</code>是一个指向返回 void 类型的函数的指针类型，可以简化为<code>typedef void (*fn_ptr)(); (fn_ptr)0</code>，
+这样写是不是一下子明了了许多，原来是把<code>0</code>强制类型转换成了<code>fn_ptr</code>类型，也就是把<code>0</code>转成了一个指向返回<code>void</code>的函数的指针类型。这样的话，原式可以等价为<code>((* fn_ptr )0)()</code>，
+实际上就是一个先转型，后调用的过程，即先把 0 转成函数指针，然后再调用函数。</p>]]></description></item><item><title>彻底掌握malloc</title><link>https://iliubang.cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</link><pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</guid><description><![CDATA[<p>说明：参考文献地址 <a href="http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf" target="_blank" rel="noopener noreferrer">A Malloc Tutorial<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
+
+<h2 id="1-简介" data-numberify>1 简介<a class="anchor ms-1" href="#1-简介"></a></h2>
+<p><code>malloc</code>是干什么的？如果你连这个名字都没听过，那么你应该先去了解 Unix 环境下的 c 语言开发，然后再来阅读。对一个程序员而言，<code>malloc</code>是一个在 c 语言中用来分配内存的函数，但是大多数人并不知道它背后真正的原理，甚至有些人认为<code>malloc</code>是 c 语言的关键字或者认为它是系统调用。事实上，<code>malloc</code>是一个再简单不过的函数而已，而且只需要很少的操作系统相关知识就可以让我们彻底理解它的原理。</p>
+<p>下面来一步步的实现一个简单的<code>malloc</code>函数，从而帮助我们理解其背后运作的原理。因为仅仅作为说明原理之用，所以这里实现的<code>malloc</code>不会太高效，但是足以说明原理。</p>
+<p>什么是 malloc</p>
+<p><code>malloc(3)</code>是一个用来分配内存块的标准的 c 语言库函数。它遵循以下规则：</p>
+<ul>
+<li><code>malloc</code>至少分配所需字节数的内存；</li>
+<li><code>malloc</code>返回其所分配内存空间(程序可以成功读写的空间)的指针；</li>
+<li>一块内存一旦被<code>malloc</code>分配，其他<code>malloc</code>调用不能再分配该内存块的任何部分，除非指向该内存块的指针被释放掉；</li>
+<li><code>malloc</code>应该是可控的：他必须能够很快完成分配并返回；</li>
+<li><code>malloc</code>同时应该提供重新分配内存块大小和释放内存的功能</li>
+</ul>
+<p><code>malloc</code>函数必须遵循以下原型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">malloc</span>(<span style="color:#66d9ef">size_t</span> size);
+</span></span></code></pre></div><p>其中<code>size</code>是所需要的内存大小。如果失败（没有足够的内存空间可以分配），应该返回<code>NULL</code>。</p>
+
+<h2 id="2-堆brk-和-sbrk-系统调用" data-numberify>2 堆，brk 和 sbrk 系统调用<a class="anchor ms-1" href="#2-堆brk-和-sbrk-系统调用"></a></h2>
+<p>在开始实现第一个<code>malloc</code>函数之前，需要了解内存在大多数多任务操作系统中是如何管理的。这里我们只是做出一个抽象的解释，从大体上去帮助理解，至于很多细节，它们都依赖操作系统原理和硬件相关的知识。</p>
+
+<h3 id="21-进程的内存" data-numberify>2.1 进程的内存<a class="anchor ms-1" href="#21-进程的内存"></a></h3>
+<p>每个进程都有自己的虚拟地址空间被 MMU（Memory Management Unit, 内存管理单元）(和内核)动态的转换到物理内存地址空间。这部分空间被划分成了几个部分，我们需要了解的是至少有一部分空间存放代码，一个用来存放局部变量的栈，一部分用来存放常量和全局变量的空间，以及程序的无组织空间我们称之为堆。</p>
+<p>堆是一个连续的（依据虚拟地址而言）内存空间，它有三个边界：一个起始点，一个最大限度边界（通过 sys/ressource.h 中的 getrlimit(2)函数和 setrlimit(2)函数来管理）和一个被称为<code>break</code>的结束点。<code>break</code>标记了隐射内存空间的结束，也就是说，虚拟地址空间部分对应着真实的内存空间。下图表示内存组织结构</p>
+<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://iliubang.cn/images/2017-03-17/heap.png#center?v=7fdc4e1b5785be32c88d453deb32ca63" loading="lazy" width="512" height="114" />
+</picture>
+
+</p>
+<p>要想实现一个<code>malloc</code>函数，我们需要知道堆的起始点和 break 的位置，然后我们来移动 break。要做到这些，就需要用到两个系统调用，<code>brk</code>和<code>sbrk</code>。</p>
+
+<h3 id="22-brk2和-sbrk2" data-numberify>2.2 brk(2)和 sbrk(2)<a class="anchor ms-1" href="#22-brk2和-sbrk2"></a></h3>
+<p>我们可以在这些系统调用的文档中看到相关描述：</p>]]></description></item></channel></rss>

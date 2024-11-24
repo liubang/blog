@@ -1,5 +1,44 @@
-<!doctype html><html class=position-relative itemscope itemtype=https://schema.org/WebPage lang=zh-cn data-bs-theme=auto data-palette=blue-gray><head><script src=/assets/init/bundle.min.c4d19e04b98e8ec8dcbc2dc1e82d40c733c53f80de4dfd5340457779fc716fe3.js integrity="sha256-xNGeBLmOjsjcvC3B6C1AxzPFP4DeTf1TQEV3efxxb+M=" crossorigin=anonymous></script><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PHP扩展开发之自定义对象的存储 - liubang's blog</title>
-<link rel=icon href=/favicon_huc1d2ba7c7d6d5aa3e01f2f328b911c53_11507_16x16_resize_box_3.png sizes=16x16 type=image/png><link rel=icon href=/favicon_huc1d2ba7c7d6d5aa3e01f2f328b911c53_11507_32x32_resize_box_3.png sizes=32x32 type=image/png><link rel=icon href=/favicon_huc1d2ba7c7d6d5aa3e01f2f328b911c53_11507_150x150_resize_box_3.png sizes=150x150 type=image/png><link rel=apple-touch-icon href=/favicon_huc1d2ba7c7d6d5aa3e01f2f328b911c53_11507_180x180_resize_box_3.png sizes=180x180 type=image/png><link rel=icon href="https://iliubang.cn/images/icons/icon-192x192.png?version=5675e36f11a529bcbecb4e1fae90c416" sizes=192x192><link rel=mask-icon href=/safari-pinned-tab.svg color=#6f42c1><link rel=icon href="https://iliubang.cn/images/icons/favicon.ico?version=93c96d13551a46e5742ae6da86026661"><meta name=keywords content="c++,java,go,kv,storage"><meta name=description content="前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然"><meta name=robots content="index, follow"><meta name=twitter:card content="summary"><meta name=twitter:title content="PHP扩展开发之自定义对象的存储"><meta name=twitter:description content="前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然"><meta property="og:url" content="https://iliubang.cn/posts/php/2017-08-24-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AD%98%E5%82%A8/"><meta property="og:site_name" content="liubang's blog"><meta property="og:title" content="PHP扩展开发之自定义对象的存储"><meta property="og:description" content="前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然"><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-08-24T00:00:00+00:00"><meta property="article:modified_time" content="2017-08-24T00:00:00+00:00"><meta property="article:tag" content="C"><meta property="article:tag" content="Php"><meta itemprop=name content="PHP扩展开发之自定义对象的存储"><meta itemprop=description content="前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然"><meta itemprop=datePublished content="2017-08-24T00:00:00+00:00"><meta itemprop=dateModified content="2017-08-24T00:00:00+00:00"><meta itemprop=wordCount content="4349"><meta itemprop=keywords content="C,Php"><meta property="og:image" content="https://iliubang.cn/images/apple-touch-icon.png"><meta name=twitter:image content="https://iliubang.cn/images/apple-touch-icon.png"><meta property="og:image:alt" content="PHP扩展开发之自定义对象的存储"><meta name=twitter:image:alt content="PHP扩展开发之自定义对象的存储"><link rel=manifest href=/manifest.json><link data-precache rel=stylesheet href="/assets/main/bundle.min.556b69fca6c6d0e7f4cea3c46eab5d874d2f4d2ae50287ccc66ab4eb0990ad29.css" integrity="sha256-VWtp/KbG0Of0zqPEbqtdh00vTSrlAofMxmq06wmQrSk=" crossorigin=anonymous><link data-precache rel=stylesheet href=/assets/katex/bundle.min.fb3a3e29bffe2441555af92c874c243cf7a0bbd63527b739829f2fb126f8cb0d.css integrity="sha256-+zo+Kb/+JEFVWvksh0wkPPegu9Y1J7c5gp8vsSb4yw0=" crossorigin=anonymous><link data-precache rel=stylesheet href=/assets/viewer/bundle.min.6d0fc65b8b058ac563091dc5c36f61afba5dd705058680aa24f1d5a3bcf0064d.css integrity="sha256-bQ/GW4sFisVjCR3Fw29hr7pd1wUFhoCqJPHVo7zwBk0=" crossorigin=anonymous></head><body><header class="mb-4 sticky-top"><nav class="top-app-bar shadow navbar navbar-expand-xxl"><div class=container><a class="navbar-brand d-flex align-items-center flex-grow-1 flex-xxl-grow-0 justify-content-xxl-start ms-2 ms-xxl-0 mx-auto me-xxl-2" href=https://iliubang.cn/><picture><img class=logo alt=Logo src="https://iliubang.cn/images/apple-touch-icon.png?v=afff8fa526f47401e2cc55e06049992c" loading=lazy width=180 height=180>
+<!doctype html><html class=position-relative itemscope itemtype=https://schema.org/WebPage lang=zh-cn data-bs-theme=auto data-palette=blue-gray><head><script src=/assets/init/bundle.min.3aac6fdc59d24956ee10b0a524edba606f184724055d1add5c1c76d19731279f.js integrity="sha256-Oqxv3FnSSVbuELClJO26YG8YRyQFXRrdXBx20ZcxJ58=" crossorigin=anonymous></script><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PHP扩展开发之自定义对象的存储 - liubang's blog</title>
+<link rel=icon href=/favicon_hu8740105591289948032.png sizes=16x16 type=image/png><link rel=icon href=/favicon_hu17524450719221119378.png sizes=32x32 type=image/png><link rel=icon href=/favicon_hu6335998499482997850.png sizes=150x150 type=image/png><link rel=apple-touch-icon href=/favicon_hu6806785673370764256.png sizes=180x180 type=image/png><link rel=icon href="https://iliubang.cn/images/icons/icon-192x192.png?version=5675e36f11a529bcbecb4e1fae90c416" sizes=192x192><link rel=mask-icon href=/safari-pinned-tab.svg color=#6f42c1><link rel=icon href="https://iliubang.cn/images/icons/favicon.ico?version=93c96d13551a46e5742ae6da86026661"><meta name=keywords content="c++,java,go,kv,storage"><meta name=description content='前言
+对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然而，当我们在使用自定义的数据结构(struct)，
+并想把我们自己定义的数据结构封装成 php 的类的时候可能就会有些困惑，因为我们都知道 php 中的所有变量都是通过 zval 来存储的，而我们自定义的数据结构要怎样才能和 zval 实现完美的对接呢？
+以前我通常采用的一种方式就是使用 zend 引擎提供的资源类型，因为资源类型的封装中包含了通用的数据类型，而且有很丰富的函数来操作资源，所以使用起来很简单也很方便。然而，强大的 zend
+引擎真的没有其他方式扩展数据结构了吗？当然不是！下面就来介绍一个更加优雅的方式。要弄明白，首要要搞清 php 内核是如何创建对象的。
+
+如何创建一个对象
+我们首先来探讨下如何创建一个 PHP 对象。为此我们将会用到object_and_properties_init之类的一些宏。
+// 创建一个SomeClass类型的对象，并且把properties_hashtable中的变量作为其属性值
+zval *obj;
+MAKE_STD_ZVAL(obj);
+object_and_properties_init(obj, class_entry_of_SomeClass, properties_hashtable);
+
+// 创建一个没有属性的对象
+zval *obj;
+MAKE_STD_ZVAL(obj);
+object_init_ex(obj, class_entry_of_SomeClass);
+// = object_and_properties_init(obj, class_entry_of_SomeClass, NULL)
+
+// 创建一个stdClass的对象
+zval *obj;
+MAKE_STD_ZVAL(obj);
+object_init(obj);
+// = object_init_ex(obj, NULL) = object_and_properties_init(obj, NULL, NULL);
+在上面的例子中，最后一种情况下，当你创建一个stdClass的对象后，通常将会给它添加属性。这时如果使用
+zend_update_property之类的函数，是不起作用的，取而代之的是add_property宏函数：
+add_property_long(obj, "id", id);
+add_property_string(obj, "name", name, 1); // 1 表示使用字符串的副本
+add_property_bool(obj, "isAdmin", is_admin);
+// 同样有_null(), _double(), _stringl(), _resource()和_zval()
+那么当一个对象被创建的时候到底发生了什么呢？想知道真相，就需要去阅读_object_and_properties_init函数的源码（位于 phpsrc/Zend/zend_API.c 中）：'><meta name=robots content="index, follow"><meta name=twitter:card content="summary"><meta name=twitter:title content="PHP扩展开发之自定义对象的存储"><meta name=twitter:description content='前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然而，当我们在使用自定义的数据结构(struct)， 并想把我们自己定义的数据结构封装成 php 的类的时候可能就会有些困惑，因为我们都知道 php 中的所有变量都是通过 zval 来存储的，而我们自定义的数据结构要怎样才能和 zval 实现完美的对接呢？ 以前我通常采用的一种方式就是使用 zend 引擎提供的资源类型，因为资源类型的封装中包含了通用的数据类型，而且有很丰富的函数来操作资源，所以使用起来很简单也很方便。然而，强大的 zend 引擎真的没有其他方式扩展数据结构了吗？当然不是！下面就来介绍一个更加优雅的方式。要弄明白，首要要搞清 php 内核是如何创建对象的。
+如何创建一个对象 我们首先来探讨下如何创建一个 PHP 对象。为此我们将会用到object_and_properties_init之类的一些宏。
+// 创建一个SomeClass类型的对象，并且把properties_hashtable中的变量作为其属性值 zval *obj; MAKE_STD_ZVAL(obj); object_and_properties_init(obj, class_entry_of_SomeClass, properties_hashtable); // 创建一个没有属性的对象 zval *obj; MAKE_STD_ZVAL(obj); object_init_ex(obj, class_entry_of_SomeClass); // = object_and_properties_init(obj, class_entry_of_SomeClass, NULL) // 创建一个stdClass的对象 zval *obj; MAKE_STD_ZVAL(obj); object_init(obj); // = object_init_ex(obj, NULL) = object_and_properties_init(obj, NULL, NULL); 在上面的例子中，最后一种情况下，当你创建一个stdClass的对象后，通常将会给它添加属性。这时如果使用 zend_update_property之类的函数，是不起作用的，取而代之的是add_property宏函数：
+add_property_long(obj, "id", id); add_property_string(obj, "name", name, 1); // 1 表示使用字符串的副本 add_property_bool(obj, "isAdmin", is_admin); // 同样有_null(), _double(), _stringl(), _resource()和_zval() 那么当一个对象被创建的时候到底发生了什么呢？想知道真相，就需要去阅读_object_and_properties_init函数的源码（位于 phpsrc/Zend/zend_API.c 中）：'><meta property="og:url" content="https://iliubang.cn/posts/php/2017-08-24-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AD%98%E5%82%A8/"><meta property="og:site_name" content="liubang's blog"><meta property="og:title" content="PHP扩展开发之自定义对象的存储"><meta property="og:description" content='前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然而，当我们在使用自定义的数据结构(struct)， 并想把我们自己定义的数据结构封装成 php 的类的时候可能就会有些困惑，因为我们都知道 php 中的所有变量都是通过 zval 来存储的，而我们自定义的数据结构要怎样才能和 zval 实现完美的对接呢？ 以前我通常采用的一种方式就是使用 zend 引擎提供的资源类型，因为资源类型的封装中包含了通用的数据类型，而且有很丰富的函数来操作资源，所以使用起来很简单也很方便。然而，强大的 zend 引擎真的没有其他方式扩展数据结构了吗？当然不是！下面就来介绍一个更加优雅的方式。要弄明白，首要要搞清 php 内核是如何创建对象的。
+如何创建一个对象 我们首先来探讨下如何创建一个 PHP 对象。为此我们将会用到object_and_properties_init之类的一些宏。
+// 创建一个SomeClass类型的对象，并且把properties_hashtable中的变量作为其属性值 zval *obj; MAKE_STD_ZVAL(obj); object_and_properties_init(obj, class_entry_of_SomeClass, properties_hashtable); // 创建一个没有属性的对象 zval *obj; MAKE_STD_ZVAL(obj); object_init_ex(obj, class_entry_of_SomeClass); // = object_and_properties_init(obj, class_entry_of_SomeClass, NULL) // 创建一个stdClass的对象 zval *obj; MAKE_STD_ZVAL(obj); object_init(obj); // = object_init_ex(obj, NULL) = object_and_properties_init(obj, NULL, NULL); 在上面的例子中，最后一种情况下，当你创建一个stdClass的对象后，通常将会给它添加属性。这时如果使用 zend_update_property之类的函数，是不起作用的，取而代之的是add_property宏函数：
+add_property_long(obj, "id", id); add_property_string(obj, "name", name, 1); // 1 表示使用字符串的副本 add_property_bool(obj, "isAdmin", is_admin); // 同样有_null(), _double(), _stringl(), _resource()和_zval() 那么当一个对象被创建的时候到底发生了什么呢？想知道真相，就需要去阅读_object_and_properties_init函数的源码（位于 phpsrc/Zend/zend_API.c 中）：'><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-08-24T00:00:00+00:00"><meta property="article:modified_time" content="2017-08-24T00:00:00+00:00"><meta property="article:tag" content="C"><meta property="article:tag" content="Php"><meta itemprop=name content="PHP扩展开发之自定义对象的存储"><meta itemprop=description content='前言 对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然而，当我们在使用自定义的数据结构(struct)， 并想把我们自己定义的数据结构封装成 php 的类的时候可能就会有些困惑，因为我们都知道 php 中的所有变量都是通过 zval 来存储的，而我们自定义的数据结构要怎样才能和 zval 实现完美的对接呢？ 以前我通常采用的一种方式就是使用 zend 引擎提供的资源类型，因为资源类型的封装中包含了通用的数据类型，而且有很丰富的函数来操作资源，所以使用起来很简单也很方便。然而，强大的 zend 引擎真的没有其他方式扩展数据结构了吗？当然不是！下面就来介绍一个更加优雅的方式。要弄明白，首要要搞清 php 内核是如何创建对象的。
+如何创建一个对象 我们首先来探讨下如何创建一个 PHP 对象。为此我们将会用到object_and_properties_init之类的一些宏。
+// 创建一个SomeClass类型的对象，并且把properties_hashtable中的变量作为其属性值 zval *obj; MAKE_STD_ZVAL(obj); object_and_properties_init(obj, class_entry_of_SomeClass, properties_hashtable); // 创建一个没有属性的对象 zval *obj; MAKE_STD_ZVAL(obj); object_init_ex(obj, class_entry_of_SomeClass); // = object_and_properties_init(obj, class_entry_of_SomeClass, NULL) // 创建一个stdClass的对象 zval *obj; MAKE_STD_ZVAL(obj); object_init(obj); // = object_init_ex(obj, NULL) = object_and_properties_init(obj, NULL, NULL); 在上面的例子中，最后一种情况下，当你创建一个stdClass的对象后，通常将会给它添加属性。这时如果使用 zend_update_property之类的函数，是不起作用的，取而代之的是add_property宏函数：
+add_property_long(obj, "id", id); add_property_string(obj, "name", name, 1); // 1 表示使用字符串的副本 add_property_bool(obj, "isAdmin", is_admin); // 同样有_null(), _double(), _stringl(), _resource()和_zval() 那么当一个对象被创建的时候到底发生了什么呢？想知道真相，就需要去阅读_object_and_properties_init函数的源码（位于 phpsrc/Zend/zend_API.c 中）：'><meta itemprop=datePublished content="2017-08-24T00:00:00+00:00"><meta itemprop=dateModified content="2017-08-24T00:00:00+00:00"><meta itemprop=wordCount content="1294"><meta itemprop=keywords content="C,Php"><meta property="og:image" content="https://iliubang.cn/images/apple-touch-icon.png"><meta name=twitter:image content="https://iliubang.cn/images/apple-touch-icon.png"><meta property="og:image:alt" content="PHP扩展开发之自定义对象的存储"><meta name=twitter:image:alt content="PHP扩展开发之自定义对象的存储"><link rel=manifest href=/manifest.json><link data-precache rel=stylesheet href="/assets/main/bundle.min.6e178270a4ff001c8a4de394b4de46a913e45e3897a8bffdd1fdd42a2fec1c18.css" integrity="sha256-bheCcKT/AByKTeOUtN5GqRPkXjiXqL/90f3UKi/sHBg=" crossorigin=anonymous><link data-precache rel=stylesheet href=/assets/katex/bundle.min.0e62515e6b767fdcffc08f3d4ab9197f6849689a486b42ab0c98b5e7732e1f58.css integrity="sha256-DmJRXmt2f9z/wI89SrkZf2hJaJpIa0KrDJi153MuH1g=" crossorigin=anonymous><link data-precache rel=stylesheet href=/assets/viewer/bundle.min.16d2c85c4cae39a98f8cb7a977e95e554b174f91a5484c32605637156f49ca6b.css integrity="sha256-FtLIXEyuOamPjLepd+leVUsXT5GlSEwyYFY3FW9Jyms=" crossorigin=anonymous></head><body><header class="mb-4 sticky-top"><nav class="top-app-bar shadow navbar navbar-expand-xxl"><div class=container><a class="navbar-brand d-flex align-items-center flex-grow-1 flex-xxl-grow-0 justify-content-xxl-start ms-2 ms-xxl-0 mx-auto me-xxl-2" href=https://iliubang.cn/><picture><img class=logo alt=Logo src="https://iliubang.cn/images/apple-touch-icon.png?v=7fdc4e1b5785be32c88d453deb32ca63" loading=lazy width=180 height=180>
 </picture>HIGHKYCK</a><div class="offcanvas-xxl offcanvas-end flex-grow-1" data-bs-scroll=true tabindex=-1 id=navbarMenus aria-labelledby=navbarMenusLabel><div class="offcanvas-header px-4 pb-0"><div class="offcanvas-title h5" id=navbarMenusLabel>HIGHKYCK</div><button type=button class="btn-close btn-close-white" data-bs-dismiss=offcanvas data-bs-target=#navbarMenus aria-label=Close></button></div><div class="offcanvas-body p-4 pt-0 p-xxl-0"><hr class=d-xxl-none><ul class="navbar-nav flex-row flex-wrap align-items-center me-auto"><li class="nav-item col-6 col-xxl-auto"><a class="nav-link py-2 px-0 px-xxl-2" href=https://iliubang.cn/archives/><i class="fas fa-fw fa-file-archive"></i>归档</a></li><li class="nav-item col-12 col-xxl-auto dropdown px-0"><a href=# class="nav-link dropdown-toggle" id=navbarDropdownCategories role=button data-bs-toggle=dropdown aria-expanded=false><i class="fas fa-fw fa-folder"></i>分类</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby=navbarDropdownCategories data-bs-popper=none><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/categories/programming><i class="fas fa-fw fa-code me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Programing</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/categories/reading><i class="fas fa-fw fa-book-reader me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Reading</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/categories/linux><i class="fab fa-fw fa-linux me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Linux</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/categories><i class="fas fa-fw fa-folder me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">所有分类</p></div></a></li></ul></li><li class="nav-item col-12 col-xxl-auto dropdown px-0"><a href=# class="nav-link dropdown-toggle" id=navbarDropdownTags role=button data-bs-toggle=dropdown aria-expanded=false><i class="fas fa-fw fa-tags me-1"></i>标签</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby=navbarDropdownTags data-bs-popper=none><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/tags/algorithm><i class="fas fa-fw fa-square-root-alt me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Algorithm</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/tags/c++><i class="fab fa-fw fa-google me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">C++</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/tags/go><i class="fab fa-fw fa-google me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Go</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/tags/java><i class="fab fa-fw fa-java me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Java</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/tags/storage><i class="fas fa-fw fa-database me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">Storage</p></div></a></li><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/tags><i class="fas fa-fw fa-tags me-1"></i><div class=dropdown-item-content><p class="dropdown-item-title mb-0">所有标签</p></div></a></li></ul></li><li class="nav-item col-12 col-xxl-auto dropdown px-0"><a href=# class="nav-link dropdown-toggle" id=navbarDropdownSeries role=button data-bs-toggle=dropdown aria-expanded=false><i class="fas fa-fw fa-columns me-1"></i>专栏</a><ul class="dropdown-menu dropdown-menu-end" aria-labelledby=navbarDropdownSeries data-bs-popper=none><li><a class="dropdown-item d-flex align-items-center text-wrap text-xxl-nowrap" href=https://iliubang.cn/leetcode/><div class=dropdown-item-content><p class="dropdown-item-title mb-0">LeetCode</p></div></a></li></ul></li></ul><hr class=d-xxl-none><form class="search-bar ms-auto my-auto" action=/search/ novalidate><div class="input-group align-items-center"><span class="btn btn-search disabled position-absolute left-0 border-0 px-1"><i class="fas fa-fw fa-search fa-lg"></i>
 </span><input class="my-1 form-control border-white rounded-5 search-input bg-body" name=q type=search placeholder=搜索 aria-label=Search required>
 <span class="search-shortcut position-absolute end-0 top-0 me-2"><kbd class="text-dark bg-white opacity-75 rounded-3 shadow border border-primary py-1 fw-bold">/</kbd></span></div></form><hr class=d-xxl-none><ul class="navbar-nav flex-row flex-wrap align-items-center ms-md-auto"><li class="nav-item py-2 py-xxl-1 col-12 col-xxl-auto"><nav class="social-links nav justify-content-center flex-row"><a class="nav-link social-link col-6 col-xxl-auto p-1" target=_blank href=https://github.com/liubang title=GitHub rel=me><i class="fa-fw fab fa-github"></i>
@@ -11,234 +50,234 @@
 <i class="mode-icon fas fa-fw fa-sun"></i> 浅色</button></li><li class=mode-item data-color-mode=dark data-icon=moon><button class=dropdown-item>
 <i class="mode-icon fas fa-fw fa-moon"></i> 深色</button></li><li class="mode-item active" data-color-mode=auto data-icon=adjust><button class=dropdown-item>
 <i class="mode-icon fas fa-fw fa-adjust"></i> 自动</button></li></ul></li></ul></div></div><div class=d-flex><button class="navbar-toggler order-5 border-0" type=button data-bs-toggle=offcanvas data-bs-target=#navbarMenus aria-controls=navbarMenus aria-expanded=false aria-label="Toggle navigation">
-<i class="fas fa-ellipsis-h"></i></button></div></div></nav></header><main class=container><div class="row content"><noscript><div class="alert alert-danger" role=alert>你的浏览器不支持 JavaScript。</div></noscript><div class=col-xxl-8><div class=container><nav class="row card component" aria-label=breadcrumb><div class="card-body pb-0"><ol class="hbs-breadcrumb breadcrumb flex-nowrap"><li class="breadcrumb-item text-surface"><a href=/>主页</a></li><li class="breadcrumb-item text-surface"><a href=/posts/>文章</a></li><li class="breadcrumb-item active">PHP扩展开发之自定义对象的存储</li></ol></div></nav><div class="post-panel-wrapper position-relative d-flex justify-content-center"><div class="d-flex flex-row justify-content-center rounded-5 border post-panel position-fixed px-3 py-1 surface shadow-1"><a class="action btn-reward" role=button data-bs-toggle=modal data-bs-target=#rewardModal title=打赏><i class="fas fa-fw fa-coffee"></i>
+<i class="fas fa-ellipsis-h"></i></button></div></div></nav></header><main class="container has-sidebar" data-kind=page><script data-precache src=/js/main-init.0bc77d87a23c00bf13103713a9283c4a18b7b2c357dc12e3b6973058baecbfe1.js integrity="sha256-C8d9h6I8AL8TEDcTqSg8Shi3ssNX3BLjtpcwWLrsv+E=" crossorigin=anonymous></script><div class="row content"><noscript><div class="alert alert-danger" role=alert>你的浏览器不支持 JavaScript。</div></noscript><div class="content-posts col-xxl-8"><div class=container><nav class="row card component" aria-label=breadcrumb><div class="card-body pb-0"><ol class="hbs-breadcrumb breadcrumb flex-nowrap"><li class="breadcrumb-item text-surface"><a href=/>主页</a></li><li class="breadcrumb-item text-surface"><a href=/posts/>文章</a></li><li class="breadcrumb-item active">PHP扩展开发之自定义对象的存储</li></ol></div></nav><div class="post-panel-wrapper position-relative d-flex justify-content-center"><div class="d-flex flex-row justify-content-center rounded-5 border post-panel position-fixed px-3 py-1 surface shadow-1"><a class="action btn-reward" role=button data-bs-toggle=modal data-bs-target=#rewardModal title=打赏><i class="fas fa-fw fa-coffee"></i>
 </a><a class="action action-toc d-none d-xxl-block" href=#postTOC role=button title=目录><i class="fas fa-fw fa-list-alt"></i>
 </a><a class="action action-toc d-block d-xxl-none" href=#post-toc-container role=button title=目录><i class="fas fa-fw fa-list-alt"></i>
 </a><a class="action action-copyright" href=#post-copyright role=button aria-label=Copyright title=版权><i class="fas fa-fw fa-copyright"></i>
 </a><a class="action action-post-comments" href=#post-comments role=button aria-label=Comments title=评论><i class="fas fa-fw fa-comments"></i>
-</a><a id=sidebarToggler class="action action-sidebar-toggler d-none d-xxl-block" role=button title=切换侧边栏><i class="fas fa-fw fa-expand-alt" data-fa-transform=rotate-45></i></a></div></div><article class="row card component mb-4 post"><div class=card-header><h1 class="card-title post-title my-2">PHP扩展开发之自定义对象的存储</h1></div><div class=card-body><div class="post-meta mb-3"><span class="post-date me-1 mb-1" title="创建于 2017-08-24 00:00:00 +0000 UTC。">August 24, 2017</span><span class="post-reading-time me-1 mb-1">9 分钟阅读</span><a href=/authors/liubang/ class="btn btn-sm btn-secondary mb-1 me-2 py-0 pe-1 post-taxonomy post-taxonomy-sm post-author">
-<i class="fas fa-fw fa-user me-1"></i>Liubang</a><a href=/categories/programming/ class="btn btn-sm btn-secondary mb-1 me-2 py-0 pe-1 post-taxonomy post-taxonomy-sm post-category">
+</a><a id=sidebarToggler class="action action-sidebar-toggler d-none d-xxl-block" role=button title=切换侧边栏><i class="fas fa-fw fa-expand-alt" data-fa-transform=rotate-45></i></a></div></div><article class="row card component mb-4 post"><div class=card-header><h1 class="card-title post-title my-2">PHP扩展开发之自定义对象的存储</h1></div><div class=card-body><div class="post-meta mb-3"><span class="post-date me-1 mb-1" title="创建于 2017-08-24 00:00:00 +0000 UTC。">August 24, 2017</span><span class="post-reading-time me-1 mb-1">7 分钟阅读</span><a href=/authors/liubang/ class="btn btn-sm btn-secondary mb-1 me-2 py-0 pe-1 post-taxonomy post-taxonomy-sm post-author">
+<i class="fas fa-fw fa-user me-1"></i>Liu Bang</a><a href=/categories/programming/ class="btn btn-sm btn-secondary mb-1 me-2 py-0 pe-1 post-taxonomy post-taxonomy-sm post-category">
 <i class="fas fa-fw fa-folder me-1"></i>Programming</a><a href=/tags/c/ class="btn btn-sm btn-secondary mb-1 me-2 py-0 pe-1 post-taxonomy post-taxonomy-sm post-tag">C</a><a href=/tags/php/ class="btn btn-sm btn-secondary mb-1 me-2 py-0 pe-1 post-taxonomy post-taxonomy-sm post-tag">Php</a></div><div class="mt-2 mb-3 d-block d-xxl-none"><h2 class="text-surface mb-3">目录</h2><div id=post-toc-container></div><hr class=text-secondary></div><div class="post-content mb-3" data-bs-spy=scroll data-bs-target=#TableOfContents tabindex=0><div id=post-content-body><h2 id=前言 data-numberify>前言<a class="anchor ms-1" href=#前言></a></h2><p>对于 php 扩展开发，很多人可能已经不那么陌生了，zend 引擎为了们提供了非常丰富了函数和 macro，来帮助我们很快速的创建一个标准的 php 类，然而，当我们在使用自定义的数据结构(struct)，
 并想把我们自己定义的数据结构封装成 php 的类的时候可能就会有些困惑，因为我们都知道 php 中的所有变量都是通过 zval 来存储的，而我们自定义的数据结构要怎样才能和 zval 实现完美的对接呢？
 以前我通常采用的一种方式就是使用 zend 引擎提供的资源类型，因为资源类型的封装中包含了通用的数据类型，而且有很丰富的函数来操作资源，所以使用起来很简单也很方便。然而，强大的 zend
-引擎真的没有其他方式扩展数据结构了吗？当然不是！下面就来介绍一个更加优雅的方式。要弄明白，首要要搞清 php 内核是如何创建对象的。</p><h2 id=如何创建一个对象 data-numberify>如何创建一个对象<a class="anchor ms-1" href=#如何创建一个对象></a></h2><p>我们首先来探讨下如何创建一个 PHP 对象。为此我们将会用到<code>object_and_properties_init</code>之类的一些宏。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// 创建一个SomeClass类型的对象，并且把properties_hashtable中的变量作为其属性值
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>obj</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>obj</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=nf>object_and_properties_init</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>class_entry_of_SomeClass</span><span class=p>,</span> <span class=n>properties_hashtable</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=c1>// 创建一个没有属性的对象
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>obj</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>obj</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=nf>object_init_ex</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>class_entry_of_SomeClass</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=c1>// = object_and_properties_init(obj, class_entry_of_SomeClass, NULL)
-</span></span></span><span class=line><span class=cl><span class=c1></span>
-</span></span><span class=line><span class=cl><span class=c1>// 创建一个stdClass的对象
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>obj</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>obj</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=nf>object_init</span><span class=p>(</span><span class=n>obj</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=c1>// = object_init_ex(obj, NULL) = object_and_properties_init(obj, NULL, NULL);
+引擎真的没有其他方式扩展数据结构了吗？当然不是！下面就来介绍一个更加优雅的方式。要弄明白，首要要搞清 php 内核是如何创建对象的。</p><h2 id=如何创建一个对象 data-numberify>如何创建一个对象<a class="anchor ms-1" href=#如何创建一个对象></a></h2><p>我们首先来探讨下如何创建一个 PHP 对象。为此我们将会用到<code>object_and_properties_init</code>之类的一些宏。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#75715e>// 创建一个SomeClass类型的对象，并且把properties_hashtable中的变量作为其属性值
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>zval <span style=color:#f92672>*</span>obj;
+</span></span><span style=display:flex><span><span style=color:#a6e22e>MAKE_STD_ZVAL</span>(obj);
+</span></span><span style=display:flex><span><span style=color:#a6e22e>object_and_properties_init</span>(obj, class_entry_of_SomeClass, properties_hashtable);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 创建一个没有属性的对象
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>zval <span style=color:#f92672>*</span>obj;
+</span></span><span style=display:flex><span><span style=color:#a6e22e>MAKE_STD_ZVAL</span>(obj);
+</span></span><span style=display:flex><span><span style=color:#a6e22e>object_init_ex</span>(obj, class_entry_of_SomeClass);
+</span></span><span style=display:flex><span><span style=color:#75715e>// = object_and_properties_init(obj, class_entry_of_SomeClass, NULL)
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 创建一个stdClass的对象
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>zval <span style=color:#f92672>*</span>obj;
+</span></span><span style=display:flex><span><span style=color:#a6e22e>MAKE_STD_ZVAL</span>(obj);
+</span></span><span style=display:flex><span><span style=color:#a6e22e>object_init</span>(obj);
+</span></span><span style=display:flex><span><span style=color:#75715e>// = object_init_ex(obj, NULL) = object_and_properties_init(obj, NULL, NULL);
 </span></span></span></code></pre></div><p>在上面的例子中，最后一种情况下，当你创建一个<code>stdClass</code>的对象后，通常将会给它添加属性。这时如果使用
-<code>zend_update_property</code>之类的函数，是不起作用的，取而代之的是<code>add_property</code>宏函数：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>add_property_long</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=s>&#34;id&#34;</span><span class=p>,</span> <span class=n>id</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=nf>add_property_string</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=s>&#34;name&#34;</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span> <span class=c1>// 1 表示使用字符串的副本
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>add_property_bool</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=s>&#34;isAdmin&#34;</span><span class=p>,</span> <span class=n>is_admin</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=c1>// 同样有_null(), _double(), _stringl(), _resource()和_zval()
-</span></span></span></code></pre></div><p>那么当一个对象被创建的时候到底发生了什么呢？想知道真相，就需要去阅读<code>_object_and_properties_init</code>函数的源码（位于 phpsrc/Zend/zend_API.c 中）：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cm>/* This function requires &#39;properties&#39; to contain all props declared in the
-</span></span></span><span class=line><span class=cl><span class=cm> * class and all props being public. If only a subset is given or the class
-</span></span></span><span class=line><span class=cl><span class=cm> * has protected members then you need to merge the properties separately by
-</span></span></span><span class=line><span class=cl><span class=cm> * calling zend_merge_properties(). */</span>
-</span></span><span class=line><span class=cl><span class=n>ZEND_API</span> <span class=kt>int</span> <span class=nf>_object_and_properties_init</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>arg</span><span class=p>,</span> <span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>class_type</span><span class=p>,</span> <span class=n>HashTable</span> <span class=o>*</span><span class=n>properties</span> <span class=n>ZEND_FILE_LINE_DC</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_object</span> <span class=o>*</span><span class=n>object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>class_type</span><span class=o>-&gt;</span><span class=n>ce_flags</span> <span class=o>&amp;</span> <span class=p>(</span><span class=n>ZEND_ACC_INTERFACE</span><span class=o>|</span><span class=n>ZEND_ACC_IMPLICIT_ABSTRACT_CLASS</span><span class=o>|</span><span class=n>ZEND_ACC_EXPLICIT_ABSTRACT_CLASS</span><span class=p>))</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=kt>char</span> <span class=o>*</span><span class=n>what</span> <span class=o>=</span>   <span class=p>(</span><span class=n>class_type</span><span class=o>-&gt;</span><span class=n>ce_flags</span> <span class=o>&amp;</span> <span class=n>ZEND_ACC_INTERFACE</span><span class=p>)</span>                <span class=o>?</span> <span class=s>&#34;interface&#34;</span>
-</span></span><span class=line><span class=cl>                     <span class=o>:</span><span class=p>((</span><span class=n>class_type</span><span class=o>-&gt;</span><span class=n>ce_flags</span> <span class=o>&amp;</span> <span class=n>ZEND_ACC_TRAIT</span><span class=p>)</span> <span class=o>==</span> <span class=n>ZEND_ACC_TRAIT</span><span class=p>)</span> <span class=o>?</span> <span class=s>&#34;trait&#34;</span>
-</span></span><span class=line><span class=cl>                     <span class=o>:</span>                                                              <span class=s>&#34;abstract class&#34;</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=nf>zend_error</span><span class=p>(</span><span class=n>E_ERROR</span><span class=p>,</span> <span class=s>&#34;Cannot instantiate %s %s&#34;</span><span class=p>,</span> <span class=n>what</span><span class=p>,</span> <span class=n>class_type</span><span class=o>-&gt;</span><span class=n>name</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nf>zend_update_class_constants</span><span class=p>(</span><span class=n>class_type</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nf>Z_TYPE_P</span><span class=p>(</span><span class=n>arg</span><span class=p>)</span> <span class=o>=</span> <span class=n>IS_OBJECT</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>class_type</span><span class=o>-&gt;</span><span class=n>create_object</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=nf>Z_OBJVAL_P</span><span class=p>(</span><span class=n>arg</span><span class=p>)</span> <span class=o>=</span> <span class=nf>zend_objects_new</span><span class=p>(</span><span class=o>&amp;</span><span class=n>object</span><span class=p>,</span> <span class=n>class_type</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>properties</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=n>object</span><span class=o>-&gt;</span><span class=n>properties</span> <span class=o>=</span> <span class=n>properties</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=n>object</span><span class=o>-&gt;</span><span class=n>properties_table</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=nf>object_properties_init</span><span class=p>(</span><span class=n>object</span><span class=p>,</span> <span class=n>class_type</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=nf>Z_OBJVAL_P</span><span class=p>(</span><span class=n>arg</span><span class=p>)</span> <span class=o>=</span> <span class=n>class_type</span><span class=o>-&gt;</span><span class=nf>create_object</span><span class=p>(</span><span class=n>class_type</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
+<code>zend_update_property</code>之类的函数，是不起作用的，取而代之的是<code>add_property</code>宏函数：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#a6e22e>add_property_long</span>(obj, <span style=color:#e6db74>&#34;id&#34;</span>, id);
+</span></span><span style=display:flex><span><span style=color:#a6e22e>add_property_string</span>(obj, <span style=color:#e6db74>&#34;name&#34;</span>, name, <span style=color:#ae81ff>1</span>); <span style=color:#75715e>// 1 表示使用字符串的副本
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#a6e22e>add_property_bool</span>(obj, <span style=color:#e6db74>&#34;isAdmin&#34;</span>, is_admin);
+</span></span><span style=display:flex><span><span style=color:#75715e>// 同样有_null(), _double(), _stringl(), _resource()和_zval()
+</span></span></span></code></pre></div><p>那么当一个对象被创建的时候到底发生了什么呢？想知道真相，就需要去阅读<code>_object_and_properties_init</code>函数的源码（位于 phpsrc/Zend/zend_API.c 中）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#75715e>/* This function requires &#39;properties&#39; to contain all props declared in the
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * class and all props being public. If only a subset is given or the class
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * has protected members then you need to merge the properties separately by
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * calling zend_merge_properties(). */</span>
+</span></span><span style=display:flex><span>ZEND_API <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>_object_and_properties_init</span>(zval <span style=color:#f92672>*</span>arg, zend_class_entry <span style=color:#f92672>*</span>class_type, HashTable <span style=color:#f92672>*</span>properties ZEND_FILE_LINE_DC TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    zend_object <span style=color:#f92672>*</span>object;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (class_type<span style=color:#f92672>-&gt;</span>ce_flags <span style=color:#f92672>&amp;</span> (ZEND_ACC_INTERFACE<span style=color:#f92672>|</span>ZEND_ACC_IMPLICIT_ABSTRACT_CLASS<span style=color:#f92672>|</span>ZEND_ACC_EXPLICIT_ABSTRACT_CLASS)) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>char</span> <span style=color:#f92672>*</span>what <span style=color:#f92672>=</span>   (class_type<span style=color:#f92672>-&gt;</span>ce_flags <span style=color:#f92672>&amp;</span> ZEND_ACC_INTERFACE)                <span style=color:#f92672>?</span> <span style=color:#e6db74>&#34;interface&#34;</span>
+</span></span><span style=display:flex><span>                     <span style=color:#f92672>:</span>((class_type<span style=color:#f92672>-&gt;</span>ce_flags <span style=color:#f92672>&amp;</span> ZEND_ACC_TRAIT) <span style=color:#f92672>==</span> ZEND_ACC_TRAIT) <span style=color:#f92672>?</span> <span style=color:#e6db74>&#34;trait&#34;</span>
+</span></span><span style=display:flex><span>                     <span style=color:#f92672>:</span>                                                              <span style=color:#e6db74>&#34;abstract class&#34;</span>;
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>zend_error</span>(E_ERROR, <span style=color:#e6db74>&#34;Cannot instantiate %s %s&#34;</span>, what, class_type<span style=color:#f92672>-&gt;</span>name);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>zend_update_class_constants</span>(class_type TSRMLS_CC);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Z_TYPE_P</span>(arg) <span style=color:#f92672>=</span> IS_OBJECT;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (class_type<span style=color:#f92672>-&gt;</span>create_object <span style=color:#f92672>==</span> NULL) {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Z_OBJVAL_P</span>(arg) <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_objects_new</span>(<span style=color:#f92672>&amp;</span>object, class_type TSRMLS_CC);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (properties) {
+</span></span><span style=display:flex><span>            object<span style=color:#f92672>-&gt;</span>properties <span style=color:#f92672>=</span> properties;
+</span></span><span style=display:flex><span>            object<span style=color:#f92672>-&gt;</span>properties_table <span style=color:#f92672>=</span> NULL;
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>object_properties_init</span>(object, class_type);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Z_OBJVAL_P</span>(arg) <span style=color:#f92672>=</span> class_type<span style=color:#f92672>-&gt;</span><span style=color:#a6e22e>create_object</span>(class_type TSRMLS_CC);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>这个函数基本上只做了三件事情：首先校验其是否能够被实例化，接着会注册 class 常量，最后也是最重要的一步操作就是
-是否该类有<code>create_object</code>的处理函数，如果有，将会被调用，如果没有，会调用一个默认的实现<code>zend_objects_new</code>。</p><p>下面是<code>zend_objects_new</code>的源码（位于 phpsrc/Zend/zend_objects.c 中）：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=n>ZEND_API</span> <span class=n>zend_object_value</span> <span class=nf>zend_objects_new</span><span class=p>(</span><span class=n>zend_object</span> <span class=o>**</span><span class=n>object</span><span class=p>,</span> <span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>class_type</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_object_value</span> <span class=n>retval</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=o>*</span><span class=n>object</span> <span class=o>=</span> <span class=nf>emalloc</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=n>zend_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=o>*</span><span class=n>object</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>ce</span> <span class=o>=</span> <span class=n>class_type</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=o>*</span><span class=n>object</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>properties</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=o>*</span><span class=n>object</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>properties_table</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>(</span><span class=o>*</span><span class=n>object</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>guards</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>retval</span><span class=p>.</span><span class=n>handle</span> <span class=o>=</span> <span class=nf>zend_objects_store_put</span><span class=p>(</span><span class=o>*</span><span class=n>object</span><span class=p>,</span> <span class=p>(</span><span class=kt>zend_objects_store_dtor_t</span><span class=p>)</span> <span class=n>zend_objects_destroy_object</span><span class=p>,</span> <span class=p>(</span><span class=kt>zend_objects_free_object_storage_t</span><span class=p>)</span> <span class=n>zend_objects_free_object_sto</span><span class=err>↷</span>
-</span></span><span class=line><span class=cl>    <span class=n>retval</span><span class=p>.</span><span class=n>handlers</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>std_object_handlers</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>retval</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>上面的代码中包含了三个很有趣的东西。一个是<code>zend_object</code>的结构，它的定义如下（位于 phpsrc/Zend/zend.h 中）：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_zend_object</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>ce</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>properties</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>zval</span> <span class=o>**</span><span class=n>properties_table</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>guards</span><span class=p>;</span> <span class=cm>/* protects from __get/__set ... recursion */</span>
-</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>zend_object</span><span class=p>;</span>
+是否该类有<code>create_object</code>的处理函数，如果有，将会被调用，如果没有，会调用一个默认的实现<code>zend_objects_new</code>。</p><p>下面是<code>zend_objects_new</code>的源码（位于 phpsrc/Zend/zend_objects.c 中）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span>ZEND_API zend_object_value <span style=color:#a6e22e>zend_objects_new</span>(zend_object <span style=color:#f92672>**</span>object, zend_class_entry <span style=color:#f92672>*</span>class_type TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    zend_object_value retval;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>*</span>object <span style=color:#f92672>=</span> <span style=color:#a6e22e>emalloc</span>(<span style=color:#66d9ef>sizeof</span>(zend_object));
+</span></span><span style=display:flex><span>    (<span style=color:#f92672>*</span>object)<span style=color:#f92672>-&gt;</span>ce <span style=color:#f92672>=</span> class_type;
+</span></span><span style=display:flex><span>    (<span style=color:#f92672>*</span>object)<span style=color:#f92672>-&gt;</span>properties <span style=color:#f92672>=</span> NULL;
+</span></span><span style=display:flex><span>    (<span style=color:#f92672>*</span>object)<span style=color:#f92672>-&gt;</span>properties_table <span style=color:#f92672>=</span> NULL;
+</span></span><span style=display:flex><span>    (<span style=color:#f92672>*</span>object)<span style=color:#f92672>-&gt;</span>guards <span style=color:#f92672>=</span> NULL;
+</span></span><span style=display:flex><span>    retval.handle <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_objects_store_put</span>(<span style=color:#f92672>*</span>object, (<span style=color:#66d9ef>zend_objects_store_dtor_t</span>) zend_objects_destroy_object, (<span style=color:#66d9ef>zend_objects_free_object_storage_t</span>) zend_objects_free_object_sto<span style=color:#960050;background-color:#1e0010>↷</span>
+</span></span><span style=display:flex><span>    retval.handlers <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>std_object_handlers;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> retval;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>上面的代码中包含了三个很有趣的东西。一个是<code>zend_object</code>的结构，它的定义如下（位于 phpsrc/Zend/zend.h 中）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>struct</span> _zend_object {
+</span></span><span style=display:flex><span>    zend_class_entry <span style=color:#f92672>*</span>ce;
+</span></span><span style=display:flex><span>    HashTable <span style=color:#f92672>*</span>properties;
+</span></span><span style=display:flex><span>    zval <span style=color:#f92672>**</span>properties_table;
+</span></span><span style=display:flex><span>    HashTable <span style=color:#f92672>*</span>guards; <span style=color:#75715e>/* protects from __get/__set ... recursion */</span>
+</span></span><span style=display:flex><span>} zend_object;
 </span></span></code></pre></div><p>这就是一个标准的对象的结构。<code>zend_objects_new</code>函数声明了一个标准的对象结构并对其进行初始化操作。然后它调用了<code>zend_objects_store_put</code>函数
-来把对象数据存放到一个对象存储器中。对象存存储器仅仅是一个能够动态改变大小的存放<code>zend_object_store_buckets</code>类型数据的数组。</p><p>下面是<code>zend_object_store_bucket</code>的数据结构（位于 phpsrc/Zend/zend_objects_API.h 中）</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_zend_object_store_bucket</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_bool</span> <span class=n>destructor_called</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_bool</span> <span class=n>valid</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_uchar</span> <span class=n>apply_count</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=k>union</span> <span class=n>_store_bucket</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>struct</span> <span class=n>_store_object</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=kt>void</span> <span class=o>*</span><span class=n>object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=kt>zend_objects_store_dtor_t</span> <span class=n>dtor</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=kt>zend_objects_free_object_storage_t</span> <span class=n>free_storage</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=kt>zend_objects_store_clone_t</span> <span class=n>clone</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=k>const</span> <span class=n>zend_object_handlers</span> <span class=o>*</span><span class=n>handlers</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=n>zend_uint</span> <span class=n>refcount</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>            <span class=n>gc_root_buffer</span> <span class=o>*</span><span class=n>buffered</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=n>obj</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>struct</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>            <span class=kt>int</span> <span class=n>next</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>        <span class=p>}</span> <span class=n>free_list</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=n>bucket</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>zend_object_store_bucket</span><span class=p>;</span>
+来把对象数据存放到一个对象存储器中。对象存存储器仅仅是一个能够动态改变大小的存放<code>zend_object_store_buckets</code>类型数据的数组。</p><p>下面是<code>zend_object_store_bucket</code>的数据结构（位于 phpsrc/Zend/zend_objects_API.h 中）</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>struct</span> _zend_object_store_bucket {
+</span></span><span style=display:flex><span>    zend_bool destructor_called;
+</span></span><span style=display:flex><span>    zend_bool valid;
+</span></span><span style=display:flex><span>    zend_uchar apply_count;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>union</span> _store_bucket {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>struct</span> _store_object {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>void</span> <span style=color:#f92672>*</span>object;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>zend_objects_store_dtor_t</span> dtor;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>zend_objects_free_object_storage_t</span> free_storage;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>zend_objects_store_clone_t</span> clone;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>const</span> zend_object_handlers <span style=color:#f92672>*</span>handlers;
+</span></span><span style=display:flex><span>            zend_uint refcount;
+</span></span><span style=display:flex><span>            gc_root_buffer <span style=color:#f92672>*</span>buffered;
+</span></span><span style=display:flex><span>        } obj;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> next;
+</span></span><span style=display:flex><span>        } free_list;
+</span></span><span style=display:flex><span>    } bucket;
+</span></span><span style=display:flex><span>} zend_object_store_bucket;
 </span></span></code></pre></div><p>这里的主要部分是<code>_store_object</code>结构，它通过<code>void *object</code>成员来存储对象，紧跟其后的成员分别用于是它的销毁，释放和拷贝。
 接着是一些额外的成员，例如它有自己的<code>refcount</code>属性，因为一个存储在对象存储器中的对象可以被很多<code>zval</code>同时引用，php 需要
 知道有多少引用以便于它是否能够被释放。此外，<code>handlers</code>属性和一个 GC root buffer 也被额外保存下来。</p><p>我们回到前面的<code>zend_objects_new</code>函数，它的最后一部操作就是将对象的<code>handlers</code>设置成默认的<code>std_object_handlers</code>。</p><h2 id=重写-create_object data-numberify>重写 create_object<a class="anchor ms-1" href=#重写-create_object></a></h2><p>当你想使用自定义的对象存储时，你至少需要重复上述的三个操作：首先你需要申明并初始化你的对象，其中它需要包含一个标准的
 对象作为它结构的一部分。接着你需要将它以及它的一些处理函数一起放入对象存储器中。最后你需要将你自定义的对象处理结构物
-赋值给<code>zend_object_value</code>的<code>handlers</code>属性中。</p><p>下面是一个很简单的示例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cp>#ifdef HAVE_CONFIG_H
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;config.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#endif
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;php.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;php_ini.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;ext/standard/info.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;php_test.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kt>int</span> <span class=n>le_test</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>test_ce</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=n>zend_object_handlers</span> <span class=n>test_object_handlers</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>typedef</span>	<span class=k>struct</span> <span class=n>_test_object</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_object</span> <span class=n>std</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=kt>long</span> <span class=n>additional_property</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>test_object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kt>void</span> <span class=nf>test_free_object_storage_handler</span><span class=p>(</span><span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_object_std_dtor</span><span class=p>(</span><span class=o>&amp;</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>std</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>efree</span><span class=p>(</span><span class=n>intern</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>zend_object_value</span> <span class=nf>test_create_object_handler</span><span class=p>(</span><span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>class_type</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_object_value</span> <span class=n>retval</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span> <span class=o>=</span> <span class=nf>emalloc</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=n>test_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>	<span class=nf>memset</span><span class=p>(</span><span class=n>intern</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>test_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_object_std_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>class_type</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>object_properties_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>class_type</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=n>retval</span><span class=p>.</span><span class=n>handle</span> <span class=o>=</span> <span class=nf>zend_objects_store_put</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>			<span class=n>intern</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>			<span class=p>(</span><span class=kt>zend_objects_store_dtor_t</span><span class=p>)</span> <span class=n>zend_objects_destroy_object</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>			<span class=p>(</span><span class=kt>zend_objects_free_object_storage_t</span><span class=p>)</span> <span class=n>test_free_object_storage_handler</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>			<span class=nb>NULL</span> <span class=n>TSRMLS_CC</span>
-</span></span><span class=line><span class=cl>			<span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=cm>/* Assign the customized object handlers */</span>
-</span></span><span class=line><span class=cl>	<span class=n>retval</span><span class=p>.</span><span class=n>handlers</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>test_object_handlers</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>retval</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>const</span> <span class=n>zend_function_entry</span> <span class=n>test_methods</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>PHP_FE_END</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_MINIT_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_MINIT_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_class_entry</span> <span class=n>tmp_ce</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=nf>INIT_CLASS_ENTRY</span><span class=p>(</span><span class=n>tmp_ce</span><span class=p>,</span> <span class=s>&#34;Test&#34;</span><span class=p>,</span> <span class=n>test_methods</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_ce</span> <span class=o>=</span> <span class=nf>zend_register_internal_class</span><span class=p>(</span><span class=o>&amp;</span><span class=n>tmp_ce</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_ce</span><span class=o>-&gt;</span><span class=n>create_object</span> <span class=o>=</span> <span class=n>test_create_object_handler</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=nf>memcpy</span><span class=p>(</span><span class=o>&amp;</span><span class=n>test_object_handlers</span><span class=p>,</span> <span class=nf>zend_get_std_object_handlers</span><span class=p>(),</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zend_object_handlers</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_MSHUTDOWN_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_MSHUTDOWN_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_RINIT_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_RINIT_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_RSHUTDOWN_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_RSHUTDOWN_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_MINFO_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_MINFO_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=nf>php_info_print_table_start</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>	<span class=nf>php_info_print_table_header</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s>&#34;test support&#34;</span><span class=p>,</span> <span class=s>&#34;enabled&#34;</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>php_info_print_table_end</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* test_functions[]
-</span></span></span><span class=line><span class=cl><span class=cm> *
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=k>const</span> <span class=n>zend_function_entry</span> <span class=n>test_functions</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>PHP_FE_END</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* test_module_entry
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=n>zend_module_entry</span> <span class=n>test_module_entry</span> <span class=o>=</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>STANDARD_MODULE_HEADER</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=s>&#34;test&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=nb>NULL</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_MINIT</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_MSHUTDOWN</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_RINIT</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>		<span class=cm>/* Replace with NULL if there&#39;s nothing to do at request start */</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_RSHUTDOWN</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>	<span class=cm>/* Replace with NULL if there&#39;s nothing to do at request end */</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_MINFO</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>
-</span></span><span class=line><span class=cl>	<span class=n>PHP_TEST_VERSION</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=n>STANDARD_MODULE_PROPERTIES</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cp>#ifdef COMPILE_DL_TEST
-</span></span></span><span class=line><span class=cl><span class=cp></span><span class=nf>ZEND_GET_MODULE</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=cp>#endif
+赋值给<code>zend_object_value</code>的<code>handlers</code>属性中。</p><p>下面是一个很简单的示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#75715e>#ifdef HAVE_CONFIG_H
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;config.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#endif
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;php.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;php_ini.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;ext/standard/info.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;php_test.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>int</span> le_test;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zend_class_entry <span style=color:#f92672>*</span>test_ce;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> zend_object_handlers test_object_handlers;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span>	<span style=color:#66d9ef>struct</span> _test_object {
+</span></span><span style=display:flex><span>	zend_object std;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>long</span> additional_property;
+</span></span><span style=display:flex><span>} test_object;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>test_free_object_storage_handler</span>(test_object <span style=color:#f92672>*</span>intern TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_object_std_dtor</span>(<span style=color:#f92672>&amp;</span>intern<span style=color:#f92672>-&gt;</span>std TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>efree</span>(intern);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zend_object_value <span style=color:#a6e22e>test_create_object_handler</span>(zend_class_entry <span style=color:#f92672>*</span>class_type TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zend_object_value retval;
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>intern <span style=color:#f92672>=</span> <span style=color:#a6e22e>emalloc</span>(<span style=color:#66d9ef>sizeof</span>(test_object));
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>memset</span>(intern, <span style=color:#ae81ff>0</span>, <span style=color:#66d9ef>sizeof</span>(test_object));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_object_std_init</span>(<span style=color:#f92672>&amp;</span>intern<span style=color:#f92672>-&gt;</span>std, class_type TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>object_properties_init</span>(<span style=color:#f92672>&amp;</span>intern<span style=color:#f92672>-&gt;</span>std, class_type);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	retval.handle <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_objects_store_put</span>(
+</span></span><span style=display:flex><span>			intern,
+</span></span><span style=display:flex><span>			(<span style=color:#66d9ef>zend_objects_store_dtor_t</span>) zend_objects_destroy_object,
+</span></span><span style=display:flex><span>			(<span style=color:#66d9ef>zend_objects_free_object_storage_t</span>) test_free_object_storage_handler,
+</span></span><span style=display:flex><span>			NULL TSRMLS_CC
+</span></span><span style=display:flex><span>			);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/* Assign the customized object handlers */</span>
+</span></span><span style=display:flex><span>	retval.handlers <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>test_object_handlers;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> retval;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> zend_function_entry test_methods[] <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>	PHP_FE_END
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_MINIT_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_MINIT_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zend_class_entry tmp_ce;
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>INIT_CLASS_ENTRY</span>(tmp_ce, <span style=color:#e6db74>&#34;Test&#34;</span>, test_methods);
+</span></span><span style=display:flex><span>	test_ce <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_register_internal_class</span>(<span style=color:#f92672>&amp;</span>tmp_ce TSRMLS_CC);
+</span></span><span style=display:flex><span>	test_ce<span style=color:#f92672>-&gt;</span>create_object <span style=color:#f92672>=</span> test_create_object_handler;
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>memcpy</span>(<span style=color:#f92672>&amp;</span>test_object_handlers, <span style=color:#a6e22e>zend_get_std_object_handlers</span>(), <span style=color:#66d9ef>sizeof</span>(zend_object_handlers));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_MSHUTDOWN_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_MSHUTDOWN_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_RINIT_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_RINIT_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_RSHUTDOWN_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_RSHUTDOWN_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_MINFO_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_MINFO_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>php_info_print_table_start</span>();
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>php_info_print_table_header</span>(<span style=color:#ae81ff>2</span>, <span style=color:#e6db74>&#34;test support&#34;</span>, <span style=color:#e6db74>&#34;enabled&#34;</span>);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>php_info_print_table_end</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* test_functions[]
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> zend_function_entry test_functions[] <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>	PHP_FE_END
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* test_module_entry
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span>zend_module_entry test_module_entry <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>	STANDARD_MODULE_HEADER,
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;test&#34;</span>,
+</span></span><span style=display:flex><span>	NULL,
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_MINIT</span>(test),
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_MSHUTDOWN</span>(test),
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_RINIT</span>(test),		<span style=color:#75715e>/* Replace with NULL if there&#39;s nothing to do at request start */</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_RSHUTDOWN</span>(test),	<span style=color:#75715e>/* Replace with NULL if there&#39;s nothing to do at request end */</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_MINFO</span>(test),
+</span></span><span style=display:flex><span>	PHP_TEST_VERSION,
+</span></span><span style=display:flex><span>	STANDARD_MODULE_PROPERTIES
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#ifdef COMPILE_DL_TEST
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#a6e22e>ZEND_GET_MODULE</span>(test)
+</span></span><span style=display:flex><span><span style=color:#75715e>#endif
 </span></span></span></code></pre></div><h2 id=object-store-handlers data-numberify>Object store handlers<a class="anchor ms-1" href=#object-store-handlers></a></h2><p>正如前面已经提到的，总共有三个 object storage handlers: 一个是用来做销毁操作，一个是用来处理释放操作，还有一个是用来处理克隆。
 你一开始是不是感到有一点点的疑惑，为什么会同时存在<code>dtor</code>和<code>free</code>操作，它们看上去像是做的相同的事情。然而实际上是 php 有两个阶段
 的对象销毁系统，首先会调用析构函数，然后才会释放空间。两个阶段相互分开，彼此独立。</p><p>特别地，在脚本执行完毕，而且所有的对象还存在于内存中的时候，php 会先调用析构函数（之后会执行 RSHUTDOWN 函数），接下来会及时释放
@@ -246,287 +285,283 @@
 话说，你可能会遇到这种情况，你的代码在一种半关闭的状态下执行。</p><p>析构函数的另一个特性就是它不是一定会被执行，例如当执行<code>die</code>语句后，析构函数就会被跳过。</p><p>因此<code>dtor</code>和<code>free</code>最本质的区别就是<code>dtor</code>可以执行用户端的代码，但是并不是必须执行的，而<code>free</code>操作却总是会被执行，而且<code>free</code>不必
 执行任何 php 代码。这就是为什么大多数情况下，你只需要定义一个自定义的释放函数，然后使用<code>zend_objects_destroy_object</code>作为析构函数的原因。
 而<code>zend_objects_destroy_object</code>只提供了一个默认的行为，那就是调用<code>__destruct</code>方法，如果存在的话。另外，即使你用不到<code>__destruct</code>方法，
-你也需要给该<code>dtor</code>赋值，否则它的派生类也不能使用<code>__destruct</code>方法。</p><p>至此，只剩下 clone handler 了，但是对于它的功能，从名字上我们很快就能理解到。但是它的用法却有一点点的复杂。下面是一个 clone handler 的示例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>static</span> <span class=kt>void</span> <span class=nf>test_clone_object_storage_handler</span><span class=p>(</span><span class=n>test_object</span> <span class=o>*</span><span class=n>object</span><span class=p>,</span> <span class=n>test_object</span> <span class=o>**</span><span class=n>object_clone_target</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=cm>/* Create a new object */</span>
-</span></span><span class=line><span class=cl>    <span class=n>test_object</span> <span class=o>*</span><span class=n>object_clone</span> <span class=o>=</span> <span class=nf>emalloc</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=n>test_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>    <span class=nf>zend_object_std_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>object_clone</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>.</span><span class=n>ce</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=nf>object_properties_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>object_clone</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>.</span><span class=n>ce</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=n>object_clone</span><span class=o>-&gt;</span><span class=n>additional_property</span> <span class=o>=</span> <span class=n>object</span><span class=o>-&gt;</span><span class=n>additional_property</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=o>*</span><span class=n>object_clone_target</span> <span class=o>=</span> <span class=n>object_clone</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>然后把 clone handler 传递给<code>zend_objects_store_put</code>函数的最后一个参数：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=n>retval</span><span class=p>.</span><span class=n>handle</span> <span class=o>=</span> <span class=nf>zend_object_store_put</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>            <span class=n>intern</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>            <span class=p>(</span><span class=kt>zend_objects_store_dtor_t</span><span class=p>)</span> <span class=n>zend_objects_destroy_object</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>            <span class=p>(</span><span class=kt>zend_objects_free_object_storage_t</span><span class=p>)</span> <span class=n>test_free_object_storage_handler</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>            <span class=p>(</span><span class=kt>zend_objects_store_clone_t</span><span class=p>)</span> <span class=n>test_clone_object_storage_handler</span>
-</span></span><span class=line><span class=cl>            <span class=n>TSRMLS_CC</span>
-</span></span><span class=line><span class=cl>            <span class=p>);</span>
+你也需要给该<code>dtor</code>赋值，否则它的派生类也不能使用<code>__destruct</code>方法。</p><p>至此，只剩下 clone handler 了，但是对于它的功能，从名字上我们很快就能理解到。但是它的用法却有一点点的复杂。下面是一个 clone handler 的示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>test_clone_object_storage_handler</span>(test_object <span style=color:#f92672>*</span>object, test_object <span style=color:#f92672>**</span>object_clone_target TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* Create a new object */</span>
+</span></span><span style=display:flex><span>    test_object <span style=color:#f92672>*</span>object_clone <span style=color:#f92672>=</span> <span style=color:#a6e22e>emalloc</span>(<span style=color:#66d9ef>sizeof</span>(test_object));
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>zend_object_std_init</span>(<span style=color:#f92672>&amp;</span>object_clone<span style=color:#f92672>-&gt;</span>std, object<span style=color:#f92672>-&gt;</span>std.ce TSRMLS_CC);
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>object_properties_init</span>(<span style=color:#f92672>&amp;</span>object_clone<span style=color:#f92672>-&gt;</span>std, object<span style=color:#f92672>-&gt;</span>std.ce);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    object_clone<span style=color:#f92672>-&gt;</span>additional_property <span style=color:#f92672>=</span> object<span style=color:#f92672>-&gt;</span>additional_property;
+</span></span><span style=display:flex><span>    <span style=color:#f92672>*</span>object_clone_target <span style=color:#f92672>=</span> object_clone;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>然后把 clone handler 传递给<code>zend_objects_store_put</code>函数的最后一个参数：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span>retval.handle <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_put</span>(
+</span></span><span style=display:flex><span>            intern,
+</span></span><span style=display:flex><span>            (<span style=color:#66d9ef>zend_objects_store_dtor_t</span>) zend_objects_destroy_object,
+</span></span><span style=display:flex><span>            (<span style=color:#66d9ef>zend_objects_free_object_storage_t</span>) test_free_object_storage_handler,
+</span></span><span style=display:flex><span>            (<span style=color:#66d9ef>zend_objects_store_clone_t</span>) test_clone_object_storage_handler
+</span></span><span style=display:flex><span>            TSRMLS_CC
+</span></span><span style=display:flex><span>            );
 </span></span></code></pre></div><p>但是这样做并不能使 clone handler 生效，默认情况下，clone handler 会被忽略。为了使他生效，你需要通过<code>zend_objects_store_clone_obj</code>用
-默认的 clone handler 替换到自己定义的 handlers 结构：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>memcpy</span><span class=p>(</span><span class=o>&amp;</span><span class=n>test_object_handlers</span><span class=p>,</span> <span class=nf>zend_get_std_object_handlers</span><span class=p>(),</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zend_object_handlers</span><span class=p>));</span>
-</span></span><span class=line><span class=cl><span class=n>test_object_handler</span><span class=p>.</span><span class=n>clone_obj</span> <span class=o>=</span> <span class=n>zend_objects_store_clone_obj</span><span class=p>;</span>
+默认的 clone handler 替换到自己定义的 handlers 结构：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#a6e22e>memcpy</span>(<span style=color:#f92672>&amp;</span>test_object_handlers, <span style=color:#a6e22e>zend_get_std_object_handlers</span>(), <span style=color:#66d9ef>sizeof</span>(zend_object_handlers));
+</span></span><span style=display:flex><span>test_object_handler.clone_obj <span style=color:#f92672>=</span> zend_objects_store_clone_obj;
 </span></span></code></pre></div><p>由于覆盖标准的 clone handler(<code>zend_objects_clone_obj</code>)会引发一系列的问题：由于对象的属性不会被拷贝，因此
 <code>__clone</code>方法也不会被调用。这就是为什么大多数内部类都是直接指定自己的对象拷贝函数，而不是绕额外的弯子去
-使用对象存储器的对象克隆函数。这个方法看起来有点过于样板化，它的源码如下（位于 phpsrc/Zend/zend_objects.c 中）：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=n>ZEND_API</span> <span class=n>zend_object_value</span> <span class=nf>zend_objects_clone_obj</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>zobject</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_object_value</span> <span class=n>new_obj_val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_object</span> <span class=o>*</span><span class=n>old_object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_object</span> <span class=o>*</span><span class=n>new_object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>    <span class=n>zend_object_handle</span> <span class=n>handle</span> <span class=o>=</span> <span class=nf>Z_OBJ_HANDLE_P</span><span class=p>(</span><span class=n>zobject</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=cm>/* assume that create isn&#39;t overwritten, so when clone depends on the
-</span></span></span><span class=line><span class=cl><span class=cm>     * overwritten one then it must itself be overwritten */</span>
-</span></span><span class=line><span class=cl>    <span class=n>old_object</span> <span class=o>=</span> <span class=nf>zend_objects_get_address</span><span class=p>(</span><span class=n>zobject</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>    <span class=n>new_obj_val</span> <span class=o>=</span> <span class=nf>zend_objects_new</span><span class=p>(</span><span class=o>&amp;</span><span class=n>new_object</span><span class=p>,</span> <span class=n>old_object</span><span class=o>-&gt;</span><span class=n>ce</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nf>zend_objects_clone_members</span><span class=p>(</span><span class=n>new_object</span><span class=p>,</span> <span class=n>new_obj_val</span><span class=p>,</span> <span class=n>old_object</span><span class=p>,</span> <span class=n>handle</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>new_obj_val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
+使用对象存储器的对象克隆函数。这个方法看起来有点过于样板化，它的源码如下（位于 phpsrc/Zend/zend_objects.c 中）：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span>ZEND_API zend_object_value <span style=color:#a6e22e>zend_objects_clone_obj</span>(zval <span style=color:#f92672>*</span>zobject TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    zend_object_value new_obj_val;
+</span></span><span style=display:flex><span>    zend_object <span style=color:#f92672>*</span>old_object;
+</span></span><span style=display:flex><span>    zend_object <span style=color:#f92672>*</span>new_object;
+</span></span><span style=display:flex><span>    zend_object_handle handle <span style=color:#f92672>=</span> <span style=color:#a6e22e>Z_OBJ_HANDLE_P</span>(zobject);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/* assume that create isn&#39;t overwritten, so when clone depends on the
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * overwritten one then it must itself be overwritten */</span>
+</span></span><span style=display:flex><span>    old_object <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_objects_get_address</span>(zobject TSRMLS_CC);
+</span></span><span style=display:flex><span>    new_obj_val <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_objects_new</span>(<span style=color:#f92672>&amp;</span>new_object, old_object<span style=color:#f92672>-&gt;</span>ce TSRMLS_CC);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>zend_objects_clone_members</span>(new_object, new_obj_val, old_object, handle TSRMLS_CC);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> new_obj_val;
+</span></span><span style=display:flex><span>}
 </span></span></code></pre></div><p>这个函数首先使用<code>zend_objects_get_address</code>从对象存储器中获取<code>zend_object*</code>，然后创建一个拥有相同<code>class_entry</code>的对象（通过<code>zend_objects_new</code>），
-然后调用<code>zend_objects_clone_members</code>操作来克隆对象的属性，而且会调用<code>__clone</code>方法，如果存在的话。</p><p>使用我们自定义的<code>create_object</code> handler 来取代<code>zend_objects_new</code>函数，将会使得我们自定义的 object clone handler 看起来简单许多：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>static</span> <span class=n>zend_object_value</span> <span class=nf>test_clone_handler</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>object</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>old_object</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object</span><span class=p>(</span><span class=n>object</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_object_value</span> <span class=n>new_object_val</span> <span class=o>=</span> <span class=nf>test_create_object_handler</span><span class=p>(</span><span class=nf>Z_OBJCE_P</span><span class=p>(</span><span class=n>object</span><span class=p>)</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>new_object</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object_by_handle</span><span class=p>(</span><span class=n>new_object_val</span><span class=p>.</span><span class=n>handle</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=cm>/* Clone properties and call __clone */</span>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_objects_clone_members</span><span class=p>(</span><span class=o>&amp;</span><span class=n>new_object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>new_object_val</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=nf>Z_OBJ_HANDLE_P</span><span class=p>(</span><span class=n>object</span><span class=p>)</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=n>new_object</span><span class=o>-&gt;</span><span class=n>additional_property</span> <span class=o>=</span> <span class=n>old_object</span><span class=o>-&gt;</span><span class=n>additional_property</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>new_object_val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* ... */</span>
-</span></span><span class=line><span class=cl><span class=c1>//MINIT
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>test_object_handler</span><span class=p>.</span><span class=n>clone_obj</span> <span class=o>=</span> <span class=n>test_clone_handler</span><span class=p>;</span>
+然后调用<code>zend_objects_clone_members</code>操作来克隆对象的属性，而且会调用<code>__clone</code>方法，如果存在的话。</p><p>使用我们自定义的<code>create_object</code> handler 来取代<code>zend_objects_new</code>函数，将会使得我们自定义的 object clone handler 看起来简单许多：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#66d9ef>static</span> zend_object_value <span style=color:#a6e22e>test_clone_handler</span>(zval <span style=color:#f92672>*</span>object TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>old_object <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object</span>(object TSRMLS_CC);
+</span></span><span style=display:flex><span>	zend_object_value new_object_val <span style=color:#f92672>=</span> <span style=color:#a6e22e>test_create_object_handler</span>(<span style=color:#a6e22e>Z_OBJCE_P</span>(object) TSRMLS_CC);
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>new_object <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object_by_handle</span>(new_object_val.handle TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/* Clone properties and call __clone */</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_objects_clone_members</span>(<span style=color:#f92672>&amp;</span>new_object<span style=color:#f92672>-&gt;</span>std, new_object_val, <span style=color:#f92672>&amp;</span>old_object<span style=color:#f92672>-&gt;</span>std, <span style=color:#a6e22e>Z_OBJ_HANDLE_P</span>(object) TSRMLS_CC);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	new_object<span style=color:#f92672>-&gt;</span>additional_property <span style=color:#f92672>=</span> old_object<span style=color:#f92672>-&gt;</span>additional_property;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> new_object_val;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* ... */</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>//MINIT
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>test_object_handler.clone_obj <span style=color:#f92672>=</span> test_clone_handler;
 </span></span></code></pre></div><h2 id=与-object-store-的交互操作 data-numberify>与 object store 的交互操作<a class="anchor ms-1" href=#与-object-store-的交互操作></a></h2><p>通过上面的示例，已经展示过一些与 object store 交互的函数，例如：<code>zend_objects_store_put</code>，这是一个向 object store 中插入一个元素的操作。
 同时也有三个函数用来从 object store 中获取元素。</p><p><code>zend_object_store_get_object_by_handle()</code>，顾名思义，通过给定一个对象的 handle 来获取该对象。当你已经获取到了一个对象的 handle，却没有访问到它的 zval 时，可以调用此函数。
 但是在大多数情况下，你会使用<code>zend_object_store_get_object()</code>函数，通过给定对象的 zval 来获取它。
 第三个函数是<code>zend_objects_get_address()</code>，该函数类似于<code>zend_object_store_get_object()</code>函数，但是它返回的类型是<code>zend_object *</code>而不是<code>void *</code>。所以这个函数一般很少使用，因为
-c 语言允许隐式的类型转换，从<code>void *</code>类型转换成其他指针类型。</p><p>以上三个函数中最重要的一个就是<code>zend_object_store_get_object()</code>。你将会频繁使用。下面给出一个简单的示例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>PHP_METHOD</span><span class=p>(</span><span class=n>Test</span><span class=p>,</span> <span class=n>get</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zval</span> <span class=o>*</span><span class=n>object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=p>(</span><span class=nf>zend_parse_parameters_none</span><span class=p>()</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>		<span class=k>return</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=p>}</span>
-</span></span><span class=line><span class=cl>	<span class=n>object</span> <span class=o>=</span> <span class=nf>getThis</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>	<span class=n>intern</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object</span><span class=p>(</span><span class=n>object</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>RETURN_LONG</span><span class=p>(</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>additional_property</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></div><p>下面给出完整的示例代码：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cm>/*
-</span></span></span><span class=line><span class=cl><span class=cm>  +----------------------------------------------------------------------+
-</span></span></span><span class=line><span class=cl><span class=cm>  | Test                                                                 |
-</span></span></span><span class=line><span class=cl><span class=cm>  +----------------------------------------------------------------------+
-</span></span></span><span class=line><span class=cl><span class=cm>  | Copyright (c) 1997-2016 The PHP Group                                |
-</span></span></span><span class=line><span class=cl><span class=cm>  +----------------------------------------------------------------------+
-</span></span></span><span class=line><span class=cl><span class=cm>  | This source file is subject to version 3.01 of the PHP license,      |
-</span></span></span><span class=line><span class=cl><span class=cm>  | that is bundled with this package in the file LICENSE, and is        |
-</span></span></span><span class=line><span class=cl><span class=cm>  | available through the world-wide-web at the following url:           |
-</span></span></span><span class=line><span class=cl><span class=cm>  | http://www.php.net/license/3_01.txt                                  |
-</span></span></span><span class=line><span class=cl><span class=cm>  | If you did not receive a copy of the PHP license and are unable to   |
-</span></span></span><span class=line><span class=cl><span class=cm>  | obtain it through the world-wide-web, please send a note to          |
-</span></span></span><span class=line><span class=cl><span class=cm>  | license@php.net so we can mail you a copy immediately.               |
-</span></span></span><span class=line><span class=cl><span class=cm>  +----------------------------------------------------------------------+
-</span></span></span><span class=line><span class=cl><span class=cm>  | Author: liubang &lt;it.liubang@gmail.com&gt;                               |
-</span></span></span><span class=line><span class=cl><span class=cm>  +----------------------------------------------------------------------+
-</span></span></span><span class=line><span class=cl><span class=cm>*/</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* $Id$ */</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cp>#ifdef HAVE_CONFIG_H
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;config.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#endif
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;php.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;php_ini.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;ext/standard/info.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;php_test.h&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kt>int</span> <span class=n>le_test</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>test_ce</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=n>zend_object_handlers</span> <span class=n>test_object_handlers</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>typedef</span>	<span class=k>struct</span> <span class=n>_test_object</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_object</span> <span class=n>std</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=kt>long</span> <span class=n>additional_property</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>test_object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kt>void</span> <span class=nf>test_free_object_storage_handler</span><span class=p>(</span><span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_object_std_dtor</span><span class=p>(</span><span class=o>&amp;</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>std</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>efree</span><span class=p>(</span><span class=n>intern</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kt>void</span> <span class=nf>test_clone_object_storage_handler</span><span class=p>(</span><span class=n>test_object</span> <span class=o>*</span><span class=n>object</span><span class=p>,</span> <span class=n>test_object</span> <span class=o>**</span><span class=n>object_clone_target</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=cm>/* Create a new object */</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>object_clone</span> <span class=o>=</span> <span class=nf>emalloc</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=n>test_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_object_std_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>object_clone</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>.</span><span class=n>ce</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>object_properties_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>object_clone</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>.</span><span class=n>ce</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=n>object_clone</span><span class=o>-&gt;</span><span class=n>additional_property</span> <span class=o>=</span> <span class=n>object</span><span class=o>-&gt;</span><span class=n>additional_property</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=o>*</span><span class=n>object_clone_target</span> <span class=o>=</span> <span class=n>object_clone</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=n>zend_object_value</span> <span class=nf>test_create_object_handler</span><span class=p>(</span><span class=n>zend_class_entry</span> <span class=o>*</span><span class=n>class_type</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_object_value</span> <span class=n>retval</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span> <span class=o>=</span> <span class=nf>emalloc</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=n>test_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>	<span class=nf>memset</span><span class=p>(</span><span class=n>intern</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>test_object</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_object_std_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>class_type</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>object_properties_init</span><span class=p>(</span><span class=o>&amp;</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>class_type</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=n>retval</span><span class=p>.</span><span class=n>handle</span> <span class=o>=</span> <span class=nf>zend_objects_store_put</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>			<span class=n>intern</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>			<span class=p>(</span><span class=kt>zend_objects_store_dtor_t</span><span class=p>)</span> <span class=n>zend_objects_destroy_object</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>			<span class=p>(</span><span class=kt>zend_objects_free_object_storage_t</span><span class=p>)</span> <span class=n>test_free_object_storage_handler</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>			<span class=p>(</span><span class=kt>zend_objects_store_clone_t</span><span class=p>)</span> <span class=n>test_clone_object_storage_handler</span>
-</span></span><span class=line><span class=cl>			<span class=n>TSRMLS_CC</span>
-</span></span><span class=line><span class=cl>			<span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=cm>/* Assign the customized object handlers */</span>
-</span></span><span class=line><span class=cl>	<span class=n>retval</span><span class=p>.</span><span class=n>handlers</span> <span class=o>=</span> <span class=o>&amp;</span><span class=n>test_object_handlers</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>retval</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>static</span> <span class=n>zend_object_value</span> <span class=nf>test_clone_handler</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>object</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>old_object</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object</span><span class=p>(</span><span class=n>object</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_object_value</span> <span class=n>new_object_val</span> <span class=o>=</span> <span class=nf>test_create_object_handler</span><span class=p>(</span><span class=nf>Z_OBJCE_P</span><span class=p>(</span><span class=n>object</span><span class=p>)</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>new_object</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object_by_handle</span><span class=p>(</span><span class=n>new_object_val</span><span class=p>.</span><span class=n>handle</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=cm>/* Clone properties and call __clone */</span>
-</span></span><span class=line><span class=cl>	<span class=nf>zend_objects_clone_members</span><span class=p>(</span><span class=o>&amp;</span><span class=n>new_object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=n>new_object_val</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>old_object</span><span class=o>-&gt;</span><span class=n>std</span><span class=p>,</span> <span class=nf>Z_OBJ_HANDLE_P</span><span class=p>(</span><span class=n>object</span><span class=p>)</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=n>new_object</span><span class=o>-&gt;</span><span class=n>additional_property</span> <span class=o>=</span> <span class=n>old_object</span><span class=o>-&gt;</span><span class=n>additional_property</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>new_object_val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=nf>PHP_METHOD</span><span class=p>(</span><span class=n>Test</span><span class=p>,</span> <span class=n>set</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zval</span> <span class=o>*</span><span class=n>object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=kt>long</span> <span class=o>*</span><span class=n>val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=p>(</span><span class=nf>zend_parse_parameters</span><span class=p>(</span><span class=nf>ZEND_NUM_ARGS</span><span class=p>()</span> <span class=n>TSRMLS_CC</span><span class=p>,</span> <span class=s>&#34;l&#34;</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>val</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>		<span class=n>RETURN_FALSE</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=p>}</span>
-</span></span><span class=line><span class=cl>	<span class=n>object</span> <span class=o>=</span> <span class=nf>getThis</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>	<span class=n>intern</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object</span><span class=p>(</span><span class=n>object</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>intern</span><span class=o>-&gt;</span><span class=n>additional_property</span> <span class=o>=</span> <span class=n>val</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=n>RETURN_TRUE</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=nf>PHP_METHOD</span><span class=p>(</span><span class=n>Test</span><span class=p>,</span> <span class=n>get</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zval</span> <span class=o>*</span><span class=n>object</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object</span> <span class=o>*</span><span class=n>intern</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=p>(</span><span class=nf>zend_parse_parameters_none</span><span class=p>()</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>		<span class=k>return</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=p>}</span>
-</span></span><span class=line><span class=cl>	<span class=n>object</span> <span class=o>=</span> <span class=nf>getThis</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>	<span class=n>intern</span> <span class=o>=</span> <span class=nf>zend_object_store_get_object</span><span class=p>(</span><span class=n>object</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>RETURN_LONG</span><span class=p>(</span><span class=n>intern</span><span class=o>-&gt;</span><span class=n>additional_property</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=k>const</span> <span class=n>zend_function_entry</span> <span class=n>test_methods</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_ME</span><span class=p>(</span><span class=n>Test</span><span class=p>,</span> <span class=n>set</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=n>ZEND_ACC_PUBLIC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_ME</span><span class=p>(</span><span class=n>Test</span><span class=p>,</span> <span class=n>get</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=n>ZEND_ACC_PUBLIC</span><span class=p>)</span>
-</span></span><span class=line><span class=cl>	<span class=n>PHP_FE_END</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_MINIT_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_MINIT_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>zend_class_entry</span> <span class=n>tmp_ce</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=nf>INIT_CLASS_ENTRY</span><span class=p>(</span><span class=n>tmp_ce</span><span class=p>,</span> <span class=s>&#34;Test&#34;</span><span class=p>,</span> <span class=n>test_methods</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_ce</span> <span class=o>=</span> <span class=nf>zend_register_internal_class</span><span class=p>(</span><span class=o>&amp;</span><span class=n>tmp_ce</span> <span class=n>TSRMLS_CC</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_ce</span><span class=o>-&gt;</span><span class=n>create_object</span> <span class=o>=</span> <span class=n>test_create_object_handler</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>	<span class=nf>memcpy</span><span class=p>(</span><span class=o>&amp;</span><span class=n>test_object_handlers</span><span class=p>,</span> <span class=nf>zend_get_std_object_handlers</span><span class=p>(),</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zend_object_handlers</span><span class=p>));</span>
-</span></span><span class=line><span class=cl>	<span class=n>test_object_handlers</span><span class=p>.</span><span class=n>clone_obj</span> <span class=o>=</span> <span class=n>test_clone_handler</span><span class=p>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_MSHUTDOWN_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_MSHUTDOWN_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_RINIT_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_RINIT_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_RSHUTDOWN_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_RSHUTDOWN_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* PHP_MINFO_FUNCTION
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=nf>PHP_MINFO_FUNCTION</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=nf>php_info_print_table_start</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>	<span class=nf>php_info_print_table_header</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=s>&#34;test support&#34;</span><span class=p>,</span> <span class=s>&#34;enabled&#34;</span><span class=p>);</span>
-</span></span><span class=line><span class=cl>	<span class=nf>php_info_print_table_end</span><span class=p>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* test_functions[]
-</span></span></span><span class=line><span class=cl><span class=cm> *
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=k>const</span> <span class=n>zend_function_entry</span> <span class=n>test_functions</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>PHP_FE_END</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cm>/* test_module_entry
-</span></span></span><span class=line><span class=cl><span class=cm> */</span>
-</span></span><span class=line><span class=cl><span class=n>zend_module_entry</span> <span class=n>test_module_entry</span> <span class=o>=</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>	<span class=n>STANDARD_MODULE_HEADER</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=s>&#34;test&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=nb>NULL</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_MINIT</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_MSHUTDOWN</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_RINIT</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>		<span class=cm>/* Replace with NULL if there&#39;s nothing to do at request start */</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_RSHUTDOWN</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>	<span class=cm>/* Replace with NULL if there&#39;s nothing to do at request end */</span>
-</span></span><span class=line><span class=cl>	<span class=nf>PHP_MINFO</span><span class=p>(</span><span class=n>test</span><span class=p>),</span>
-</span></span><span class=line><span class=cl>	<span class=n>PHP_TEST_VERSION</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>	<span class=n>STANDARD_MODULE_PROPERTIES</span>
-</span></span><span class=line><span class=cl><span class=p>};</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=cp>#ifdef COMPILE_DL_TEST
-</span></span></span><span class=line><span class=cl><span class=cp></span><span class=nf>ZEND_GET_MODULE</span><span class=p>(</span><span class=n>test</span><span class=p>)</span>
-</span></span><span class=line><span class=cl><span class=cp>#endif
-</span></span></span></code></pre></div><p>测试并运行：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=nv>$test</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Test</span><span class=p>();</span>
-</span></span><span class=line><span class=cl><span class=nx>var_dump</span><span class=p>(</span><span class=nv>$test</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=nv>$test</span><span class=o>-&gt;</span><span class=na>set</span><span class=p>(</span><span class=mi>123</span><span class=p>);</span>
-</span></span><span class=line><span class=cl><span class=nx>var_dump</span><span class=p>(</span><span class=nv>$test</span><span class=o>-&gt;</span><span class=na>get</span><span class=p>());</span>
-</span></span><span class=line><span class=cl><span class=c1>// output
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>liubang</span><span class=o>@</span><span class=nx>venux</span><span class=o>:~/</span><span class=nx>workspace</span><span class=o>/</span><span class=nx>c</span><span class=o>/</span><span class=nx>test</span><span class=err>$</span> <span class=nx>php</span> <span class=nx>tests</span><span class=o>/</span><span class=nx>test</span><span class=o>.</span><span class=nx>php</span>
-</span></span><span class=line><span class=cl><span class=nx>object</span><span class=p>(</span><span class=nx>Test</span><span class=p>)</span><span class=c1>#1 (0) {
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=nx>int</span><span class=p>(</span><span class=mi>123</span><span class=p>)</span>
+c 语言允许隐式的类型转换，从<code>void *</code>类型转换成其他指针类型。</p><p>以上三个函数中最重要的一个就是<code>zend_object_store_get_object()</code>。你将会频繁使用。下面给出一个简单的示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#a6e22e>PHP_METHOD</span>(Test, get)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zval <span style=color:#f92672>*</span>object;
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>intern;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>zend_parse_parameters_none</span>() <span style=color:#f92672>==</span> FAILURE) {
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>return</span>;
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	object <span style=color:#f92672>=</span> <span style=color:#a6e22e>getThis</span>();
+</span></span><span style=display:flex><span>	intern <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object</span>(object TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>RETURN_LONG</span>(intern<span style=color:#f92672>-&gt;</span>additional_property);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>下面给出完整的示例代码：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#75715e>/*
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +----------------------------------------------------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | Test                                                                 |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +----------------------------------------------------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | Copyright (c) 1997-2016 The PHP Group                                |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +----------------------------------------------------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | This source file is subject to version 3.01 of the PHP license,      |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | that is bundled with this package in the file LICENSE, and is        |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | available through the world-wide-web at the following url:           |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | http://www.php.net/license/3_01.txt                                  |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | If you did not receive a copy of the PHP license and are unable to   |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | obtain it through the world-wide-web, please send a note to          |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | license@php.net so we can mail you a copy immediately.               |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +----------------------------------------------------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  | Author: liubang &lt;it.liubang@gmail.com&gt;                               |
+</span></span></span><span style=display:flex><span><span style=color:#75715e>  +----------------------------------------------------------------------+
+</span></span></span><span style=display:flex><span><span style=color:#75715e>*/</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* $Id$ */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#ifdef HAVE_CONFIG_H
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;config.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#endif
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;php.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;php_ini.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;ext/standard/info.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e>#include</span> <span style=color:#75715e>&#34;php_test.h&#34;</span><span style=color:#75715e>
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>int</span> le_test;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zend_class_entry <span style=color:#f92672>*</span>test_ce;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> zend_object_handlers test_object_handlers;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>typedef</span>	<span style=color:#66d9ef>struct</span> _test_object {
+</span></span><span style=display:flex><span>	zend_object std;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>long</span> additional_property;
+</span></span><span style=display:flex><span>} test_object;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>test_free_object_storage_handler</span>(test_object <span style=color:#f92672>*</span>intern TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_object_std_dtor</span>(<span style=color:#f92672>&amp;</span>intern<span style=color:#f92672>-&gt;</span>std TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>efree</span>(intern);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>test_clone_object_storage_handler</span>(test_object <span style=color:#f92672>*</span>object, test_object <span style=color:#f92672>**</span>object_clone_target TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/* Create a new object */</span>
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>object_clone <span style=color:#f92672>=</span> <span style=color:#a6e22e>emalloc</span>(<span style=color:#66d9ef>sizeof</span>(test_object));
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_object_std_init</span>(<span style=color:#f92672>&amp;</span>object_clone<span style=color:#f92672>-&gt;</span>std, object<span style=color:#f92672>-&gt;</span>std.ce TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>object_properties_init</span>(<span style=color:#f92672>&amp;</span>object_clone<span style=color:#f92672>-&gt;</span>std, object<span style=color:#f92672>-&gt;</span>std.ce);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	object_clone<span style=color:#f92672>-&gt;</span>additional_property <span style=color:#f92672>=</span> object<span style=color:#f92672>-&gt;</span>additional_property;
+</span></span><span style=display:flex><span>	<span style=color:#f92672>*</span>object_clone_target <span style=color:#f92672>=</span> object_clone;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zend_object_value <span style=color:#a6e22e>test_create_object_handler</span>(zend_class_entry <span style=color:#f92672>*</span>class_type TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zend_object_value retval;
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>intern <span style=color:#f92672>=</span> <span style=color:#a6e22e>emalloc</span>(<span style=color:#66d9ef>sizeof</span>(test_object));
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>memset</span>(intern, <span style=color:#ae81ff>0</span>, <span style=color:#66d9ef>sizeof</span>(test_object));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_object_std_init</span>(<span style=color:#f92672>&amp;</span>intern<span style=color:#f92672>-&gt;</span>std, class_type TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>object_properties_init</span>(<span style=color:#f92672>&amp;</span>intern<span style=color:#f92672>-&gt;</span>std, class_type);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	retval.handle <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_objects_store_put</span>(
+</span></span><span style=display:flex><span>			intern,
+</span></span><span style=display:flex><span>			(<span style=color:#66d9ef>zend_objects_store_dtor_t</span>) zend_objects_destroy_object,
+</span></span><span style=display:flex><span>			(<span style=color:#66d9ef>zend_objects_free_object_storage_t</span>) test_free_object_storage_handler,
+</span></span><span style=display:flex><span>			(<span style=color:#66d9ef>zend_objects_store_clone_t</span>) test_clone_object_storage_handler
+</span></span><span style=display:flex><span>			TSRMLS_CC
+</span></span><span style=display:flex><span>			);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/* Assign the customized object handlers */</span>
+</span></span><span style=display:flex><span>	retval.handlers <span style=color:#f92672>=</span> <span style=color:#f92672>&amp;</span>test_object_handlers;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> retval;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>static</span> zend_object_value <span style=color:#a6e22e>test_clone_handler</span>(zval <span style=color:#f92672>*</span>object TSRMLS_DC)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>old_object <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object</span>(object TSRMLS_CC);
+</span></span><span style=display:flex><span>	zend_object_value new_object_val <span style=color:#f92672>=</span> <span style=color:#a6e22e>test_create_object_handler</span>(<span style=color:#a6e22e>Z_OBJCE_P</span>(object) TSRMLS_CC);
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>new_object <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object_by_handle</span>(new_object_val.handle TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#75715e>/* Clone properties and call __clone */</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>zend_objects_clone_members</span>(<span style=color:#f92672>&amp;</span>new_object<span style=color:#f92672>-&gt;</span>std, new_object_val, <span style=color:#f92672>&amp;</span>old_object<span style=color:#f92672>-&gt;</span>std, <span style=color:#a6e22e>Z_OBJ_HANDLE_P</span>(object) TSRMLS_CC);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	new_object<span style=color:#f92672>-&gt;</span>additional_property <span style=color:#f92672>=</span> old_object<span style=color:#f92672>-&gt;</span>additional_property;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> new_object_val;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_METHOD</span>(Test, set)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zval <span style=color:#f92672>*</span>object;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>long</span> <span style=color:#f92672>*</span>val;
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>intern;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>zend_parse_parameters</span>(<span style=color:#a6e22e>ZEND_NUM_ARGS</span>() TSRMLS_CC, <span style=color:#e6db74>&#34;l&#34;</span>, <span style=color:#f92672>&amp;</span>val) <span style=color:#f92672>==</span> FAILURE) {
+</span></span><span style=display:flex><span>		RETURN_FALSE;
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	object <span style=color:#f92672>=</span> <span style=color:#a6e22e>getThis</span>();
+</span></span><span style=display:flex><span>	intern <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object</span>(object TSRMLS_CC);
+</span></span><span style=display:flex><span>	intern<span style=color:#f92672>-&gt;</span>additional_property <span style=color:#f92672>=</span> val;
+</span></span><span style=display:flex><span>	RETURN_TRUE;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_METHOD</span>(Test, get)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zval <span style=color:#f92672>*</span>object;
+</span></span><span style=display:flex><span>	test_object <span style=color:#f92672>*</span>intern;
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>zend_parse_parameters_none</span>() <span style=color:#f92672>==</span> FAILURE) {
+</span></span><span style=display:flex><span>		<span style=color:#66d9ef>return</span>;
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	object <span style=color:#f92672>=</span> <span style=color:#a6e22e>getThis</span>();
+</span></span><span style=display:flex><span>	intern <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_object_store_get_object</span>(object TSRMLS_CC);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>RETURN_LONG</span>(intern<span style=color:#f92672>-&gt;</span>additional_property);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> zend_function_entry test_methods[] <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_ME</span>(Test, set, NULL, ZEND_ACC_PUBLIC)
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_ME</span>(Test, get, NULL, ZEND_ACC_PUBLIC)
+</span></span><span style=display:flex><span>	PHP_FE_END
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_MINIT_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_MINIT_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	zend_class_entry tmp_ce;
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>INIT_CLASS_ENTRY</span>(tmp_ce, <span style=color:#e6db74>&#34;Test&#34;</span>, test_methods);
+</span></span><span style=display:flex><span>	test_ce <span style=color:#f92672>=</span> <span style=color:#a6e22e>zend_register_internal_class</span>(<span style=color:#f92672>&amp;</span>tmp_ce TSRMLS_CC);
+</span></span><span style=display:flex><span>	test_ce<span style=color:#f92672>-&gt;</span>create_object <span style=color:#f92672>=</span> test_create_object_handler;
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>memcpy</span>(<span style=color:#f92672>&amp;</span>test_object_handlers, <span style=color:#a6e22e>zend_get_std_object_handlers</span>(), <span style=color:#66d9ef>sizeof</span>(zend_object_handlers));
+</span></span><span style=display:flex><span>	test_object_handlers.clone_obj <span style=color:#f92672>=</span> test_clone_handler;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_MSHUTDOWN_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_MSHUTDOWN_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_RINIT_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_RINIT_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_RSHUTDOWN_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_RSHUTDOWN_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* PHP_MINFO_FUNCTION
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>PHP_MINFO_FUNCTION</span>(test)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>php_info_print_table_start</span>();
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>php_info_print_table_header</span>(<span style=color:#ae81ff>2</span>, <span style=color:#e6db74>&#34;test support&#34;</span>, <span style=color:#e6db74>&#34;enabled&#34;</span>);
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>php_info_print_table_end</span>();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* test_functions[]
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> zend_function_entry test_functions[] <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>	PHP_FE_END
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/* test_module_entry
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span>zend_module_entry test_module_entry <span style=color:#f92672>=</span> {
+</span></span><span style=display:flex><span>	STANDARD_MODULE_HEADER,
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;test&#34;</span>,
+</span></span><span style=display:flex><span>	NULL,
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_MINIT</span>(test),
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_MSHUTDOWN</span>(test),
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_RINIT</span>(test),		<span style=color:#75715e>/* Replace with NULL if there&#39;s nothing to do at request start */</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_RSHUTDOWN</span>(test),	<span style=color:#75715e>/* Replace with NULL if there&#39;s nothing to do at request end */</span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>PHP_MINFO</span>(test),
+</span></span><span style=display:flex><span>	PHP_TEST_VERSION,
+</span></span><span style=display:flex><span>	STANDARD_MODULE_PROPERTIES
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#ifdef COMPILE_DL_TEST
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#a6e22e>ZEND_GET_MODULE</span>(test)
+</span></span><span style=display:flex><span><span style=color:#75715e>#endif
+</span></span></span></code></pre></div><p>测试并运行：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=display:flex><span>$test <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>Test</span>();
+</span></span><span style=display:flex><span><span style=color:#a6e22e>var_dump</span>($test);
+</span></span><span style=display:flex><span>$test<span style=color:#f92672>-&gt;</span><span style=color:#a6e22e>set</span>(<span style=color:#ae81ff>123</span>);
+</span></span><span style=display:flex><span><span style=color:#a6e22e>var_dump</span>($test<span style=color:#f92672>-&gt;</span><span style=color:#a6e22e>get</span>());
+</span></span><span style=display:flex><span><span style=color:#75715e>// output
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#a6e22e>liubang</span><span style=color:#f92672>@</span><span style=color:#a6e22e>venux</span><span style=color:#f92672>:~/</span><span style=color:#a6e22e>workspace</span><span style=color:#f92672>/</span><span style=color:#a6e22e>c</span><span style=color:#f92672>/</span><span style=color:#a6e22e>test</span><span style=color:#960050;background-color:#1e0010>$</span> <span style=color:#a6e22e>php</span> <span style=color:#a6e22e>tests</span><span style=color:#f92672>/</span><span style=color:#a6e22e>test</span><span style=color:#f92672>.</span><span style=color:#a6e22e>php</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>object</span>(<span style=color:#a6e22e>Test</span>)<span style=color:#75715e>#1 (0) {
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span><span style=display:flex><span><span style=color:#a6e22e>int</span>(<span style=color:#ae81ff>123</span>)
 </span></span></code></pre></div></div></div><div class="modal fade" id=rewardModal tabindex=-1 aria-labelledby=rewardModalLabel aria-hidden=true><div class=modal-dialog><div class="modal-content surface"><div class=modal-header><h5 class="modal-title text-surface" id=rewardModalLabel><i class="fas fa-fw fa-coffee me-1"></i>打赏</h5><a href=# data-bs-dismiss=modal class=btn-close aria-label=Close></a></div><div class=modal-body><ul class="nav nav-tabs mb-3" role=tablist><li class="nav-item text-nowrap" role=presentation><a class="nav-link active" id=reward-alipay-tab data-bs-toggle=tab href=#reward-alipay role=tab aria-controls=reward-alipay aria-selected=true><i class="fab fa-fw fa-alipay me-1"></i>支付宝</a></li><li class="nav-item text-nowrap" role=presentation><a class=nav-link id=reward-wechat-tab data-bs-toggle=tab href=#reward-wechat role=tab aria-controls=reward-wechat aria-selected=true><i class="fab fa-fw fa-weixin me-1"></i>微信</a></li></ul><div class=tab-content id=rewardTabContent><div class="tab-pane fade post-reward-content text-center show active" id=reward-alipay role=tabpanel aria-labelledby=reward-alipay-tab><img class="img-fluid post-reward-img" src=https://iliubang.cn/images/reward/alipay.jpg loading=lazy data-viewer-invisible></div><div class="tab-pane fade post-reward-content text-center show" id=reward-wechat role=tabpanel aria-labelledby=reward-wechat-tab><img class="img-fluid post-reward-img" src=https://iliubang.cn/images/reward/wechat.jpg loading=lazy data-viewer-invisible></div></div></div></div></div></div></div><div class=card-footer><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev"><i class="fas fa-fw fa-chevron-down post-prev-icon me-1" data-fa-transform=rotate-90></i>
 <a href=/posts/ds/2017-08-22-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8Bhashtable/>数据结构之hashtable</a></div><div class="post-nav post-next"><a href=/posts/php/2017-08-25-php%E6%89%A9%E5%B1%95%E5%BC%80%E5%8F%91%E4%B9%8B%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E7%AE%80%E6%98%93%E7%9A%84arraybuffer/>PHP扩展开发之打造一个简易的ArrayBuffer</a>
 <i class="fas fa-fw fa-chevron-down post-next-icon ms-1" data-fa-transform=rotate-270></i></div></div></div></article><div class="post-copyright mb-3 row card component" id=post-copyright><div class=card-header><h2 class="card-title fs-4 my-2 text-surface">版权</h2></div><div class=card-body><a class="d-flex align-items-center flex-column" target=_blank rel="license noopener noreferrer" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh><span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
-CC BY-NC-ND 4.0</a></div></div><div class="card component row post-comments" id=post-comments><div class=card-header><h2 class="card-title my-2 fs-4 text-surface">评论</h2></div><div class=card-body><script src=https://utteranc.es/client.js repo=liubang/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></div></div></div></div><aside class="col-xxl-4 sidebar d-flex"><div class="container d-flex flex-column"><div class="accordion profile"><div class="accordion-item card row text-center component"><div class="accordion-header card-header border-0" id=profile-header><a class="accordion-button d-lg-none mb-2 shadow-none p-0 bg-transparent text-surface collapsed" role=button data-bs-toggle=collapse href=#profile aria-expanded=false aria-controls=profile>Profile</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=profile aria-labelledby=profile-header><div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt=liubang src="https://iliubang.cn/images/profile.webp?v=afff8fa526f47401e2cc55e06049992c" loading=lazy data-viewer-invisible width=484 height=483></picture></div><div class="col-12 profile-meta"><div class="profile-name fw-fold fs-lg">liubang</div><div class=profile-bio>Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class=profile-company><i class="fas fa-fw fa-building"></i>Baidu</div><div class=profile-location><i class="fas fa-fw fa-map-marker-alt"></i>China</div><a class="profile-about text-primary" href=/about/><i class="fas fa-fw fa-user"></i>关于</a></div><nav class="social-links nav justify-content-center mt-1 justify-content-around"><a class="nav-link social-link" href=mailto:it.liubang@gmail.com title=电子邮箱><i class="fas fa-fw fa-2x fa-envelope" style=color:#0963ac></i>
-</a><a class="nav-link social-link" target=_blank href=https://github.com/liubang title=GitHub rel=me><i class="fa-fw fa-2x fab fa-github"></i>
-</a><a class="nav-link social-link" target=_blank href="https://wpa.qq.com/msgrd?v=3&amp;uin=1301841042&amp;site=qq&amp;menu=yes" title=QQ rel=me><i class="fa-fw fa-2x fab fa-qq"></i>
-</a><a class="nav-link social-link" target=_blank href=https://weibo.com/2113750192 title=微博 rel=me><i class="fa-fw fa-2x fab fa-weibo" style=color:#e1162c></i>
-</a><a class="nav-link social-link" target=_blank href=/index.xml title=RSS rel=me><i class="fas fa-fw fa-2x fa-rss" style=color:#ea6221></i></a></nav></div></div></div><div class="accordion taxonomies-toggle"><div class="row card component accordion-item"><div class="accordion-header card-header border-0"><a class="accordion-button d-lg-none mb-1 shadow-none p-0 bg-transparent collapsed" role=button data-bs-toggle=collapse href=#taxonomies-toggle aria-expanded=false aria-controls=taxonomies-toggle>Taxonomies</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=taxonomies-toggle><ul class="nav nav-pills nav-fill" role=tablist><li class=nav-item role=presentation><button class="nav-link active" id=taxonomyTagsTab data-bs-toggle=tab data-bs-target=#taxonomyTags type=button role=tab aria-controls=taxonomyTags aria-selected=true>
+CC BY-NC-ND 4.0</a></div></div><div class="card component row post-comments" id=post-comments><div class=card-header><h2 class="card-title my-2 fs-4 text-surface">评论</h2></div><div class=card-body><script src=https://utteranc.es/client.js repo=liubang/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></div></div></div></div><aside class="col-xxl-4 sidebar d-flex"><div class="container d-flex flex-column"><div class="accordion profile"><div class="accordion-item card row text-center component"><div class="accordion-header card-header border-0" id=profile-header><a class="accordion-button d-lg-none mb-2 shadow-none p-0 bg-transparent text-surface collapsed" role=button data-bs-toggle=collapse href=#profile aria-expanded=false aria-controls=profile>Profile</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=profile aria-labelledby=profile-header><div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt=liubang src="https://iliubang.cn/images/profile.webp?v=7fdc4e1b5785be32c88d453deb32ca63" loading=lazy data-viewer-invisible width=484 height=483></picture></div><div class="col-12 profile-meta"><div class="profile-name fw-fold fs-lg">liubang</div><div class=profile-bio>Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise</div><div class=profile-company><i class="fas fa-fw fa-building"></i>Baidu</div><div class=profile-location><i class="fas fa-fw fa-map-marker-alt"></i>China</div><a class="profile-about text-primary" href=/about/><i class="fas fa-fw fa-user"></i>关于</a></div></div></div></div><div class="accordion taxonomies-toggle"><div class="row card component accordion-item"><div class="accordion-header card-header border-0"><a class="accordion-button d-lg-none mb-1 shadow-none p-0 bg-transparent collapsed" role=button data-bs-toggle=collapse href=#taxonomies-toggle aria-expanded=false aria-controls=taxonomies-toggle>Taxonomies</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=taxonomies-toggle><ul class="nav nav-pills nav-fill" role=tablist><li class=nav-item role=presentation><button class="nav-link active" id=taxonomyTagsTab data-bs-toggle=tab data-bs-target=#taxonomyTags type=button role=tab aria-controls=taxonomyTags aria-selected=true>
 标签</button></li><li class=nav-item role=presentation><button class=nav-link id=taxonomySeriesTab data-bs-toggle=tab data-bs-target=#taxonomySeries type=button role=tab aria-controls=taxonomySeries aria-selected=true>
 专栏</button></li><li class=nav-item role=presentation><button class=nav-link id=taxonomyArchivesTab data-bs-toggle=tab data-bs-target=#taxonomyArchives type=button role=tab aria-controls=taxonomyArchives aria-selected=true>
 归档</button></li></ul><div class="tab-content mt-3"><div class="tab-pane active" id=taxonomyTags role=tabpanel aria-labelledby=taxonomyTagsTab tabindex=0><a href=/tags/c++/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=C++>C++
@@ -539,30 +574,30 @@ CC BY-NC-ND 4.0</a></div></div><div class="card component row post-comments" id=
 <span class="badge badge-sm text-secondary bg-white ms-1">5</span>
 </a><a href=/tags/c++17/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=C++17>C++17
 <span class="badge badge-sm text-secondary bg-white ms-1">4</span>
+</a><a href=/tags/java/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=Java>Java
+<span class="badge badge-sm text-secondary bg-white ms-1">4</span>
 </a><a href=/tags/stack/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=Stack>Stack
 <span class="badge badge-sm text-secondary bg-white ms-1">4</span>
 </a><a href=/tags/c++11/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=C++11>C++11
 <span class="badge badge-sm text-secondary bg-white ms-1">3</span>
 </a><a href=/tags/dp/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=DP>DP
 <span class="badge badge-sm text-secondary bg-white ms-1">3</span>
-</a><a href=/tags/java/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=Java>Java
-<span class="badge badge-sm text-secondary bg-white ms-1">3</span>
 </a><a href=/tags/jni/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=JNI>JNI
 <span class="badge badge-sm text-secondary bg-white ms-1">3</span>
 </a><a href=https://iliubang.cn/tags class="btn btn-sm btn-secondary post-taxonomy ps-3 post-tag me-2 mb-2" title=全部>全部
-<span class="badge badge-sm text-secondary bg-white ms-1">27</span></a></div><div class=tab-pane id=taxonomySeries role=tabpanel aria-labelledby=taxonomySeriesTab tabindex=0><a href=/series/leetcode/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-series me-2 mb-2" title=LeetCode>LeetCode
+<span class="badge badge-sm text-secondary bg-white ms-1">30</span></a></div><div class=tab-pane id=taxonomySeries role=tabpanel aria-labelledby=taxonomySeriesTab tabindex=0><a href=/series/leetcode/ class="btn btn-sm btn-secondary post-taxonomy ps-3 post-series me-2 mb-2" title=LeetCode>LeetCode
 <span class="badge badge-sm text-secondary bg-white ms-1">14</span></a></div><div class=tab-pane id=taxonomyArchives role=tabpanel aria-labelledby=taxonomyArchivesTab tabindex=0><a href=/archives/2023/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2023>2023 <span class="badge badge-sm text-secondary bg-white ms-1">1</span>
 </a><a href=/archives/2022/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2022>2022 <span class="badge badge-sm text-secondary bg-white ms-1">13</span>
 </a><a href=/archives/2021/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2021>2021 <span class="badge badge-sm text-secondary bg-white ms-1">1</span>
 </a><a href=/archives/2020/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2020>2020 <span class="badge badge-sm text-secondary bg-white ms-1">1</span>
-</a><a href=/archives/2019/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2019>2019 <span class="badge badge-sm text-secondary bg-white ms-1">2</span>
+</a><a href=/archives/2019/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2019>2019 <span class="badge badge-sm text-secondary bg-white ms-1">4</span>
 </a><a href=/archives/2018/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2018>2018 <span class="badge badge-sm text-secondary bg-white ms-1">10</span>
 </a><a href=/archives/2017/ class="btn btn-sm btn-secondary post-taxonomy ps-3 me-2 mb-2" title=2017>2017 <span class="badge badge-sm text-secondary bg-white ms-1">15</span></a></div></div></div></div></div><div class="accordion posts-toggle"><div class="row card component accordion-item"><div class="accordion-header card-header border-0"><a class="accordion-button d-lg-none mb-1 shadow-none p-0 bg-transparent collapsed" role=button data-bs-toggle=collapse href=#posts-toggle aria-expanded=false aria-controls=posts-toggle>文章</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=posts-toggle><ul class="nav nav-pills nav-fill" role=tablist><li class=nav-item role=presentation><button class="nav-link active" id=recent-posts-tab data-bs-toggle=tab data-bs-target=#recent-posts type=button role=tab aria-controls=recent-posts aria-selected=true>
-最近文章</button></li></ul><div class="tab-content mt-3"><div class="tab-pane active" id=recent-posts role=tabpanel aria-labelledby=recent-posts-tab tabindex=0><ul class="post-list list-unstyled ms-1"><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/cpp/2023-05-23-%E4%BD%BF%E7%94%A8llvm%E7%9A%84libfuzzer%E8%BF%9B%E8%A1%8C%E6%A8%A1%E7%B3%8A%E6%B5%8B%E8%AF%95/>使用LLVM的libFuzzer进行模糊测试</a><div class="post-meta mt-2"><span class=post-date>May 23, 2023</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/>Rust和C++: 泛型和特例化</a><div class="post-meta mt-2"><span class=post-date>November 12, 2022</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/>Rust和C++: 可变性、移动和所有权</a><div class="post-meta mt-2"><span class=post-date>November 1, 2022</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/cpp/2022-09-28-%E4%B8%BA%E4%BB%80%E4%B9%88c++%E4%B8%AD%E6%9C%89%E4%BA%86%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E5%8D%B4%E8%BF%98%E9%9C%80%E8%A6%81stdfunction/>为什么c++中有了函数指针却还需要std::function</a><div class="post-meta mt-2"><span class=post-date>September 28, 2022</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/cpp/2022-05-15-%E4%BD%BF%E7%94%A8stdlist%E7%9A%84splice%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0lru-cache/>使用std::list的splice方法实现LRU Cache</a><div class="post-meta mt-2"><span class=post-date>May 15, 2022</span></div></div></div></li></ul></div></div></div></div></div><div class="accordion post-toc d-none d-lg-block"><div class="accordion-item row mb-4 card component" id=postTOC><div class="card-header accordion-header"><h2 class="card-title fs-4 my-2 text-surface d-none d-lg-block">目录</h2><a class="accordion-button d-lg-none mb-1 collapsed shadow-none p-0 bg-transparent" role=button data-bs-toggle=collapse href=#post-toc aria-expanded=false aria-controls=post-toc>目录</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=post-toc><nav id=TableOfContents><ul><li><a href=#前言>前言</a></li><li><a href=#如何创建一个对象>如何创建一个对象</a></li><li><a href=#重写-create_object>重写 create_object</a></li><li><a href=#object-store-handlers>Object store handlers</a></li><li><a href=#与-object-store-的交互操作>与 object store 的交互操作</a></li></ul></nav></div></div></div></div></aside></div></main><footer class="footer mt-auto py-3 text-center container"><div class="offcanvas offcanvas-bottom h-auto" tabindex=-1 id=offcanvasActionsPanel aria-labelledby=offcanvasActionsPanelLabel><div class=offcanvas-header><div class="offcanvas-title h5" id=offcanvasActionsPanelLabel><i class="fas fa-fw fa-th-large me-1"></i>
+最近文章</button></li></ul><div class="tab-content mt-3"><div class="tab-pane active" id=recent-posts role=tabpanel aria-labelledby=recent-posts-tab tabindex=0><ul class="post-list list-unstyled ms-1"><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/cpp/2023-05-23-%E4%BD%BF%E7%94%A8llvm%E7%9A%84libfuzzer%E8%BF%9B%E8%A1%8Cfuzzy-test/>使用LLVM的libFuzzer进行fuzzy test</a><div class="post-meta mt-2"><span class=post-date>May 23, 2023</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/>Rust和C++: 泛型和特例化</a><div class="post-meta mt-2"><span class=post-date>November 12, 2022</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/>Rust和C++: 可变性、移动和所有权</a><div class="post-meta mt-2"><span class=post-date>November 1, 2022</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/cpp/2022-09-28-%E4%B8%BA%E4%BB%80%E4%B9%88c++%E4%B8%AD%E6%9C%89%E4%BA%86%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E5%8D%B4%E8%BF%98%E9%9C%80%E8%A6%81stdfunction/>为什么c++中有了函数指针却还需要std::function</a><div class="post-meta mt-2"><span class=post-date>September 28, 2022</span></div></div></div></li><li class=mb-2><div class=d-flex><div class="flex-grow-1 d-flex flex-column h-auto justify-content-center"><a class=post-title href=/posts/cpp/2022-05-15-%E4%BD%BF%E7%94%A8stdlist%E7%9A%84splice%E6%96%B9%E6%B3%95%E5%AE%9E%E7%8E%B0lru-cache/>使用std::list的splice方法实现LRU Cache</a><div class="post-meta mt-2"><span class=post-date>May 15, 2022</span></div></div></div></li></ul></div></div></div></div></div><div class="accordion post-toc d-none d-lg-block"><div class="accordion-item row mb-4 card component" id=postTOC><div class="card-header accordion-header"><h2 class="card-title fs-4 my-2 text-surface d-none d-lg-block">目录</h2><a class="accordion-button d-lg-none mb-1 collapsed shadow-none p-0 bg-transparent" role=button data-bs-toggle=collapse href=#post-toc aria-expanded=false aria-controls=post-toc>目录</a></div><div class="card-body collapse accordion-collapse accordion-body d-lg-block" id=post-toc><nav id=TableOfContents><ul><li><a href=#前言>前言</a></li><li><a href=#如何创建一个对象>如何创建一个对象</a></li><li><a href=#重写-create_object>重写 create_object</a></li><li><a href=#object-store-handlers>Object store handlers</a></li><li><a href=#与-object-store-的交互操作>与 object store 的交互操作</a></li></ul></nav></div></div></div></div></aside></div></main><footer class="footer mt-auto py-3 text-center container"><div class="offcanvas offcanvas-bottom h-auto" tabindex=-1 id=offcanvasActionsPanel aria-labelledby=offcanvasActionsPanelLabel><div class=offcanvas-header><div class="offcanvas-title h5" id=offcanvasActionsPanelLabel><i class="fas fa-fw fa-th-large me-1"></i>
 操作</div><button type=button class="btn-close ms-auto" data-bs-dismiss=offcanvas data-bs-target=offcanvasActionsPanel aria-label=Close></button></div><div class="offcanvas-body mt-2"><div class="actions d-flex overflow-auto align-items-center"><a role=button class="action action-go-back d-flex flex-column align-items-center me-3" href="javascript: window.history.back();"><span class="action-icon mb-2"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform=rotate-90></i></span> 返回
 </a><a role=button class="action action-reload-page d-flex flex-column align-items-center me-3"><span class="action-icon mb-2"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
 </a><a role=button class="action action-copy-url d-flex flex-column align-items-center me-3"><span class="action-icon mb-2"><i class="fas fa-2x fa-link"></i></span> 复制链接</a></div></div></div><div class="row text-center"><div class="col-12 mt-2"><p class=mb-2>liubang's blog</p><p class="text-secondary mb-2"><small>刘邦的博客</small></p><div class="copyright mb-2 text-secondary"><small>Copyright © 2016-2024 LiuBang. All Rights Reserved.</small></div><div class="powered-by mb-2 text-secondary"><small>Build with ❤️ from the <a class=text-primary href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> and the <a class=text-primary href=https://github.com/razonyang/hugo-theme-bootstrap target=_blank rel="noopener noreferrer">HBS</a> theme.</small></div><nav class="social-links nav justify-content-center mb-2 mt-3"><a class="nav-link social-link p-0 me-1 mb-2" href=mailto:it.liubang@gmail.com title=电子邮箱><i class="fas fa-fw fa-2x fa-envelope" style=color:#0963ac></i>
 </a><a class="nav-link social-link p-0 me-1 mb-2" target=_blank href=https://github.com/liubang title=GitHub rel=me><i class="fa-fw fa-2x fab fa-github"></i>
 </a><a class="nav-link social-link p-0 me-1 mb-2" target=_blank href="https://wpa.qq.com/msgrd?v=3&amp;uin=1301841042&amp;site=qq&amp;menu=yes" title=QQ rel=me><i class="fa-fw fa-2x fab fa-qq"></i>
 </a><a class="nav-link social-link p-0 me-1 mb-2" target=_blank href=https://weibo.com/2113750192 title=微博 rel=me><i class="fa-fw fa-2x fab fa-weibo" style=color:#e1162c></i>
-</a><a class="nav-link social-link p-0 me-1 mb-2" target=_blank href=/index.xml title=RSS rel=me><i class="fas fa-fw fa-2x fa-rss" style=color:#ea6221></i></a></nav></div><div class="col-12 col-lg-8 offset-0 offset-lg-1"></div></div></footer><script data-precache src=/assets/main/bundle.min.eb5afcd32a88480aacfc19dc07ef65a5d7d8e29107c1c3bf21605313b8a6e5a5.js integrity="sha256-61r80yqISAqs/BncB+9lpdfY4pEHwcO/IWBTE7im5aU=" crossorigin=anonymous async></script><script data-precache src=/assets/icons/bundle.min.23f22e6cc1789ba744d808d4ebd223b95688dbe913be5e0676f69612d0b3219d.js integrity="sha256-I/IubMF4m6dE2AjU69IjuVaI2+kTvl4GdvaWEtCzIZ0=" crossorigin=anonymous defer></script><script data-precache src=/assets/viewer/bundle.min.30dd8726c834a14837e5de3b42732d00e88b0baff625f59b2cb534c4c2815517.js integrity="sha256-MN2HJsg0oUg35d47QnMtAOiLC6/2JfWbLLU0xMKBVRc=" crossorigin=anonymous defer></script><script data-precache defer src=/assets/katex/bundle.min.eace3aacbb4d5035eb584c009bfde9abce78ef2130f9cf3fda0237765b9e5f58.js integrity="sha256-6s46rLtNUDXrWEwAm/3pq8547yEw+c8/2gI3dlueX1g=" crossorigin=anonymous></script><script data-precache defer src=/assets/mermaid/bundle.min.a111132bee4cad66f2bfdc514fa7e18eacfe6f94f8b4617726cf17e5b9ee2169.js integrity="sha256-oRETK+5MrWbyv9xRT6fhjqz+b5T4tGF3Js8X5bnuIWk=" crossorigin=anonymous></script><script src=/js/sw-register.js defer></script></body></html>
+</a><a class="nav-link social-link p-0 me-1 mb-2" target=_blank href=/index.xml title=RSS rel=me><i class="fas fa-fw fa-2x fa-rss" style=color:#ea6221></i></a></nav></div><div class="col-12 col-lg-8 offset-0 offset-lg-1"></div></div></footer><script data-precache src=/assets/main/bundle.min.8cac337db334f5e88a0d3a39ecd178e8c95439cccc154f0409d8084910de52b6.js integrity="sha256-jKwzfbM09eiKDTo57NF46MlUOczMFU8ECdgISRDeUrY=" crossorigin=anonymous async></script><script data-precache src=/assets/icons/bundle.min.1edf0be44ac92fc373eca5ba12ce1f444409c1a5ea989cc1338c8d660a99f81f.js integrity="sha256-Ht8L5ErJL8Nz7KW6Es4fREQJwaXqmJzBM4yNZgqZ+B8=" crossorigin=anonymous defer></script><script data-precache src=/assets/viewer/bundle.min.945567884be417f2aa4a3f7fb0171fc00a214c3c63dd586d110fc7b77d4d6077.js integrity="sha256-lFVniEvkF/KqSj9/sBcfwAohTDxj3VhtEQ/Ht31NYHc=" crossorigin=anonymous defer></script><script data-precache defer src=/assets/katex/bundle.min.ecfaac987a9ad8e8c435500e3a2dc277d9c1bdedc12ea02390b093db3788c0d4.js integrity="sha256-7PqsmHqa2OjENVAOOi3Cd9nBve3BLqAjkLCT2zeIwNQ=" crossorigin=anonymous></script><script data-precache defer src=/assets/mermaid/bundle.min.d16e7a97a0908ae444f9e9f4adb15493b9a77d27e8636078275173704d90bfa4.js integrity="sha256-0W56l6CQiuRE+en0rbFUk7mnfSfoY2B4J1FzcE2Qv6Q=" crossorigin=anonymous></script><script src=/js/sw-register.js defer></script></body></html>
