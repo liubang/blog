@@ -1,6 +1,5 @@
 ---
 title: 基于公司私有gitlab的go module实践
-published: false
 categories: ["go"]
 tags: [go]
 date: 2019-10-17

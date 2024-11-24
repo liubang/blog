@@ -9,7 +9,8 @@ defaultContentLanguageInSubdir = false
 disableLanguages = ["fr", "zh-tw"]
 
 # Pagination
-paginate = 10
+[pagination]
+  pagerSize = 10
 
 paginatePath = "page"
 
