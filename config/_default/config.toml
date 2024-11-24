@@ -1,7 +1,7 @@
 baseURL = "https://iliubang.cn"
 title = "liubang's blog"
 theme = "github.com/razonyang/hugo-theme-bootstrap"
-copyright = "Copyright © 2016-{year} LiuBang. All Rights Reserved."
+copyright = "Copyright © 2019-{year} LiuBang. All Rights Reserved."
 
 # Multilingual mode
 defaultContentLanguage = "zh-cn"
@@ -10,37 +10,31 @@ disableLanguages = ["fr", "zh-tw"]
 
 # Pagination
 [pagination]
-  pagerSize = 10
+pagerSize = 10
 
 paginatePath = "page"
-
 enableRobotsTXT = true
-
 enableEmoji = true
-
 enableGitInfo = true
-
-hasCJKLanguage = true # Uncomment it if your content contains Chinese/Japanese/Korean Languages.
-
+hasCJKLanguage = true
 pygmentsUseClasses = true
-
 timeout = "120s"
 
 [blackfriday]
-  hrefTargetBlank = true
+hrefTargetBlank = true
 
 [outputs]
-  home = ["HTML", "RSS"]
+home = ["HTML", "RSS"]
 
 # 分类
 [taxonomies]
-  category = "categories"
-  series = "series"
-  tag = "tags"
-  author = "authors"
+category = "categories"
+series = "series"
+tag = "tags"
+author = "authors"
 
 [build]
-  writeStats = true
+writeStats = true
 
 [security.funcs]
-  getenv = ['^HUGO_', '^CI$', 'PWD']
+getenv = ['^HUGO_', '^CI$', 'PWD']

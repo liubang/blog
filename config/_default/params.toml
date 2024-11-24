@@ -1,5 +1,5 @@
 mainSections = ["posts", "blog"]
-titleSeparator = "-" # Title separator.
+titleSeparator = "-"                 # Title separator.
 description = "刘邦的博客"
 keywords = "c++,java,go,kv,storage"
 logo = "images/apple-touch-icon.png" # Logo image. Default to "images/logo.webp".
@@ -34,32 +34,32 @@ palettes = [] # Disable palette switcher.
 googleAdsense = ""
 
 math = true # Enable math globally.
-toc = true # Disable TOC globally.
+toc = true  # Disable TOC globally.
 # tocPosition = "content"
-breadcrumb = true # Disable breadcrumb
+breadcrumb = true   # Disable breadcrumb
 diagram = true
 socialShare = false # disable social network sharing
-searchBar = true # disable search-bar
+searchBar = true    # disable search-bar
 
 poweredBy = true # Whether to show powered by.
 
 readingTime = true # Whether to display the reading time.
-postDate = true # Whether to display the post date in the post meta section.
+postDate = true    # Whether to display the post date in the post meta section.
 
-featuredPostCount = 5 # The number of featured posts shown in sidebar. Turn off by setting it to false.
-recentPostCount = 5 # The number of recent posts shown in sidebar. Turn off by setting it to false.
+featuredPostCount = 5    # The number of featured posts shown in sidebar. Turn off by setting it to false.
+recentPostCount = 5      # The number of recent posts shown in sidebar. Turn off by setting it to false.
 relatedPostCount = false # The number of related posts. Turn off by setting it to false.
 # categoryCount = 10 # The number of categories shown in sidebar. Turn off by setting it to false.
 # tagCount = 10 # The number of tags shown in sidebar. Turn off by setting it to false.
 # seriesCount = 20 # The number of series shown in sidebar. Turn off by setting it to false.
 # taxonomyPaginate = 5 # Default to 10.
-taxonomyPostCount = 20 # The number of taxonomy's posts. Turn off by setting it to false.
+taxonomyPostCount = 20    # The number of taxonomy's posts. Turn off by setting it to false.
 countTaxonomyPosts = true # Count posts of taxonomy.
 
 # 侧边栏分类
 sidebarTaxonomies = ["tags", "series"] # The order of taxonomies on the sidebar.
 
-pinnedPost = true # Turn on/off pinned posts.
+pinnedPost = true   # Turn on/off pinned posts.
 pinnedPostCount = 3 # The number of pinned posts.
 
 # Custom CSS and JS
@@ -77,84 +77,83 @@ viewer = true # Image Viewer
 rss = "home" # link the RSS button to homepage all the times.
 
 [codeBlock]
-  maxLines = 128
-  lineNos = true # true/false represents that show/hide the line numbers by default.
+maxLines = 128
+lineNos = true # true/false represents that show/hide the line numbers by default.
 
 [sidebar]
-  fixed = false
-  # archives = true # Enable archives widget
-  # taxonomiesToggle = false # Disable taxonomy toggle
-  # taxonomiesToggleArchives = false # Don't show the archives on taxonomies toggle widget.
-  # categories = true # Enable categories widget
-  # tags = true # Enable tags widget
-  # series = true # Enable series widget
-  # authors = true # Enable authors widget
-  # postsToggle = false # Disable posts toggle
-  # featuredPosts = true # Enable featured posts widget
-  # recentPosts = true # Enable featured posts widget
-  collapsed = true # Collapse sidebar widgets by default on small screens.
+fixed = false
+# archives = true # Enable archives widget
+# taxonomiesToggle = false # Disable taxonomy toggle
+# taxonomiesToggleArchives = false # Don't show the archives on taxonomies toggle widget.
+# categories = true # Enable categories widget
+# tags = true # Enable tags widget
+# series = true # Enable series widget
+# authors = true # Enable authors widget
+# postsToggle = false # Disable posts toggle
+# featuredPosts = true # Enable featured posts widget
+# recentPosts = true # Enable featured posts widget
+collapsed = true # Collapse sidebar widgets by default on small screens.
 
 [post]
-  featuredImage = true
-  plainifyExcerpt = false # Format excerpt in HTML if false.
-  numberifyHeadings = true
-  numberifyHeadingsSeparator = "."
-  imageTitleAsCaption = true
-  copyright = true # Whether to display copyright section on each post.
+featuredImage = true
+plainifyExcerpt = false          # Format excerpt in HTML if false.
+numberifyHeadings = true
+numberifyHeadingsSeparator = "."
+imageTitleAsCaption = true
+copyright = true                 # Whether to display copyright section on each post.
 
 [creativeCommons]
-  # by = true # Credit must be given to you, the creator.
-  # nc = true # Only noncommercial use of your work is permitted.
-  # nd = true # No derivatives or adaptations of your work are permitted.
-  # sa = true # Adaptations must be shared under the same terms.
+# by = true # Credit must be given to you, the creator.
+# nc = true # Only noncommercial use of your work is permitted.
+# nd = true # No derivatives or adaptations of your work are permitted.
+# sa = true # Adaptations must be shared under the same terms.
 
 
 [repo]
-  url = "https://github.com/liubang/blog"
-  branch = "main"
+url = "https://github.com/liubang/blog"
+branch = "main"
 
 [utterances]
-  repo = "liubang/blog" # Replace with your repository.
-  #issueTerm = "pathname" # pathname, url, title, og:title
-  #label = "comment"
-  # By default, light and dark mode correspond to github-light and github-dark, respectively.
-  # Optional values: github-light, github-dark, preferred-color-scheme, github-dark-orange, icy-dark, dark-blue, photon-dark.
-  #theme = ""
+repo = "liubang/blog" # Replace with your repository.
+#issueTerm = "pathname" # pathname, url, title, og:title
+#label = "comment"
+# By default, light and dark mode correspond to github-light and github-dark, respectively.
+# Optional values: github-light, github-dark, preferred-color-scheme, github-dark-orange, icy-dark, dark-blue, photon-dark.
+#theme = ""
 
 [search]
-  paginate = 10 # Pagination. Default to 10.
-  # resultContentWordCount = 240 # The maximum word count of result content for displaying.
-  # Fuse.js options. See https://fusejs.io/api/options.html.
-  [search.fuse]
-    # ignoreLocation = true
-    # location = 0
-    # isCaseSensitive = false
-    minMatchCharLength = 3
-    threshold = 0.1
-    # distance = 100
-    # useExtendedSearch = true
+paginate = 10 # Pagination. Default to 10.
+# resultContentWordCount = 240 # The maximum word count of result content for displaying.
+# Fuse.js options. See https://fusejs.io/api/options.html.
+[search.fuse]
+# ignoreLocation = true
+# location = 0
+# isCaseSensitive = false
+minMatchCharLength = 3
+threshold = 0.1
+# distance = 100
+# useExtendedSearch = true
 
 [reward]
-  alipay = "images/reward/alipay.jpg"
-  wechat = "images/reward/wechat.jpg"
+alipay = "images/reward/alipay.jpg"
+wechat = "images/reward/wechat.jpg"
 
 [pwa]
-  [pwa.manifest]
-    short_name = "LB"
+[pwa.manifest]
+short_name = "LB"
 
 [topAppBar]
-  [topAppBar.social]
-    github = "liubang"
+[topAppBar.social]
+github = "liubang"
 
 [author]
-  name = "liubang"
-  # avatar = "images/profile.png" # Avatar image. Default to "images/profile.webp".
-  bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise"
-  company = 'Baidu'
-  location = "China"
+name = "liubang"
+avatar = "images/profile.png"
+bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise"
+company = 'BIDU'
+location = "China"
 
 [social]
-  github = "liubang"
-  email = "it.liubang@gmail.com"
-  qq = "1301841042"
-  weibo = "2113750192"
+github = "liubang"
+qq = "1301841042"
+weibo = "2113750192"

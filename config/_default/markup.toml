@@ -11,7 +11,7 @@ typographer = true
 [goldmark.parser]
 autoHeadingID = true
 autoHeadingIDType = 'github'
-[markup.goldmark.parser.attribute]
+[goldmark.parser.attribute]
 block = false
 title = true
 
@@ -19,3 +19,16 @@ title = true
 hardWraps = false
 unsafe = true
 xhtml = false
+
+[highlight]
+anchorLineNos = true
+codeFences = true
+guessSyntax = true
+hl_Lines = ""
+lineAnchors = ""
+lineNoStart = 1
+lineNos = true
+lineNumbersInTable = false
+noClasses = true
+style = "onedark"
+tabWidth = 2
