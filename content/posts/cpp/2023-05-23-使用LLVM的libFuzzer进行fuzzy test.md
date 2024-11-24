@@ -1,5 +1,5 @@
 ---
-title: 使用LLVM的libFuzzer进行模糊测试
+title: 使用LLVM的libFuzzer进行fuzzy test
 categories: [programming]
 tags: [c++]
 date: 2023-05-23
@@ -8,17 +8,17 @@ authors: ["liubang"]
 
 ## libFuzzer 简介
 
-LLVM libFuzzer 是 LLVM 生态系统中的一个模糊测试工具，用于自动化地发现软件程序中的漏洞和错误。它通过生成大量的随机输入数据并观察程序的行为来进行模糊测试。
-libFuzzer 是一个基于内存的模糊测试引擎，使用 LLVM 的插桩技术和代码优化功能来提高测试效率和覆盖率。
+LLVM libFuzzer 是 LLVM 生态系统中的一个fuzzy test工具，用于自动化地发现软件程序中的漏洞和错误。它通过生成大量的随机输入数据并观察程序的行为来进行fuzzy test。
+libFuzzer 是一个基于内存的fuzzy test引擎，使用 LLVM 的插桩技术和代码优化功能来提高测试效率和覆盖率。
 
 以下是 libFuzzer 的一些功能特点：
 
-1. 自动化模糊测试：libFuzzer 提供了一种自动化的模糊测试方法，可以生成大量的随机输入数据，并在每个输入上运行目标函数进行测试。它通过观察程序的崩溃、断言失败、未定义行为等反馈来发现潜在的问题。
-2. 内存安全性：libFuzzer 通过使用 AddressSanitizer (ASan) 和 UndefinedBehaviorSanitizer (UBSan) 等工具来确保模糊测试过程中的内存安全性。这有助于检测和报告内存错误、缓冲区溢出、使用已释放内存等问题。
+1. 自动化fuzzy test：libFuzzer 提供了一种自动化的fuzzy test方法，可以生成大量的随机输入数据，并在每个输入上运行目标函数进行测试。它通过观察程序的崩溃、断言失败、未定义行为等反馈来发现潜在的问题。
+2. 内存安全性：libFuzzer 通过使用 AddressSanitizer (ASan) 和 UndefinedBehaviorSanitizer (UBSan) 等工具来确保fuzzy test过程中的内存安全性。这有助于检测和报告内存错误、缓冲区溢出、使用已释放内存等问题。
 3. 代码覆盖率分析：libFuzzer 使用 LLVM 提供的代码覆盖率分析技术，帮助确定已经执行过的代码路径和未执行的代码区域。这有助于评估测试的质量和覆盖范围，并帮助发现潜在的漏洞。
 4. 快速收敛：libFuzzer 使用一种称为 "回退"（Backoff）的策略，以更快地收敛到程序中的漏洞。它会根据测试结果调整输入数据的变异程度，使得能够更快地发现问题并生成更有潜力的测试用例。
 5. 灵活性和可定制性：libFuzzer 提供了多种选项和配置参数，使用户能够根据自己的需求进行定制。例如，可以设置最大测试时间、内存消耗限制、覆盖率报告等。
-6. 多线程支持：libFuzzer 支持多线程执行，可以利用多核处理器并行进行模糊测试，加快测试速度。
+6. 多线程支持：libFuzzer 支持多线程执行，可以利用多核处理器并行进行fuzzy test，加快测试速度。
 
 ## 示例
 
