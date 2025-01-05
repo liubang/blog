@@ -65,4 +65,54 @@ $$
 
 当$\epsilon$最小的时候，$k$为最优，因此需要对$\epsilon$关于$k$求导，找到极小值。
 
+令$f = (1 - e^{\frac{-kn}{m}})^k$，等式两边取对数 $g = \ln{f} = k \cdot \ln{(1 - e^{\frac{-kn}{m}})}$，对$g$关于$k$求导:
+
+$$
+\frac{dg}{dk} = k^\prime\cdot\ln{(1 - e^{\frac{-kn}{m}})} + k \cdot\ln^\prime{(1 - e^{\frac{-kn}{m}})} \iff \frac{dg}{dk} = \ln{(1 - e^{\frac{-kn}{m}})} + k\cdot\frac{(1 - e^{\frac{-kn}{m}})^\prime}{1 - e^{\frac{-kn}{m}}} \iff \frac{dg}{dk} = \ln{(1 - e^{\frac{-kn}{m}})} + \frac{kn}{m}\cdot\frac{e^{\frac{-kn}{m}}}{1 - e^{\frac{-kn}{m}}}
+$$
+
+要找到最小的$\epsilon$，使得$k$的值为最优（在不考虑$k$为整数的情况下），则需要找到极值点，也就是令$\frac{dg}{dk} = 0$,得到
+
+$$
+\ln{(1 - e^{\frac{-kn}{m}})} + \frac{kn}{m}\cdot\frac{e^{\frac{-kn}{m}}}{1 - e^{\frac{-kn}{m}}} = 0 \iff - \ln{(1 - e^{\frac{-kn}{m}})}  = \frac{kn}{m}\cdot\frac{e^{\frac{-kn}{m}}}{1 - e^{\frac{-kn}{m}}}
+$$
+
+对等式两边做整理得
+
+$$
+e^{- \ln{(1 - e^{\frac{-kn}{m}})}} = e^{\frac{kn}{m}\cdot\frac{e^{\frac{-kn}{m}}}{1 - e^{\frac{-kn}{m}}}} \iff \frac{1}{(1 - e^{\frac{-kn}{m}})} = e^{\frac{kn}{m}\cdot\frac{e^{\frac{-kn}{m}}}{1 - e^{\frac{-kn}{m}}}}
+$$
+
+进一步简化等式，令$x = e^{\frac{-kn}{m}}$可得
+
+$$
+\frac{1}{1 - x} = (\frac{1}{x})^{\frac{x}{1 - x}} \iff (1 - x)^{-1} = x^{-\frac{x}{1-x}} \iff (1 - x) = x^{\frac{x}{1 - x}}
+$$
+
+对等式两边取对数
+
+$$
+\ln{(1 - x)} = \ln{x^{\frac{x}{1 - x}}} \iff \ln{(1 - x)} = \frac{x}{1 - x}\ln(x) \iff (1 - x) \cdot \ln(1 - x) = x \cdot \ln(x)
+$$
+
+显然可得$x = \frac{1}{2}$，又因为$x = e^{\frac{-kn}{m}}$，所以
+
+$$
+e^{\frac{-kn}{m}} = \frac{1}{2} \iff \ln{e^{\frac{-kn}{m}}} = \ln\frac{1}{2} \iff -\frac{kn}{m} = \ln(2^{-1}) \iff \frac{kn}{m} = \ln(2)
+$$
+
+最终可得$k = \frac{m}{n}\ln(2)$
+
 ## 计算最优$m$
+
+已知$\epsilon \approx (1 - e^{\frac{-kn}{m}})^k$，将$k = \frac{m}{n}\ln(2)$代入可得 
+
+$$
+\epsilon \approx (1 - e^{-\ln{(2)}})^{\frac{m}{n}\ln2} = (1 - \frac{1}{2})^{\frac{m}{n}\ln2} \iff \ln{(\epsilon)} \approx \frac{m}{n}\ln2\cdot\ln{\frac{1}{2}} = -\frac{m}{n}\cdot\ln{(2)}^2
+$$
+
+最终可得 
+
+$$
+m \approx = -\frac{n\ln{(\epsilon)}}{\ln{(2)}^2} \approx -2.08n\ln{(\epsilon)}
+$$
