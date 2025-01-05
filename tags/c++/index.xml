@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>C++ on liubang's blog</title><link>https://iliubang.cn/tags/c++/</link><description>Recent content in C++ on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 23 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/c++/index.xml" rel="self" type="application/rss+xml"/><item><title>使用LLVM的libFuzzer进行fuzzy test</title><link>https://iliubang.cn/posts/cpp/2023-05-23-%E4%BD%BF%E7%94%A8llvm%E7%9A%84libfuzzer%E8%BF%9B%E8%A1%8Cfuzzy-test/</link><pubDate>Tue, 23 May 2023 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2023-05-23-%E4%BD%BF%E7%94%A8llvm%E7%9A%84libfuzzer%E8%BF%9B%E8%A1%8Cfuzzy-test/</guid><description><![CDATA[<h2 id="libfuzzer-简介" data-numberify>libFuzzer 简介<a class="anchor ms-1" href="#libfuzzer-简介"></a></h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>C++ on liubang's blog</title><link>https://iliubang.cn/tags/c++/</link><description>Recent content in C++ on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2025 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 23 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/c++/index.xml" rel="self" type="application/rss+xml"/><item><title>使用LLVM的libFuzzer进行fuzzy test</title><link>https://iliubang.cn/posts/cpp/2023-05-23-%E4%BD%BF%E7%94%A8llvm%E7%9A%84libfuzzer%E8%BF%9B%E8%A1%8Cfuzzy-test/</link><pubDate>Tue, 23 May 2023 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/cpp/2023-05-23-%E4%BD%BF%E7%94%A8llvm%E7%9A%84libfuzzer%E8%BF%9B%E8%A1%8Cfuzzy-test/</guid><description><![CDATA[<h2 id="libfuzzer-简介" data-numberify>libFuzzer 简介<a class="anchor ms-1" href="#libfuzzer-简介"></a></h2>
 <p>LLVM libFuzzer 是 LLVM 生态系统中的一个fuzzy test工具，用于自动化地发现软件程序中的漏洞和错误。它通过生成大量的随机输入数据并观察程序的行为来进行fuzzy test。
 libFuzzer 是一个基于内存的fuzzy test引擎，使用 LLVM 的插桩技术和代码优化功能来提高测试效率和覆盖率。</p>
 <p>以下是 libFuzzer 的一些功能特点：</p>
@@ -563,7 +563,7 @@ loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，�
 基类中的 private 成员不受继承方式的影响，子类永远无权访问。</p>
 
 <h3 id="12-一个示例" data-numberify>1.2 一个示例<a class="anchor ms-1" href="#12-一个示例"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="289" height="584" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="289" height="584" />
 </picture>
 
 </p>
@@ -628,7 +628,7 @@ loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，�
 取代数字地址的是用名字（或者标识符）直接关联到确定的地址上，而且变量类型（如<code>int</code>, <code>double</code>, <code>char</code>）与之关联，从而简化了对数据的解析。</p>
 <p>每个内存地址占 8 位（也就是 1 个字节），一个 4 个字节的<code>int</code>值需要 4 个内存位置。一个 32 位的系统通常使用 32 位的地址。同样的，存储这个 32 位的地址也需要 4 个内存位置。</p>
 <p>下面的插图形象的描绘了计算机内存地址，内存中数据，变量名，变量类型以及变量值之间的关系。</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-02-23/MemoryAddressContent.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="661" height="503" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-02-23/MemoryAddressContent.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="661" height="503" />
 </picture>
 
 </p>
@@ -655,7 +655,7 @@ loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，�
 <p>为什么要重新造轮子呢？</p>
 
 <h3 id="11-传统的面向过程的编程语言" data-numberify>1.1 传统的面向过程的编程语言<a class="anchor ms-1" href="#11-传统的面向过程的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-02-13/OOP_CFunction.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="326" height="335" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-02-13/OOP_CFunction.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="326" height="335" />
 </picture>
 
 </p>
@@ -673,7 +673,7 @@ Customer Relationship Management (CRM) 系统或者电脑足球游戏。</p>
 <p>简而言之，传统的面向过程的编程语言将数据结构和算法单元分开了。</p>
 
 <h3 id="12-面向对象的编程语言" data-numberify>1.2 面向对象的编程语言<a class="anchor ms-1" href="#12-面向对象的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-02-13/OOP_Objects.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="538" height="351" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2018-02-13/OOP_Objects.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="538" height="351" />
 </picture>
 
 </p>

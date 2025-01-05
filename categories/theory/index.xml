@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Theory on liubang's blog</title><link>https://iliubang.cn/categories/theory/</link><description>Recent content in Theory on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Mon, 25 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/categories/theory/index.xml" rel="self" type="application/rss+xml"/><item><title>分布式协议</title><link>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</guid><description><![CDATA[<h2 id="拜占庭将军问题" data-numberify>拜占庭将军问题<a class="anchor ms-1" href="#拜占庭将军问题"></a></h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Theory on liubang's blog</title><link>https://iliubang.cn/categories/theory/</link><description>Recent content in Theory on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2025 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Mon, 25 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/categories/theory/index.xml" rel="self" type="application/rss+xml"/><item><title>分布式协议</title><link>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</guid><description><![CDATA[<h2 id="拜占庭将军问题" data-numberify>拜占庭将军问题<a class="anchor ms-1" href="#拜占庭将军问题"></a></h2>
 
 <h3 id="简介" data-numberify>简介<a class="anchor ms-1" href="#简介"></a></h3>
 <ul>
@@ -9,11 +9,11 @@
 </ul>
 
 <h3 id="二忠一叛难题" data-numberify>二忠一叛难题<a class="anchor ms-1" href="#二忠一叛难题"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt1.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="1035" height="575" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt1.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="1035" height="575" />
 </picture>
 
 </p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt2.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="1100" height="569" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt2.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="1100" height="569" />
 </picture>
 
 </p>
@@ -34,7 +34,7 @@
 <li>收到指令的将军按照少数服从多数的原则执行指令</li>
 <li>按照这个公式，前面的例子叛军为 1 人的情况，则需要 1 个指挥官和 3 个将军</li>
 </ul>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt3.png#center?v=1977a5828f79ed938da04cce2c1f83a9" loading="lazy" width="1181" height="529" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://iliubang.cn/images/2020-05-25/bzt3.png#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="1181" height="529" />
 </picture>
 
 </p>

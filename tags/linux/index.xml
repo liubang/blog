@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Linux on liubang's blog</title><link>https://iliubang.cn/tags/linux/</link><description>Recent content in Linux on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Fri, 25 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Linux磁盘IO</title><link>https://iliubang.cn/posts/linux/2022-02-25-linux%E7%A3%81%E7%9B%98io/</link><pubDate>Fri, 25 Feb 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/linux/2022-02-25-linux%E7%A3%81%E7%9B%98io/</guid><description><![CDATA[<h2 id="前言" data-numberify>前言<a class="anchor ms-1" href="#前言"></a></h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Linux on liubang's blog</title><link>https://iliubang.cn/tags/linux/</link><description>Recent content in Linux on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2025 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Fri, 25 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Linux磁盘IO</title><link>https://iliubang.cn/posts/linux/2022-02-25-linux%E7%A3%81%E7%9B%98io/</link><pubDate>Fri, 25 Feb 2022 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/linux/2022-02-25-linux%E7%A3%81%E7%9B%98io/</guid><description><![CDATA[<h2 id="前言" data-numberify>前言<a class="anchor ms-1" href="#前言"></a></h2>
 <p>做存储开发，一定会经常涉及到 IO 相关的操作。而现在的高级编程语言，往往会帮助我们屏蔽 IO 操作的底层细节，虽然这样能降低开发门槛，提升效率，但是却也导致我们对 IO 底层操作实现的理解不够系统和深入。
 所以呢，我一直想抽时间来系统整理一下 Linux IO 涉及的系统调用，以及相互之间的区别和联系，以加深对 IO 操作的理解。</p>
 
@@ -17,7 +17,7 @@
 <p>fsync 系统调用就是将内核缓冲区中的数据同步到存储介质(如硬盘)。也可以在 open 文件的时候通过开启<code>O_SYNC</code>来开启同步 I/O.</p>
 
 <h2 id="各-io-操作的区别与联系" data-numberify>各 IO 操作的区别与联系<a class="anchor ms-1" href="#各-io-操作的区别与联系"></a></h2>
-<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://iliubang.cn/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=9b8e2c511990176ac6eea28d659c5cf8" loading="lazy" width="1216" height="1224" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://iliubang.cn/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=a968b8500760a908b4c174dfdbe6cbb1" loading="lazy" width="1216" height="1224" />
 </picture>
 
 </p>]]></description></item></channel></rss>

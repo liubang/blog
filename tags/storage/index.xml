@@ -1,4 +1,32 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Storage on liubang's blog</title><link>https://iliubang.cn/tags/storage/</link><description>Recent content in Storage on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2024 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Tue, 12 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/storage/index.xml" rel="self" type="application/rss+xml"/><item><title>LevelDB 源码阅读之 Compaction</title><link>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</link><pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</guid><description><![CDATA[<h2 id="1-概览" data-numberify>1. 概览<a class="anchor ms-1" href="#1-概览"></a></h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Storage on liubang's blog</title><link>https://iliubang.cn/tags/storage/</link><description>Recent content in Storage on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2025 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Wed, 01 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://iliubang.cn/tags/storage/index.xml" rel="self" type="application/rss+xml"/><item><title>BloomFilter中的数学推导</title><link>https://iliubang.cn/posts/storage/2025-01-01-bloomfilter%E4%B8%AD%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/</link><pubDate>Wed, 01 Jan 2025 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/storage/2025-01-01-bloomfilter%E4%B8%AD%E7%9A%84%E6%95%B0%E5%AD%A6%E6%8E%A8%E5%AF%BC/</guid><description><![CDATA[<h2 id="false-positive-rate" data-numberify>False Positive Rate<a class="anchor ms-1" href="#false-positive-rate"></a></h2>
+<p>$m$: 表示BloomFilter bit array的长度;<br>
+$k$: 表示hash函数个数;<br>
+$n$: 表示插入元素的个数;</p>
+<p>假设hash函数以等概率选择bit array的下标，那么经过$k$个hash函数之后，某个bit位未被设置为1的概率为:</p>
+<p>$$
+(1 - \frac{1}{m})^k
+$$</p>
+<p>在插入$n$个元素之后，某个bit位仍然没有被设置为1的概率为:</p>
+<p>$$
+(1 - \frac{1}{m})^{kn}
+$$</p>
+<p>因此在插入$n$个元素之后，某个bit位被设置为1的概率为:</p>
+<p>$$
+p = 1 - (1 - \frac{1}{m})^{kn}
+$$</p>
+<p>对于一个不存在于集合中的元素，如果要出现误判，那么意味着经过$k$个hash函数之后，生成的下标所在的bit位
+都是1，其概率为:</p>
+<p>$$
+\epsilon = p^k = (1 - (1 - \frac{1}{m})^{kn})^k
+$$</p>
+<p>接着来用欧拉恒等式来对上面的式子进行简化，已知欧拉恒等式可表示为:</p>
+<p>$$
+\lim_{m \to \infty}(1 + \frac{z}{m})^m = e^z
+$$</p>
+<p>令$z = -1$</p>
+<p>$$
+\lim_{m \to \infty}(1 - \frac{1}{m})^m = e^{-1}
+$$</p>]]></description></item><item><title>LevelDB 源码阅读之 Compaction</title><link>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</link><pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate><guid>https://iliubang.cn/posts/storage/2021-01-12-leveldb%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E4%B9%8Bcompaction/</guid><description><![CDATA[<h2 id="1-概览" data-numberify>1. 概览<a class="anchor ms-1" href="#1-概览"></a></h2>
 <p>要谈论 LevelDB 的 Compaction 就不得不从 LevelDB 的整个数据写入流程入手。LevelDB 的基本写入流程大致为：</p>
 <ol>
 <li>数据先写入到 WAL 日志中，做持久化</li>
