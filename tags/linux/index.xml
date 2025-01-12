@@ -17,7 +17,7 @@
 <p>fsync 系统调用就是将内核缓冲区中的数据同步到存储介质(如硬盘)。也可以在 open 文件的时候通过开启<code>O_SYNC</code>来开启同步 I/O.</p>
 
 <h2 id="各-io-操作的区别与联系" data-numberify>各 IO 操作的区别与联系<a class="anchor ms-1" href="#各-io-操作的区别与联系"></a></h2>
-<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://iliubang.cn/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=7f4f41d3dc4989c08ffa632b6db8f248" loading="lazy" width="1216" height="1224" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://iliubang.cn/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=308d2893935473733c86f8f251803c53" loading="lazy" width="1216" height="1224" />
 </picture>
 
 </p>]]></description></item></channel></rss>
