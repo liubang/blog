@@ -1,4 +1,4 @@
-baseURL = "https://iliubang.cn"
+baseURL = "https://liubang.github.io/blog"
 title = "liubang's blog"
 theme = "github.com/razonyang/hugo-theme-bootstrap"
 copyright = "Copyright © 2019-{year} LiuBang. All Rights Reserved."
