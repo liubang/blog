@@ -334,7 +334,8 @@ PHP 的内核没有使用线程，而且 PHP 天生也不允许用户层代码�
 </span></span></span></code></pre></div><p>在上面的例子中，最后一种情况下，当你创建一个<code>stdClass</code>的对象后，通常将会给它添加属性。这时如果使用
 <code>zend_update_property</code>之类的函数，是不起作用的，取而代之的是<code>add_property</code>宏函数：</p>]]></description></item><item><title>c语言之struct</title><link>https://liubang.github.io/blog/posts/sp/2017-08-21-c%E8%AF%AD%E8%A8%80%E4%B9%8Bstruct/</link><pubDate>Mon, 21 Aug 2017 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2017-08-21-c%E8%AF%AD%E8%A8%80%E4%B9%8Bstruct/</guid><description><![CDATA[<h2 id="struct" data-numberify>struct<a class="anchor ms-1" href="#struct"></a></h2>
 <blockquote>
-<p>在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个指针就能访问集合中的所有成员。结构体中可以包含许多简单或符合数据类型，因此从内存分配上看，有点类似数组，而从变量组织上看，又类似于面向对象编程语言中的类。</p></blockquote>
+<p>在 c 语言中，结构体(struct)是一种复合数据类型，用来将一系列相同或不同类型的变量聚集在同一个内存区间内并赋予同一个名字，使得通过一个指针就能访问集合中的所有成员。结构体中可以包含许多简单或符合数据类型，因此从内存分配上看，有点类似数组，而从变量组织上看，又类似于面向对象编程语言中的类。</p>
+</blockquote>
 
 <h3 id="定义-struct" data-numberify>定义 struct<a class="anchor ms-1" href="#定义-struct"></a></h3>
 <p>定义一个 struct 非常简单，使用<code>struct</code>关键字即可。</p>
@@ -377,7 +378,7 @@ PHP 的内核没有使用线程，而且 PHP 天生也不允许用户层代码�
 <h3 id="21-进程的内存" data-numberify>2.1 进程的内存<a class="anchor ms-1" href="#21-进程的内存"></a></h3>
 <p>每个进程都有自己的虚拟地址空间被 MMU（Memory Management Unit, 内存管理单元）(和内核)动态的转换到物理内存地址空间。这部分空间被划分成了几个部分，我们需要了解的是至少有一部分空间存放代码，一个用来存放局部变量的栈，一部分用来存放常量和全局变量的空间，以及程序的无组织空间我们称之为堆。</p>
 <p>堆是一个连续的（依据虚拟地址而言）内存空间，它有三个边界：一个起始点，一个最大限度边界（通过 sys/ressource.h 中的 getrlimit(2)函数和 setrlimit(2)函数来管理）和一个被称为<code>break</code>的结束点。<code>break</code>标记了隐射内存空间的结束，也就是说，虚拟地址空间部分对应着真实的内存空间。下图表示内存组织结构</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=022c7eb97152ded0427315adc74ffdaf" loading="lazy" width="512" height="114" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="512" height="114" />
 </picture>
 
 </p>

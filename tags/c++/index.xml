@@ -563,7 +563,7 @@ loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，�
 基类中的 private 成员不受继承方式的影响，子类永远无权访问。</p>
 
 <h3 id="12-一个示例" data-numberify>1.2 一个示例<a class="anchor ms-1" href="#12-一个示例"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=022c7eb97152ded0427315adc74ffdaf" loading="lazy" width="289" height="584" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="289" height="584" />
 </picture>
 
 </p>
@@ -628,7 +628,7 @@ loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，�
 取代数字地址的是用名字（或者标识符）直接关联到确定的地址上，而且变量类型（如<code>int</code>, <code>double</code>, <code>char</code>）与之关联，从而简化了对数据的解析。</p>
 <p>每个内存地址占 8 位（也就是 1 个字节），一个 4 个字节的<code>int</code>值需要 4 个内存位置。一个 32 位的系统通常使用 32 位的地址。同样的，存储这个 32 位的地址也需要 4 个内存位置。</p>
 <p>下面的插图形象的描绘了计算机内存地址，内存中数据，变量名，变量类型以及变量值之间的关系。</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-23/MemoryAddressContent.png#center?v=022c7eb97152ded0427315adc74ffdaf" loading="lazy" width="661" height="503" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-23/MemoryAddressContent.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="661" height="503" />
 </picture>
 
 </p>
@@ -655,7 +655,7 @@ loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，�
 <p>为什么要重新造轮子呢？</p>
 
 <h3 id="11-传统的面向过程的编程语言" data-numberify>1.1 传统的面向过程的编程语言<a class="anchor ms-1" href="#11-传统的面向过程的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_CFunction.png#center?v=022c7eb97152ded0427315adc74ffdaf" loading="lazy" width="326" height="335" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_CFunction.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="326" height="335" />
 </picture>
 
 </p>
@@ -673,7 +673,7 @@ Customer Relationship Management (CRM) 系统或者电脑足球游戏。</p>
 <p>简而言之，传统的面向过程的编程语言将数据结构和算法单元分开了。</p>
 
 <h3 id="12-面向对象的编程语言" data-numberify>1.2 面向对象的编程语言<a class="anchor ms-1" href="#12-面向对象的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_Objects.png#center?v=022c7eb97152ded0427315adc74ffdaf" loading="lazy" width="538" height="351" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_Objects.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="538" height="351" />
 </picture>
 
 </p>

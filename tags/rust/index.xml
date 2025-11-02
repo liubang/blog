@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Rust on liubang's blog</title><link>https://liubang.github.io/blog/tags/rust/</link><description>Recent content in Rust on liubang's blog</description><generator>Hugo</generator><language>zh-cn</language><copyright>Copyright © 2019-2025 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sat, 12 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://liubang.github.io/blog/tags/rust/index.xml" rel="self" type="application/rss+xml"/><item><title>Rust和C++: 泛型和特例化</title><link>https://liubang.github.io/blog/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/</link><pubDate>Sat, 12 Nov 2022 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/rust/2022-11-13-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E6%B3%9B%E5%9E%8B%E5%92%8C%E7%89%B9%E4%BE%8B%E5%8C%96/</guid><description><![CDATA[<blockquote>
-<p>Ref: <a href="https://www.tangramvision.com/blog/c-rust-generics-and-specialization" target="_blank" rel="noopener noreferrer">https://www.tangramvision.com/blog/c-rust-generics-and-specialization<i class="fas fa-external-link-square-alt ms-1"></i></a></p></blockquote>
+<p>Ref: <a href="https://www.tangramvision.com/blog/c-rust-generics-and-specialization" target="_blank" rel="noopener noreferrer">https://www.tangramvision.com/blog/c-rust-generics-and-specialization<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
+</blockquote>
 
 <h2 id="泛型入门输入的类型" data-numberify>泛型入门：输入的类型<a class="anchor ms-1" href="#泛型入门输入的类型"></a></h2>
 <p>C++和 Rust 中的泛型都是一种将其他类型作为其定义的一部分的类型。泛型是通过在类型定义中指定占位符的一种方式，然后可以
@@ -27,7 +28,8 @@
 </span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-2-8"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-2-8">8</a></span><span>}
 </span></span></code></pre></div><p>很显然，上面 Rust 版本和 C++版本的实现相比看上去多了很多额外的语法。其中主要的区别是我们调用了特征边界检查，也就是<code>T: Add + Copy</code>，
 或者用更通俗的话来说，<code>T</code>类型必须实现<code>Add</code>和<code>Copy</code> 特征(trait)。</p>]]></description></item><item><title>Rust和C++: 可变性、移动和所有权</title><link>https://liubang.github.io/blog/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/</link><pubDate>Tue, 01 Nov 2022 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/rust/2022-11-01-rust%E5%92%8Cc++%E5%AF%B9%E6%AF%94%E4%B9%8B%E5%8F%AF%E5%8F%98%E6%80%A7%E7%A7%BB%E5%8A%A8%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83/</guid><description><![CDATA[<blockquote>
-<p>Ref: <a href="https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership" target="_blank" rel="noopener noreferrer">https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership<i class="fas fa-external-link-square-alt ms-1"></i></a></p></blockquote>
+<p>Ref: <a href="https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership" target="_blank" rel="noopener noreferrer">https://www.tangramvision.com/blog/c-rust-interior-mutability-moving-and-ownership<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
+</blockquote>
 
 <h2 id="c和-rust-中的不变性constness" data-numberify>C++和 Rust 中的不变性(constness)<a class="anchor ms-1" href="#c和-rust-中的不变性constness"></a></h2>
 
