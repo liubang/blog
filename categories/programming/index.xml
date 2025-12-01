@@ -392,7 +392,7 @@ libFuzzer 是一个基于内存的fuzzy test引擎，使用 LLVM 的插桩技术
 <p>fsync 系统调用就是将内核缓冲区中的数据同步到存储介质(如硬盘)。也可以在 open 文件的时候通过开启<code>O_SYNC</code>来开启同步 I/O.</p>
 
 <h2 id="各-io-操作的区别与联系" data-numberify>各 IO 操作的区别与联系<a class="anchor ms-1" href="#各-io-操作的区别与联系"></a></h2>
-<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://liubang.github.io/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="1216" height="1224" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://liubang.github.io/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="1216" height="1224" />
 </picture>
 
 </p>]]></description></item><item><title>c++元编程之遍历tuple</title><link>https://liubang.github.io/blog/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</link><pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</guid><description><![CDATA[<p>对于一个标准的 c++容器来说，我们可以很容易在运行时使用迭代器和 range-based for
@@ -905,7 +905,7 @@ n + 1 层生成一个新的 sstable 文件</li>
 基类中的 private 成员不受继承方式的影响，子类永远无权访问。</p>
 
 <h3 id="12-一个示例" data-numberify>1.2 一个示例<a class="anchor ms-1" href="#12-一个示例"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="289" height="584" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="289" height="584" />
 </picture>
 
 </p>
@@ -970,7 +970,7 @@ n + 1 层生成一个新的 sstable 文件</li>
 取代数字地址的是用名字（或者标识符）直接关联到确定的地址上，而且变量类型（如<code>int</code>, <code>double</code>, <code>char</code>）与之关联，从而简化了对数据的解析。</p>
 <p>每个内存地址占 8 位（也就是 1 个字节），一个 4 个字节的<code>int</code>值需要 4 个内存位置。一个 32 位的系统通常使用 32 位的地址。同样的，存储这个 32 位的地址也需要 4 个内存位置。</p>
 <p>下面的插图形象的描绘了计算机内存地址，内存中数据，变量名，变量类型以及变量值之间的关系。</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-23/MemoryAddressContent.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="661" height="503" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-23/MemoryAddressContent.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="661" height="503" />
 </picture>
 
 </p>
@@ -997,7 +997,7 @@ n + 1 层生成一个新的 sstable 文件</li>
 <p>为什么要重新造轮子呢？</p>
 
 <h3 id="11-传统的面向过程的编程语言" data-numberify>1.1 传统的面向过程的编程语言<a class="anchor ms-1" href="#11-传统的面向过程的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_CFunction.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="326" height="335" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_CFunction.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="326" height="335" />
 </picture>
 
 </p>
@@ -1015,7 +1015,7 @@ Customer Relationship Management (CRM) 系统或者电脑足球游戏。</p>
 <p>简而言之，传统的面向过程的编程语言将数据结构和算法单元分开了。</p>
 
 <h3 id="12-面向对象的编程语言" data-numberify>1.2 面向对象的编程语言<a class="anchor ms-1" href="#12-面向对象的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_Objects.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="538" height="351" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_Objects.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="538" height="351" />
 </picture>
 
 </p>
@@ -1241,7 +1241,7 @@ key 的类型是可变的，而 hash code 是一个整型。</p>
 <h3 id="chained-hash-table" data-numberify>Chained Hash Table<a class="anchor ms-1" href="#chained-hash-table"></a></h3>
 <p>链式 hash 表从本质上来讲，就是一个存放了一组链表的数组。每个链表可以看做是一个槽，我们把元素通过 hash 函数找到一个 hash 值，然后把元素的值
 放入到数组中与改 hash 值对应的槽中。</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="chained hashtable" src="https://liubang.github.io/images/2017-08-23/chained_hashtable.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="320" height="267" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="chained hashtable" src="https://liubang.github.io/images/2017-08-23/chained_hashtable.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="320" height="267" />
 </picture>
 
 </p>
@@ -1358,7 +1358,7 @@ key 的类型是可变的，而 hash code 是一个整型。</p>
 <h3 id="21-进程的内存" data-numberify>2.1 进程的内存<a class="anchor ms-1" href="#21-进程的内存"></a></h3>
 <p>每个进程都有自己的虚拟地址空间被 MMU（Memory Management Unit, 内存管理单元）(和内核)动态的转换到物理内存地址空间。这部分空间被划分成了几个部分，我们需要了解的是至少有一部分空间存放代码，一个用来存放局部变量的栈，一部分用来存放常量和全局变量的空间，以及程序的无组织空间我们称之为堆。</p>
 <p>堆是一个连续的（依据虚拟地址而言）内存空间，它有三个边界：一个起始点，一个最大限度边界（通过 sys/ressource.h 中的 getrlimit(2)函数和 setrlimit(2)函数来管理）和一个被称为<code>break</code>的结束点。<code>break</code>标记了隐射内存空间的结束，也就是说，虚拟地址空间部分对应着真实的内存空间。下图表示内存组织结构</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="512" height="114" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="512" height="114" />
 </picture>
 
 </p>

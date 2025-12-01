@@ -378,7 +378,7 @@ PHP 的内核没有使用线程，而且 PHP 天生也不允许用户层代码�
 <h3 id="21-进程的内存" data-numberify>2.1 进程的内存<a class="anchor ms-1" href="#21-进程的内存"></a></h3>
 <p>每个进程都有自己的虚拟地址空间被 MMU（Memory Management Unit, 内存管理单元）(和内核)动态的转换到物理内存地址空间。这部分空间被划分成了几个部分，我们需要了解的是至少有一部分空间存放代码，一个用来存放局部变量的栈，一部分用来存放常量和全局变量的空间，以及程序的无组织空间我们称之为堆。</p>
 <p>堆是一个连续的（依据虚拟地址而言）内存空间，它有三个边界：一个起始点，一个最大限度边界（通过 sys/ressource.h 中的 getrlimit(2)函数和 setrlimit(2)函数来管理）和一个被称为<code>break</code>的结束点。<code>break</code>标记了隐射内存空间的结束，也就是说，虚拟地址空间部分对应着真实的内存空间。下图表示内存组织结构</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=b2ce5c0fb02e68da759fba5d2971c303" loading="lazy" width="512" height="114" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=e5be9d19feea7dc21520c93490a792af" loading="lazy" width="512" height="114" />
 </picture>
 
 </p>
