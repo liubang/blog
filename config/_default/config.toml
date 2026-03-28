@@ -3,6 +3,14 @@ title = "liubang's blog"
 theme = "github.com/razonyang/hugo-theme-bootstrap"
 copyright = "Copyright © 2019-{year} LiuBang. All Rights Reserved."
 
+[author]
+name = "liubang"
+avatar = "images/profile.png"
+bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise"
+company = "BIDU"
+location = "China"
+email = "it.liubang@gmail.com"
+
 # Multilingual mode
 defaultContentLanguage = "zh-cn"
 defaultContentLanguageInSubdir = false
