@@ -373,7 +373,29 @@ libFuzzer 是一个基于内存的fuzzy test引擎，使用 LLVM 的插桩技术
 </span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-9"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-9">9</a></span><span><span style="color:#c678dd">const</span> <span style="color:#e06c75">Points</span> <span style="color:#e06c75">x</span>{.<span style="color:#e06c75">x</span> <span style="color:#56b6c2">=</span> <span style="color:#d19a66">1.1</span>, .<span style="color:#e06c75">y</span>{<span style="color:#d19a66">2.2</span>}};
 </span></span></code></pre></div>
 <h2 id="优点" data-numberify>优点<a class="anchor ms-1" href="#优点"></a></h2>
-<p>使用 Designated Initializers 最大的好处就是能够提升代码的可读性。</p>]]></description></item><item><title>c++元编程之遍历tuple</title><link>https://liubang.github.io/blog/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</link><pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</guid><description><![CDATA[<p>对于一个标准的 c++容器来说，我们可以很容易在运行时使用迭代器和 range-based for
+<p>使用 Designated Initializers 最大的好处就是能够提升代码的可读性。</p>]]></description></item><item><title>Linux磁盘IO</title><link>https://liubang.github.io/blog/posts/linux/2022-02-25-linux%E7%A3%81%E7%9B%98io/</link><pubDate>Fri, 25 Feb 2022 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/linux/2022-02-25-linux%E7%A3%81%E7%9B%98io/</guid><description><![CDATA[<h2 id="前言" data-numberify>前言<a class="anchor ms-1" href="#前言"></a></h2>
+<p>做存储开发，一定会经常涉及到 IO 相关的操作。而现在的高级编程语言，往往会帮助我们屏蔽 IO 操作的底层细节，虽然这样能降低开发门槛，提升效率，但是却也导致我们对 IO 底层操作实现的理解不够系统和深入。
+所以呢，我一直想抽时间来系统整理一下 Linux IO 涉及的系统调用，以及相互之间的区别和联系，以加深对 IO 操作的理解。</p>
+
+<h2 id="io-操作" data-numberify>IO 操作<a class="anchor ms-1" href="#io-操作"></a></h2>
+
+<h3 id="fwrite" data-numberify>fwrite<a class="anchor ms-1" href="#fwrite"></a></h3>
+<p>fwrite 是 c 语言标准库中的文件写入函数，其作用是向指定的文件中写入若干数据。调用 fwrite 实际上是将数据写入到了 c 标准库的 IO Buffer 中。</p>
+
+<h3 id="mmap" data-numberify>mmap<a class="anchor ms-1" href="#mmap"></a></h3>
+<p>mmap 将一个文件或者其它对象映射进内存。文件被映射到多个页上，如果文件的大小不是所有页的大小之和，最后一个页不被使用的空间将会清零。mmap 在用户空间映射调用系统中作用很大。</p>
+
+<h3 id="fflush" data-numberify>fflush<a class="anchor ms-1" href="#fflush"></a></h3>
+<p>fflush 就是将 c 标准库中的 IO Buffer 中的数据写入到参数 stream 指定的文件中。</p>
+
+<h3 id="fsync" data-numberify>fsync<a class="anchor ms-1" href="#fsync"></a></h3>
+<p>fsync 系统调用就是将内核缓冲区中的数据同步到存储介质(如硬盘)。也可以在 open 文件的时候通过开启<code>O_SYNC</code>来开启同步 I/O.</p>
+
+<h2 id="各-io-操作的区别与联系" data-numberify>各 IO 操作的区别与联系<a class="anchor ms-1" href="#各-io-操作的区别与联系"></a></h2>
+<p><picture><img class="img-fluid mx-auto d-block" alt="图片引用自 https://oscimg.oschina.net/oscnet/51a17cc9aa34eba47971af609fdecabf398.jpg" src="https://liubang.github.io/images/2022-02-28/linux_io_sub_system_arch.jpeg#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="1216" height="1224" />
+</picture>
+
+</p>]]></description></item><item><title>c++元编程之遍历tuple</title><link>https://liubang.github.io/blog/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</link><pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/cpp/2022-02-22-c++%E5%85%83%E7%BC%96%E7%A8%8B%E4%B9%8B%E9%81%8D%E5%8E%86tuple/</guid><description><![CDATA[<p>对于一个标准的 c++容器来说，我们可以很容易在运行时使用迭代器和 range-based for
 loop 来遍历其中的每一个元素。但是对于<code>std::tuple</code>，却不能像普通的容器那样去遍历它。</p>
 
 <h2 id="stdtuple-简介" data-numberify>std::tuple 简介<a class="anchor ms-1" href="#stdtuple-简介"></a></h2>
@@ -448,7 +470,64 @@ n + 1 层生成一个新的 sstable 文件</li>
 <li><code>immutable memtable compaction</code>，也叫做<strong>minor compaction</strong>，指的是将<code>immutable memtable</code>dump 到 sstable 文件的过程</li>
 <li><code>sstable compaction</code>，也叫做<strong>major compaction</strong>，指的是 sstable 文件之间的合并过程</li>
 </ul>
-<p>而对于<code>sstable compaction</code>又可以细分为三种：</p>]]></description></item><item><title>使用c语言模拟lisp语法</title><link>https://liubang.github.io/blog/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</link><pubDate>Sun, 18 Aug 2019 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</guid><description><![CDATA[<p>使用 c 语言的 macro 操作，能够很简单的用 c 语言模拟 lisp 语法。</p>
+<p>而对于<code>sstable compaction</code>又可以细分为三种：</p>]]></description></item><item><title>分布式协议</title><link>https://liubang.github.io/blog/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/inf/2020-05-25-%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%AE%AE/</guid><description><![CDATA[<h2 id="拜占庭将军问题" data-numberify>拜占庭将军问题<a class="anchor ms-1" href="#拜占庭将军问题"></a></h2>
+
+<h3 id="简介" data-numberify>简介<a class="anchor ms-1" href="#简介"></a></h3>
+<ul>
+<li>在可能存在叛军的情况下，采用合适的通讯协议，让多个将军达成共识，执行统一的作战计划</li>
+<li>二忠一叛难题</li>
+<li>它是分布式领域最复杂的容错模型</li>
+<li>莱斯利·兰伯特（Leslie Lamport）<a href="https://www.microsoft.com/en-us/research/uploads/prod/2016/12/The-Byzantine-Generals-Problem.pdf" target="_blank" rel="noopener noreferrer">The Byzantine Generals Problem<i class="fas fa-external-link-square-alt ms-1"></i></a></li>
+</ul>
+
+<h3 id="二忠一叛难题" data-numberify>二忠一叛难题<a class="anchor ms-1" href="#二忠一叛难题"></a></h3>
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2020-05-25/bzt1.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="1035" height="575" />
+</picture>
+
+</p>
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2020-05-25/bzt2.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="1100" height="569" />
+</picture>
+
+</p>
+<ul>
+<li>总共有三个将军，其中一个作为指挥官</li>
+<li>通过信使相互传递作战指令，进攻或者撤退</li>
+<li>所有忠诚的将军必须执行统一的作战计划，忠诚的将军必须执行忠诚的指挥官发布的指令</li>
+<li>假如 LIEUTENANT2 叛变，LIEUTENANT1 收到的作战指令就是“进攻，撤退”</li>
+<li>假如 COMMANDER 叛变，LIEUTENANT1 和 LIEUTENANT2 收到的作战指令都是“进攻，撤退”</li>
+</ul>
+
+<h3 id="口信消息型解法" data-numberify>口信消息型解法<a class="anchor ms-1" href="#口信消息型解法"></a></h3>
+<ul>
+<li>叛变人数为 m 需要已知</li>
+<li>则所有参与者的人数至少为 3m+1</li>
+<li>第一轮由指挥官发送作战指令</li>
+<li>第二轮由各位将军相互发送指令</li>
+<li>收到指令的将军按照少数服从多数的原则执行指令</li>
+<li>按照这个公式，前面的例子叛军为 1 人的情况，则需要 1 个指挥官和 3 个将军</li>
+</ul>
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2020-05-25/bzt3.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="1181" height="529" />
+</picture>
+
+</p>
+<p>假如 LIEUTENANT3 叛变了，那么首先指挥官向各位将军发送“进攻”的指令，由于 3 号将军叛变了，所以最终 1 号将军收到的指令是 2 个进攻，1 个撤退，2 号将军同样收到 2 个进攻，1 个撤退，这样忠诚的将军将会执行一致的指令</p>]]></description></item><item><title>基于公司私有gitlab的go module实践</title><link>https://liubang.github.io/blog/posts/go/2019-10-17-%E5%9F%BA%E4%BA%8E%E5%85%AC%E5%8F%B8%E7%A7%81%E6%9C%89gitlab%E7%9A%84go-module%E5%AE%9E%E8%B7%B5/</link><pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/go/2019-10-17-%E5%9F%BA%E4%BA%8E%E5%85%AC%E5%8F%B8%E7%A7%81%E6%9C%89gitlab%E7%9A%84go-module%E5%AE%9E%E8%B7%B5/</guid><description><![CDATA[<h2 id="背景" data-numberify>背景<a class="anchor ms-1" href="#背景"></a></h2>
+<p>我们 laser 存储为了更好的跟引擎对接，适应其他团队的技术生态，决定开发一套 golang 的公共库来给大家使用。于是我们在公司私有的 gitlab 上新建了一个项目:git.yourcomp.com/ad/ads_core/adgo，并且我们想使用单一的 codebase 来管理所有的公共 library.</p>
+<p>而且，为了更好的管理模块，我们统一使用了 go mod。</p>
+<p>按照平时我们在 github 上拉取 go library 的惯例，我本以为直接使用<code>go get git.yourcomp.com/ad/ads_core/adgo/xxx</code>就能直接拉取到相应的模块了，然而在开发完功能测试的时候却发现，事实并不是想象中那样。</p>
+
+<h2 id="遇到的问题和解决方案" data-numberify>遇到的问题和解决方案<a class="anchor ms-1" href="#遇到的问题和解决方案"></a></h2>
+
+<h3 id="1-仓库问题" data-numberify>1. 仓库问题<a class="anchor ms-1" href="#1-仓库问题"></a></h3>
+<p>执行<code>go get</code>后，实际上会请求&quot;https://git.yourcomp.com/ad/ads_core/adgo?go-get=1&quot;这个地址，如果使用<code>-insecure</code>选项，则会请求&quot;http://git.yourcomp.com/ad/ads_core/adgo?go-get=1&quot;，正常情况下回返回meta tag：</p>
+<div class="highlight"><pre tabindex="0" style="color:#abb2bf;background-color:#282c34;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-1"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-1">1</a></span><span>&lt;<span style="color:#e06c75">html</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-2"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-2">2</a></span><span>  &lt;<span style="color:#e06c75">head</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-3"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-3">3</a></span><span>    &lt;<span style="color:#e06c75">meta</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-4"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-4">4</a></span><span>      <span style="color:#e06c75">name</span><span style="color:#56b6c2">=</span><span style="color:#98c379">&#34;go-import&#34;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-5"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-5">5</a></span><span>      <span style="color:#e06c75">content</span><span style="color:#56b6c2">=</span><span style="color:#98c379">&#34;git.yourcomp.com/ad/ads_core git http://git.yourcomp.com/ad/ads_core.git&#34;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-6"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-6">6</a></span><span>    /&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-7"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-7">7</a></span><span>  &lt;/<span style="color:#e06c75">head</span>&gt;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-8"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-8">8</a></span><span>&lt;/<span style="color:#e06c75">html</span>&gt;
+</span></span></code></pre></div><p>这是 go remote import 的协议，meta tag 的格式一般为</p>]]></description></item><item><title>使用c语言模拟lisp语法</title><link>https://liubang.github.io/blog/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</link><pubDate>Sun, 18 Aug 2019 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2019-08-18-c%E8%AF%AD%E8%A8%80%E6%A8%A1%E6%8B%9Flisp%E8%AF%AD%E6%B3%95/</guid><description><![CDATA[<p>使用 c 语言的 macro 操作，能够很简单的用 c 语言模拟 lisp 语法。</p>
 
 <h3 id="下面我们来定义-lisph-头文件" data-numberify>下面我们来定义 lisp.h 头文件<a class="anchor ms-1" href="#下面我们来定义-lisph-头文件"></a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#abb2bf;background-color:#282c34;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-1"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-1"> 1</a></span><span><span style="color:#7f848e">#ifndef LISP_H_OTE1HWPK
@@ -535,7 +614,41 @@ n + 1 层生成一个新的 sstable 文件</li>
 </span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-1-12"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-1-12">12</a></span><span><span style="color:#d19a66">10</span>
 </span></span></code></pre></div><p>这个程序每次运行的结果都是不一样的，现在我们希望我们能够在不修改源码的情况下，控制程序的输出结果，例如我希望这段程序运行的结果是
 每次都能输出 10 个 10。由于不能修改源码，或者我们根本没有源码，面对这样一个编译后的可执行二进制文件，想要修改程序的运行结果，可能显
-得有些困难。然而，如果能够善用动态连接器的话，这都不是问题。</p>]]></description></item><item><title>多线程编程</title><link>https://liubang.github.io/blog/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</link><pubDate>Wed, 05 Dec 2018 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</guid><description><![CDATA[<h2 id="开始之前" data-numberify>开始之前<a class="anchor ms-1" href="#开始之前"></a></h2>
+得有些困难。然而，如果能够善用动态连接器的话，这都不是问题。</p>]]></description></item><item><title>Spring Boot With BDD</title><link>https://liubang.github.io/blog/posts/java/2019-03-15-spring_boot_with_bdd/</link><pubDate>Fri, 15 Mar 2019 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/java/2019-03-15-spring_boot_with_bdd/</guid><description><![CDATA[<h2 id="什么是-bdd" data-numberify>什么是 BDD<a class="anchor ms-1" href="#什么是-bdd"></a></h2>
+<p>BDD(Behavior Driven Development)，行为驱动开发，是一种敏捷软件开发的技术，它鼓励软件项目中的开发者、QA 和非技术人员或商业参与者之间的协作。</p>
+<p>BDD 的重点是通过与利益相关者的讨论取得对预期的软件行为的清醒认识。它通过用自然语言书写非程序员可读的测试用例扩展了测试驱动开发方法。行为驱动开发人员使用混合了领域中统一的语言的母语语言来描述他们的代码的目的。这让开发者得以把精力集中在代码应该怎么写，而不是技术细节上，而且也最大程度的减少了将代码编写者的技术语言与商业客户、用户、利益相关者、项目管理者等的领域语言之间来回翻译的代价。</p>
+
+<h2 id="具体怎么操作" data-numberify>具体怎么操作<a class="anchor ms-1" href="#具体怎么操作"></a></h2>
+<p>结合我们项目开发使用的 spring boot 2.x，下面我们来具体说明如何在实际项目中使用 BDD。</p>
+
+<h3 id="依赖的包" data-numberify>依赖的包<a class="anchor ms-1" href="#依赖的包"></a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#abb2bf;background-color:#282c34;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-1"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-1"> 1</a></span><span><span style="color:#e06c75">&lt;cucumber.version&gt;</span>4.2.5<span style="color:#e06c75">&lt;/cucumber.version&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-2"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-2"> 2</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-3"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-3"> 3</a></span><span>...
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-4"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-4"> 4</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-5"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-5"> 5</a></span><span><span style="color:#e06c75">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-6"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-6"> 6</a></span><span>    <span style="color:#e06c75">&lt;groupId&gt;</span>io.cucumber<span style="color:#e06c75">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-7"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-7"> 7</a></span><span>    <span style="color:#e06c75">&lt;artifactId&gt;</span>cucumber-junit<span style="color:#e06c75">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-8"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-8"> 8</a></span><span>    <span style="color:#e06c75">&lt;version&gt;</span>${cucumber.version}<span style="color:#e06c75">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-9"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-9"> 9</a></span><span>    <span style="color:#e06c75">&lt;scope&gt;</span>test<span style="color:#e06c75">&lt;/scope&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-10"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-10">10</a></span><span><span style="color:#e06c75">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-11"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-11">11</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-12"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-12">12</a></span><span><span style="color:#e06c75">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-13"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-13">13</a></span><span>    <span style="color:#e06c75">&lt;groupId&gt;</span>io.cucumber<span style="color:#e06c75">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-14"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-14">14</a></span><span>    <span style="color:#e06c75">&lt;artifactId&gt;</span>cucumber-java<span style="color:#e06c75">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-15"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-15">15</a></span><span>    <span style="color:#e06c75">&lt;version&gt;</span>${cucumber.version}<span style="color:#e06c75">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-16"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-16">16</a></span><span>    <span style="color:#e06c75">&lt;scope&gt;</span>test<span style="color:#e06c75">&lt;/scope&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-17"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-17">17</a></span><span><span style="color:#e06c75">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-18"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-18">18</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-19"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-19">19</a></span><span><span style="color:#e06c75">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-20"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-20">20</a></span><span>    <span style="color:#e06c75">&lt;groupId&gt;</span>io.cucumber<span style="color:#e06c75">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-21"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-21">21</a></span><span>    <span style="color:#e06c75">&lt;artifactId&gt;</span>cucumber-spring<span style="color:#e06c75">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-22"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-22">22</a></span><span>    <span style="color:#e06c75">&lt;version&gt;</span>${cucumber.version}<span style="color:#e06c75">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-23"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-23">23</a></span><span>    <span style="color:#e06c75">&lt;scope&gt;</span>test<span style="color:#e06c75">&lt;/scope&gt;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-24"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-24">24</a></span><span><span style="color:#e06c75">&lt;/dependency&gt;</span>
+</span></span></code></pre></div>
+<h3 id="定义启动文件" data-numberify>定义启动文件<a class="anchor ms-1" href="#定义启动文件"></a></h3>
+<p>BDD 其实也是依赖 junit，然后调用<code>Cucumber</code>的 Runner 来运行相应的测试。</p>]]></description></item><item><title>多线程编程</title><link>https://liubang.github.io/blog/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</link><pubDate>Wed, 05 Dec 2018 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2018-12-05-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/</guid><description><![CDATA[<h2 id="开始之前" data-numberify>开始之前<a class="anchor ms-1" href="#开始之前"></a></h2>
 <p>这篇文章主要是为了帮助大家熟悉 POSIX 线程库以及在实际开发中使用它的特性。我们会具体讲解如何利用这个线程库定义的不同工具
 来解决编程中的问题。当然这里隐含了一个假设，就是读者已经了解过并行编程（或者多进程）的相关概念，如果没有这些背景知识
 的话，读者可能会感觉到很难理解。不过也没关系，我的另一篇教程里边有专门为只具备线性编程思维的读者提供了对并行编程理论
@@ -849,7 +962,7 @@ n + 1 层生成一个新的 sstable 文件</li>
 基类中的 private 成员不受继承方式的影响，子类永远无权访问。</p>
 
 <h3 id="12-一个示例" data-numberify>1.2 一个示例<a class="anchor ms-1" href="#12-一个示例"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=2eb0422f56753913dff79534c124e095" loading="lazy" width="289" height="584" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-03-05/ClassDiagram_MovablePoint.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="289" height="584" />
 </picture>
 
 </p>
@@ -914,7 +1027,7 @@ n + 1 层生成一个新的 sstable 文件</li>
 取代数字地址的是用名字（或者标识符）直接关联到确定的地址上，而且变量类型（如<code>int</code>, <code>double</code>, <code>char</code>）与之关联，从而简化了对数据的解析。</p>
 <p>每个内存地址占 8 位（也就是 1 个字节），一个 4 个字节的<code>int</code>值需要 4 个内存位置。一个 32 位的系统通常使用 32 位的地址。同样的，存储这个 32 位的地址也需要 4 个内存位置。</p>
 <p>下面的插图形象的描绘了计算机内存地址，内存中数据，变量名，变量类型以及变量值之间的关系。</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-23/MemoryAddressContent.png#center?v=2eb0422f56753913dff79534c124e095" loading="lazy" width="661" height="503" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-23/MemoryAddressContent.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="661" height="503" />
 </picture>
 
 </p>
@@ -941,7 +1054,7 @@ n + 1 层生成一个新的 sstable 文件</li>
 <p>为什么要重新造轮子呢？</p>
 
 <h3 id="11-传统的面向过程的编程语言" data-numberify>1.1 传统的面向过程的编程语言<a class="anchor ms-1" href="#11-传统的面向过程的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_CFunction.png#center?v=2eb0422f56753913dff79534c124e095" loading="lazy" width="326" height="335" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_CFunction.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="326" height="335" />
 </picture>
 
 </p>
@@ -959,7 +1072,7 @@ Customer Relationship Management (CRM) 系统或者电脑足球游戏。</p>
 <p>简而言之，传统的面向过程的编程语言将数据结构和算法单元分开了。</p>
 
 <h3 id="12-面向对象的编程语言" data-numberify>1.2 面向对象的编程语言<a class="anchor ms-1" href="#12-面向对象的编程语言"></a></h3>
-<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_Objects.png#center?v=2eb0422f56753913dff79534c124e095" loading="lazy" width="538" height="351" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="" src="https://liubang.github.io/images/2018-02-13/OOP_Objects.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="538" height="351" />
 </picture>
 
 </p>
@@ -1185,7 +1298,7 @@ key 的类型是可变的，而 hash code 是一个整型。</p>
 <h3 id="chained-hash-table" data-numberify>Chained Hash Table<a class="anchor ms-1" href="#chained-hash-table"></a></h3>
 <p>链式 hash 表从本质上来讲，就是一个存放了一组链表的数组。每个链表可以看做是一个槽，我们把元素通过 hash 函数找到一个 hash 值，然后把元素的值
 放入到数组中与改 hash 值对应的槽中。</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="chained hashtable" src="https://liubang.github.io/images/2017-08-23/chained_hashtable.png#center?v=2eb0422f56753913dff79534c124e095" loading="lazy" width="320" height="267" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="chained hashtable" src="https://liubang.github.io/images/2017-08-23/chained_hashtable.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="320" height="267" />
 </picture>
 
 </p>
@@ -1214,7 +1327,71 @@ key 的类型是可变的，而 hash code 是一个整型。</p>
 </span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-1-5"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-1-5">5</a></span><span>    {<span style="color:#98c379">&#34;gif&#34;</span>, <span style="color:#98c379">&#34;image/gif&#34;</span>},
 </span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-1-6"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-1-6">6</a></span><span>    {<span style="color:#98c379">&#34;jpg&#34;</span>, <span style="color:#98c379">&#34;image/jpg&#34;</span>}
 </span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-1-7"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-1-7">7</a></span><span>};
-</span></span></code></pre></div><p>２．按照成员声明的顺序初始化</p>]]></description></item><item><title>彻底掌握malloc</title><link>https://liubang.github.io/blog/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</link><pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</guid><description><![CDATA[<p>说明：参考文献地址 <a href="http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf" target="_blank" rel="noopener noreferrer">A Malloc Tutorial<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
+</span></span></code></pre></div><p>２．按照成员声明的顺序初始化</p>]]></description></item><item><title>Java Native Interface（三）</title><link>https://liubang.github.io/blog/posts/java/2017-03-20-java_native_interface%E4%B8%89/</link><pubDate>Mon, 20 Mar 2017 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/java/2017-03-20-java_native_interface%E4%B8%89/</guid><description><![CDATA[<p>前面系统研究了 JNI 的相关操作，下面就来小试牛刀，做一个实际的练习。</p>
+<p>记得去年我曾经用 C 语言写过一个 PHP 的 md5 扩展函数，那么今天就花一点点时间用 JNI 来实现一遍吧。</p>
+<p>不过这里可要提前声明了，虽然是实现 md5 函数，但是这里并不会从头写 md5 算法，而是投机取巧使用到了 linux 内核提供的<code>crypto</code>库。</p>
+<p>废话不多说，首先来写一个 Java 类</p>
+<p>MyString.java</p>
+<div class="highlight"><pre tabindex="0" style="color:#abb2bf;background-color:#282c34;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-1"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-1"> 1</a></span><span><span style="color:#c678dd">public</span> <span style="color:#c678dd">class</span> <span style="color:#e5c07b">MyString</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-2"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-2"> 2</a></span><span>    <span style="color:#c678dd">static</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-3"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-3"> 3</a></span><span>        <span style="color:#e06c75">System</span>.<span style="color:#e06c75">loadLibrary</span>(<span style="color:#98c379">&#34;mymd5&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-4"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-4"> 4</a></span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-5"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-5"> 5</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-6"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-6"> 6</a></span><span>    <span style="color:#c678dd">private</span> <span style="color:#e06c75">String</span> <span style="color:#e06c75">value</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-7"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-7"> 7</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-8"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-8"> 8</a></span><span>    <span style="color:#c678dd">public</span> <span style="color:#c678dd">native</span> <span style="color:#e06c75">String</span> <span style="color:#61afef;font-weight:bold">md5</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-9"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-9"> 9</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-10"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-10">10</a></span><span>    <span style="color:#c678dd">public</span> <span style="color:#61afef;font-weight:bold">MyString</span>(<span style="color:#e06c75">String</span> <span style="color:#e06c75">value</span>) {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-11"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-11">11</a></span><span>        <span style="color:#c678dd">this</span>.<span style="color:#e06c75">value</span> <span style="color:#56b6c2">=</span> <span style="color:#e06c75">value</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-12"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-12">12</a></span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-13"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-13">13</a></span><span>}
+</span></span></code></pre></div><p>然后生成头文件，并实现 c 代码：</p>]]></description></item><item><title>Java Native Interface（二）</title><link>https://liubang.github.io/blog/posts/java/2017-03-20-java_native_interface%E4%BA%8C/</link><pubDate>Mon, 20 Mar 2017 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/java/2017-03-20-java_native_interface%E4%BA%8C/</guid><description><![CDATA[<h2 id="1jni-基础" data-numberify>1、JNI 基础<a class="anchor ms-1" href="#1jni-基础"></a></h2>
+<p>JNI 中定义了一下类型来对应到相应的 Java 的数据类型:</p>
+<p><strong>1. Java 基本数据类型:</strong> <code>jint</code>,<code>jbyte</code>,<code>jshort</code>,<code>jlong</code>,<code>jfloat</code>,<code>jdouble</code>,<code>jchar</code>,<code>jboolean</code>分别对应 Java 中的<code>int</code>,<code>byte</code>,<code>short</code>,<code>long</code>,<code>float</code>,<code>double</code>,<code>char</code>和<code>boolean</code>。</p>
+<p><strong>2. Java 引用类型：</strong>
+<code>jobject</code>对应<code>java.lang.object</code>。同时也定义了下列子类型：</p>
+<ul>
+<li><code>jclass</code>对应<code>java.lang.Class</code></li>
+<li><code>jstring</code>对应<code>java.lang.String</code></li>
+<li><code>jthrowable</code>对应<code>java.lang.Throwable</code></li>
+<li><code>jarray</code>对应 Java 中的数组。Java 中的数组由 8 种基本数据类型和一个<code>Object</code>类型派生二来，所以 JNI 中也存在<code>jintArray</code>,<code>jbyteArray</code>,<code>jshortArray</code>,<code>jlongArray</code>,<code>jfloatArray</code>,<code>jdoubleArray</code>,
+<code>jcharArray</code>,<code>jbooleanArray</code>和<code>jobjectArray</code></li>
+</ul>
+<p>native 函数接收和返回上述的 JNI 类型数据。如果 native 函数需要操作它自己的数据类型(如 c 语言中的 int, char *)，那么就需要在 JNI 类型和本地类型之间做相应的转换。</p>
+<p>简而言之，native 函数的编写流程大致为：</p>
+<ol>
+<li>通过 Java 程序接收 JNI 类型的参数</li>
+<li>将接收的 JNI 类型转换成本地类型</li>
+<li>完成相应的操作</li>
+<li>创建一个需要返回的 JNI 类型的对象，然后将返回的数据 copy 到要返回的对象中</li>
+<li>返回</li>
+</ol>
+<p>从上述流程可以看出，编写 JNI 程序主要的挑战在于数据类型之间的转换，然而 JNI 中提供了很多转换函数来帮助我们完成相应的操作。</p>
+<p>JNI 是一个 c 语言的接口，c 语言并不支持 OOP 的特性(严格的说，OOP 是一种理念，这里只是从语言本身来说 c 语言不支持面向对象，实际上用 c 语言也可以写出面向对象风格的程序！)，所以他们之间并不是真的通过对象来传递。</p>]]></description></item><item><title>Java Native Interface（一）</title><link>https://liubang.github.io/blog/posts/java/2017-03-17-java_native_interface%E4%B8%80/</link><pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/java/2017-03-17-java_native_interface%E4%B8%80/</guid><description><![CDATA[<p>最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来可以巩固所学，二来能将其迁移到本地</p>
+
+<h2 id="1-简介" data-numberify>1 简介<a class="anchor ms-1" href="#1-简介"></a></h2>
+<p>有时候，使用 native code(c/c++)来克服 Java 中的内存管理和性能的局限性是很有必要的。Java 支持 native codes，被称作 Java Native Interface(JNI)。</p>
+<p>JNI 非常难，毕竟它牵涉到了两种编程语言。假设聪明的你对 Java 和 C/C++以及 GCC 编译器已经有所了解。那么下面就一起来一步步学习 JNI 吧。</p>
+
+<h2 id="2-开始" data-numberify>2 开始<a class="anchor ms-1" href="#2-开始"></a></h2>
+
+<h3 id="21-用-c-语言实现第一个-jni-程序" data-numberify>2.1 用 c 语言实现第一个 JNI 程序<a class="anchor ms-1" href="#21-用-c-语言实现第一个-jni-程序"></a></h3>
+<p><strong>Step1:</strong> 创建一个名字为 JNITest.java 的文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#abb2bf;background-color:#282c34;-moz-tab-size:2;-o-tab-size:2;tab-size:2;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-1"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-1"> 1</a></span><span><span style="color:#c678dd">public</span> <span style="color:#c678dd">class</span> <span style="color:#e5c07b">JNITest</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-2"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-2"> 2</a></span><span>    <span style="color:#c678dd">static</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-3"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-3"> 3</a></span><span>        <span style="color:#e06c75">System</span>.<span style="color:#e06c75">load</span>(<span style="color:#98c379">&#34;/home/ubuntu/workspace/java/jni/mynativelib.so&#34;</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-4"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-4"> 4</a></span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-5"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-5"> 5</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-6"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-6"> 6</a></span><span>    <span style="color:#7f848e">//申明一个无参的native方法，而且返回空</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-7"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-7"> 7</a></span><span>    <span style="color:#c678dd">public</span> <span style="color:#c678dd">native</span> <span style="color:#e5c07b">void</span> <span style="color:#61afef;font-weight:bold">greet</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-8"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-8"> 8</a></span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-9"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-9"> 9</a></span><span>    <span style="color:#7f848e">//测试</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-10"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-10">10</a></span><span>    <span style="color:#c678dd">public</span> <span style="color:#c678dd">static</span> <span style="color:#e5c07b">void</span> <span style="color:#61afef;font-weight:bold">main</span>(<span style="color:#e06c75">String</span><span style="color:#56b6c2">[]</span> <span style="color:#e06c75">args</span>) {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-11"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-11">11</a></span><span>        <span style="color:#e06c75">JNITest</span> <span style="color:#e06c75">test</span> <span style="color:#56b6c2">=</span> <span style="color:#c678dd">new</span> <span style="color:#e06c75">JNITest</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-12"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-12">12</a></span><span>        <span style="color:#e06c75">test</span>.<span style="color:#e06c75">greet</span>();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-13"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-13">13</a></span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#55595f" id="hl-0-14"><a style="outline:none;text-decoration:none;color:inherit" href="#hl-0-14">14</a></span><span>}
+</span></span></code></pre></div><p>首先用静态代码块加载本地动态链接库&quot;mynativelib.so&quot;。对于静态代码块，我相信写过 Java 的你应该非常清楚，它只会在类被加载的时候执行一次。这个动态链接库会被添加到 Java 的 library path（保存在 Java 系统变量 java.library.path）中，如果加载失败，就会抛出<code>UnsatisfiedLinkError</code>异常。也可以使用 JVM 启动参数来加载该动态链接库到 Java 的 library path 当中：</p>]]></description></item><item><title>彻底掌握malloc</title><link>https://liubang.github.io/blog/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</link><pubDate>Fri, 17 Mar 2017 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/sp/2017-03-17-%E5%BD%BB%E5%BA%95%E6%8E%8C%E6%8F%A1malloc/</guid><description><![CDATA[<p>说明：参考文献地址 <a href="http://www.inf.udec.cl/~leo/Malloc_tutorial.pdf" target="_blank" rel="noopener noreferrer">A Malloc Tutorial<i class="fas fa-external-link-square-alt ms-1"></i></a></p>
 
 <h2 id="1-简介" data-numberify>1 简介<a class="anchor ms-1" href="#1-简介"></a></h2>
 <p><code>malloc</code>是干什么的？如果你连这个名字都没听过，那么你应该先去了解 Unix 环境下的 c 语言开发，然后再来阅读。对一个程序员而言，<code>malloc</code>是一个在 c 语言中用来分配内存的函数，但是大多数人并不知道它背后真正的原理，甚至有些人认为<code>malloc</code>是 c 语言的关键字或者认为它是系统调用。事实上，<code>malloc</code>是一个再简单不过的函数而已，而且只需要很少的操作系统相关知识就可以让我们彻底理解它的原理。</p>
@@ -1238,7 +1415,7 @@ key 的类型是可变的，而 hash code 是一个整型。</p>
 <h3 id="21-进程的内存" data-numberify>2.1 进程的内存<a class="anchor ms-1" href="#21-进程的内存"></a></h3>
 <p>每个进程都有自己的虚拟地址空间被 MMU（Memory Management Unit, 内存管理单元）(和内核)动态的转换到物理内存地址空间。这部分空间被划分成了几个部分，我们需要了解的是至少有一部分空间存放代码，一个用来存放局部变量的栈，一部分用来存放常量和全局变量的空间，以及程序的无组织空间我们称之为堆。</p>
 <p>堆是一个连续的（依据虚拟地址而言）内存空间，它有三个边界：一个起始点，一个最大限度边界（通过 sys/ressource.h 中的 getrlimit(2)函数和 setrlimit(2)函数来管理）和一个被称为<code>break</code>的结束点。<code>break</code>标记了隐射内存空间的结束，也就是说，虚拟地址空间部分对应着真实的内存空间。下图表示内存组织结构</p>
-<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=2eb0422f56753913dff79534c124e095" loading="lazy" width="512" height="114" />
+<p><picture><img class="img-fluid mx-auto d-block" alt="heap" src="https://liubang.github.io/images/2017-03-17/heap.png#center?v=ea0944308822e433563bcee751341e15" loading="lazy" width="512" height="114" />
 </picture>
 
 </p>
