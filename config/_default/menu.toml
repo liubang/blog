@@ -1,6 +1,6 @@
 [[main]]
   parent = "categories"
-  name = "Programing"
+  name = "Programming"
   url = "categories/programming"
   pre = '<i class="fas fa-fw fa-code me-1"></i>'
   weight = 1

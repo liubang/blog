@@ -4,6 +4,23 @@
 
 This blog built on top of Hugo and the HBS theme.
 
+### Local development
+
+Requirements:
+
+- Hugo extended
+- Go 1.21+
+- Node.js and npm
+
+Common setup:
+
+```bash
+hugo mod tidy
+hugo mod npm pack
+npm install
+hugo server
+```
+
 ### Upgrade theme
 
 ```bash

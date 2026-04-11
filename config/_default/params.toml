@@ -3,7 +3,7 @@ titleSeparator = "-"                 # Title separator.
 description = "刘邦的博客"
 keywords = "c++,java,go,kv,storage"
 logo = "images/apple-touch-icon.png" # Logo image. Default to "images/logo.webp".
-brand = "HIGHKYCK"
+brand = "liubang's blog"
 
 palette = "blue-gray"
 # Available palettes. Default to ALL. Empty array means disable.
@@ -149,9 +149,14 @@ github = "liubang"
 [author]
 name = "liubang"
 avatar = "images/profile.png"
-bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rise"
-company = 'BIDU'
+bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rises."
+company = "Baidu"
 location = "China"
+
+[author.social]
+github = "liubang"
+qq = "1301841042"
+weibo = "2113750192"
 
 [social]
 github = "liubang"
