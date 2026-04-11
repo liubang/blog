@@ -1,8 +1,11 @@
 ---
 title: LevelDB 源码阅读之 Compaction
+description: "结合源码梳理 LevelDB Compaction 的触发条件、执行流程，以及它在 LSM 结构中的作用。"
 tags: [leveldb, storage]
 categories: [programming]
 date: 2021-01-12
+featured: true
+pinned: true
 authors: ['liubang']
 ---
 

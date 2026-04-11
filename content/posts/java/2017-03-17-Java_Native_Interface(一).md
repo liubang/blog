@@ -1,8 +1,10 @@
 ---
 title: Java Native Interface（一）
+description: "作为 JNI 系列第一篇，介绍 Java Native Interface 的基本概念、作用以及入门示例。"
 categories: [programming]
 tags: [Java, JNI]
 date: 2017-03-17
+authors: ["liubang"]
 ---
 
 最近在整理学习笔记的时候发现了去年年中记录的 JNI 学习笔记，由于存放在了为知笔记中，而如今为知笔记已经不再免费，于是想到了将其重新整理一遍，一来可以巩固所学，二来能将其迁移到本地

@@ -1,8 +1,11 @@
 ---
 title: 使用LLVM的libFuzzer进行fuzzy test
+description: "通过一个最小示例介绍如何使用 LLVM libFuzzer 构建模糊测试，并定位程序中的崩溃问题。"
 categories: [programming]
 tags: [c++]
 date: 2023-05-23
+featured: true
+pinned: true
 authors: ["liubang"]
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: c++ 中 unique_ptr 的一些使用技巧
+description: "c++11 对智能指针做了很大的优化，废弃了 c++98 中的auto_ptr，引入了三种新的智能指针：unique_ptr，shared_ptr，weak_ptr。"
 categories: [programming]
 tags: [c++, c++11, c++14, c++17]
 date: 2022-04-20

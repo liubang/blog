@@ -1,5 +1,6 @@
 ---
 title: PHP扩展开发之call_user_func原理和回调函数的实现
+description: "从底层实现角度分析 PHP 中 call_user_func 与回调函数机制的工作原理。"
 categories: [programming]
 tags: [c, php]
 date: 2017-03-09
