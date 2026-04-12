@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320">
+  <defs>
+    <style>
+      .title { font: 700 26px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .label { font: 600 17px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .sub { font: 500 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
+      .card { fill: #f8fbff; stroke: #8cb3d9; stroke-width: 2; rx: 18; }
+      .accent { fill: #eaf4ff; stroke: #4e8ecf; stroke-width: 2; rx: 18; }
+      .arrow { stroke: #4e8ecf; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4e8ecf"/>
+    </marker>
+  </defs>
+  <rect width="960" height="320" fill="#ffffff"/>
+  <text x="40" y="46" class="title">LLM 逐 Token 生成过程</text>
+  <rect x="40" y="90" width="160" height="120" class="card"/>
+  <text x="120" y="128" text-anchor="middle" class="label">用户输入</text>
+  <text x="120" y="158" text-anchor="middle" class="sub">马克的视频怎么样</text>
+  <rect x="230" y="90" width="150" height="120" class="accent"/>
+  <text x="305" y="128" text-anchor="middle" class="label">第 1 次预测</text>
+  <text x="305" y="158" text-anchor="middle" class="sub">输出 Token：特</text>
+  <rect x="410" y="90" width="150" height="120" class="accent"/>
+  <text x="485" y="128" text-anchor="middle" class="label">第 2 次预测</text>
+  <text x="485" y="158" text-anchor="middle" class="sub">输出 Token：别</text>
+  <rect x="590" y="90" width="150" height="120" class="accent"/>
+  <text x="665" y="128" text-anchor="middle" class="label">继续生成</text>
+  <text x="665" y="158" text-anchor="middle" class="sub">输出 Token：棒</text>
+  <rect x="770" y="90" width="150" height="120" class="card"/>
+  <text x="845" y="128" text-anchor="middle" class="label">最终结果</text>
+  <text x="845" y="158" text-anchor="middle" class="sub">特别棒</text>
+  <path d="M200 150 H228" class="arrow"/>
+  <path d="M380 150 H408" class="arrow"/>
+  <path d="M560 150 H588" class="arrow"/>
+  <path d="M740 150 H768" class="arrow"/>
+  <text x="480" y="270" text-anchor="middle" class="sub">核心机制：模型每次只预测“下一个最可能出现的 Token”，不断循环直到结束。</text>
+</svg>

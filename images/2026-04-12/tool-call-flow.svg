@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420">
+  <defs>
+    <style>
+      .title { font: 700 26px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .head { font: 700 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .sub { font: 500 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
+      .lane { fill: #f7fbff; stroke: #d7e4f0; stroke-width: 1.5; }
+      .note { fill: #ffffff; stroke: #7ea8d8; stroke-width: 2; rx: 16; }
+      .arrow { stroke: #5f8ec0; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #7ea8d8; stroke-width: 2; fill: none; stroke-dasharray: 8 6; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5f8ec0"/>
+    </marker>
+  </defs>
+  <rect width="980" height="420" fill="#ffffff"/>
+  <text x="40" y="46" class="title">Tool 调用完整流程</text>
+  <rect x="60" y="90" width="140" height="280" class="lane"/>
+  <rect x="260" y="90" width="160" height="280" class="lane"/>
+  <rect x="500" y="90" width="160" height="280" class="lane"/>
+  <rect x="740" y="90" width="160" height="280" class="lane"/>
+  <text x="130" y="122" text-anchor="middle" class="head">用户</text>
+  <text x="340" y="122" text-anchor="middle" class="head">平台</text>
+  <text x="580" y="122" text-anchor="middle" class="head">大模型</text>
+  <text x="820" y="122" text-anchor="middle" class="head">工具</text>
+  <rect x="82" y="145" width="96" height="46" class="note"/>
+  <text x="130" y="174" text-anchor="middle" class="sub">今天上海天气？</text>
+  <rect x="282" y="145" width="116" height="46" class="note"/>
+  <text x="340" y="174" text-anchor="middle" class="sub">转发问题与工具列表</text>
+  <rect x="522" y="215" width="116" height="52" class="note"/>
+  <text x="580" y="242" text-anchor="middle" class="sub">输出工具调用指令</text>
+  <text x="580" y="260" text-anchor="middle" class="sub">weather_query</text>
+  <rect x="762" y="285" width="116" height="50" class="note"/>
+  <text x="820" y="314" text-anchor="middle" class="sub">返回天气结果</text>
+  <path d="M180 168 H280" class="arrow"/>
+  <path d="M398 168 H520" class="arrow"/>
+  <path d="M638 242 H760" class="arrow"/>
+  <path d="M820 285 V215 H638" class="dash"/>
+  <path d="M522 190 H398 V255" class="dash"/>
+  <path d="M340 300 H130" class="arrow"/>
+  <rect x="242" y="300" width="196" height="48" class="note"/>
+  <text x="340" y="329" text-anchor="middle" class="sub">平台把工具结果再交给模型整理自然语言</text>
+</svg>
