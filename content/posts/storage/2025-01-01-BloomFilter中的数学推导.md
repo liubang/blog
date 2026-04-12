@@ -5,7 +5,6 @@ tags: [storage]
 categories: [programming]
 date: 2025-01-01
 featured: true
-pinned: true
 authors: ["liubang"]
 ---
 

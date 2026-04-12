@@ -5,7 +5,6 @@ categories: [programming]
 tags: [c++]
 date: 2023-05-23
 featured: true
-pinned: true
 authors: ["liubang"]
 ---
 

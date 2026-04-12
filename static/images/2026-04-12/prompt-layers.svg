@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="360" viewBox="0 0 980 360">
+  <defs>
+    <style>
+      .title { font: 700 26px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .label { font: 600 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .sub { font: 500 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
+      .shell { fill: #f8fbff; stroke: #7da7d8; stroke-width: 3; rx: 24; }
+      .sys { fill: #eaf3ff; stroke: #5f94d1; stroke-width: 2; rx: 18; }
+      .usr { fill: #eefaf3; stroke: #6db78f; stroke-width: 2; rx: 18; }
+      .llm { fill: #fff8e8; stroke: #d6b15a; stroke-width: 2; rx: 18; }
+      .arrow { stroke: #5f8ec0; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5f8ec0"/>
+    </marker>
+  </defs>
+  <rect width="980" height="360" fill="#ffffff"/>
+  <text x="40" y="46" class="title">Prompt 分层：同一次请求里，角色设定和任务指令是分开的</text>
+  <rect x="60" y="90" width="620" height="210" class="shell"/>
+  <text x="370" y="122" text-anchor="middle" class="label">AI 应用发给模型的一次完整请求</text>
+  <rect x="100" y="150" width="240" height="110" class="sys"/>
+  <text x="220" y="188" text-anchor="middle" class="label">System Prompt</text>
+  <text x="220" y="216" text-anchor="middle" class="sub">定义角色、规则、边界</text>
+  <rect x="400" y="150" width="240" height="110" class="usr"/>
+  <text x="520" y="188" text-anchor="middle" class="label">User Prompt</text>
+  <text x="520" y="216" text-anchor="middle" class="sub">描述当前问题和具体任务</text>
+  <rect x="740" y="145" width="180" height="120" class="llm"/>
+  <text x="830" y="184" text-anchor="middle" class="label">LLM</text>
+  <text x="830" y="214" text-anchor="middle" class="sub">综合两层 Prompt 后生成回复</text>
+  <path d="M340 205 H398" class="arrow"/>
+  <path d="M640 205 H738" class="arrow"/>
+  <path d="M220 260 C220 300, 830 300, 830 268" class="arrow"/>
+</svg>

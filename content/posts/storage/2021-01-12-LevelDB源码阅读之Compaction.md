@@ -5,7 +5,6 @@ tags: [leveldb, storage]
 categories: [programming]
 date: 2021-01-12
 featured: true
-pinned: true
 authors: ['liubang']
 ---
 
