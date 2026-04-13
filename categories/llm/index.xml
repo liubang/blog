@@ -23,7 +23,7 @@
 </ol>
 <p>最终输出：「特别棒」</p>
 <p>这就是大模型最底层的生成原理——<strong>一个词一个词地输出答案，因为它就是这么运作的</strong>。</p>
-<p><picture><img class="img-fluid " alt="LLM 文字接龙流程图" src="https://liubang.github.io/blog/images/2026-04-12/llm-next-token.svg?v=5f81fdb86a8774f9c570e1edd97e6ba6" loading="lazy" />
+<p><picture><img class="img-fluid " alt="LLM 文字接龙流程图" src="https://liubang.github.io/blog/images/2026-04-12/llm-next-token.svg?v=467448b76cf5b9e7c871475cb0c16813" loading="lazy" />
 </picture>
 
 </p>
