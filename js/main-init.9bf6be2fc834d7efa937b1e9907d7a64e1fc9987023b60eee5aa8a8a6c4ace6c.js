@@ -1,6 +1,6 @@
 (() => {
   // ns-hugo-params:/tmp/hugo_cache_runner/modules/filecache/modules/pkg/mod/github.com/razonyang/hugo-theme-bootstrap@v1.13.3/assets/js/local-storage/index.ts
-  var local_storage_default = { baseURL: "https://liubang.github.io/blog/" };
+  var local_storage_default = { baseURL: "https://blog.liubang.cc/" };
 
   // ns-hugo-imp:/tmp/hugo_cache_runner/modules/filecache/modules/pkg/mod/github.com/razonyang/hugo-theme-bootstrap@v1.13.3/assets/js/local-storage/index.ts
   var PathLocalStorage = class {

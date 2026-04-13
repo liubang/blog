@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Llm on liubang's blog</title><link>https://liubang.github.io/blog/categories/llm/</link><description>Recent content in Llm on liubang's blog</description><generator>Hugo</generator><language>en</language><copyright>Copyright © 2019-2026 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sun, 12 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://liubang.github.io/blog/categories/llm/index.xml" rel="self" type="application/rss+xml"/><item><title>一文讲透 AI 九大核心概念</title><link>https://liubang.github.io/blog/posts/llm/2026-04-12-ai-ai-concepts-explained/</link><pubDate>Sun, 12 Apr 2026 00:00:00 +0000</pubDate><guid>https://liubang.github.io/blog/posts/llm/2026-04-12-ai-ai-concepts-explained/</guid><description><![CDATA[<blockquote>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Llm on liubang's blog</title><link>https://blog.liubang.cc/categories/llm/</link><description>Recent content in Llm on liubang's blog</description><generator>Hugo</generator><language>en</language><copyright>Copyright © 2019-2026 LiuBang. All Rights Reserved.</copyright><lastBuildDate>Sun, 12 Apr 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.liubang.cc/categories/llm/index.xml" rel="self" type="application/rss+xml"/><item><title>一文讲透 AI 九大核心概念</title><link>https://blog.liubang.cc/posts/llm/2026-04-12-ai-ai-concepts-explained/</link><pubDate>Sun, 12 Apr 2026 00:00:00 +0000</pubDate><guid>https://blog.liubang.cc/posts/llm/2026-04-12-ai-ai-concepts-explained/</guid><description><![CDATA[<blockquote>
 <p>AI 圈每天都在冒新词。但你真的能准确说出每一个概念的确切含义吗？本文从最底层的工程视角出发，逐层拆解，帮你建立完整的 AI 技术认知体系。</p>
 </blockquote>
 <hr>
@@ -23,7 +23,7 @@
 </ol>
 <p>最终输出：「特别棒」</p>
 <p>这就是大模型最底层的生成原理——<strong>一个词一个词地输出答案，因为它就是这么运作的</strong>。</p>
-<p><picture><img class="img-fluid " alt="LLM 文字接龙流程图" src="https://liubang.github.io/blog/images/2026-04-12/llm-next-token.svg?v=467448b76cf5b9e7c871475cb0c16813" loading="lazy" />
+<p><picture><img class="img-fluid " alt="LLM 文字接龙流程图" src="https://blog.liubang.cc/images/2026-04-12/llm-next-token.svg?v=b606d01efd3c488d0197e43e07ca984e" loading="lazy" />
 </picture>
 
 </p>
