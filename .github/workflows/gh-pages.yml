@@ -39,7 +39,7 @@ jobs:
           extended: true
 
       - name: Build
-        run: hugo --minify --gc --enableGitInfo -b https://liubang.github.io/blog
+        run: hugo --minify --gc --enableGitInfo -b https://blog.liubang.cc
 
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v4
