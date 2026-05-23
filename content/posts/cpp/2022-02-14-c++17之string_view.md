@@ -1,8 +1,8 @@
 ---
 title: c++17:string_view
 description: "std::string_view是 c++17 中新增的一种类型。其核心理念是，能够让我们在传统的 C++03 风格的具体性和泛型编程之间找到一个很好的折衷点。"
-categories: [programming]
-tags: [c++, c++17]
+categories: [C++工程]
+tags: [cpp, cpp17]
 date: 2022-02-14
 authors: ['liubang']
 ---

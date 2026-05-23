@@ -2,7 +2,7 @@
 title: 性能优化：从解释执行到查询下推
 description: "介绍 Flux 查询引擎的性能热点、内存执行成本、Page streaming、connector pushdown、two-stage accumulator 和 benchmark 方法。"
 date: 2026-05-23
-categories: [programming]
+categories: [语言与编译]
 tags: [flux, performance, query-engine, benchmark, cpp]
 authors: ["liubang"]
 weight: 11

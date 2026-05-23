@@ -2,7 +2,7 @@
 title: LSP 支持：给自研语言补齐 IDE 体验
 description: "介绍 Flux Language Server 的 JSON-RPC、文档同步、AST 缓存、补全、诊断、跳转、引用、重命名、语义高亮和测试策略。"
 date: 2026-05-23
-categories: [programming]
+categories: [语言与编译]
 tags: [flux, lsp, language-server, cpp]
 authors: ["liubang"]
 weight: 9

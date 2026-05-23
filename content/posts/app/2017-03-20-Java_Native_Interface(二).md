@@ -1,7 +1,7 @@
 ---
 title: Java Native Interface（二）
 description: "JNI 中定义了一下类型来对应到相应的 Java 的数据类型。"
-categories: [programming]
+categories: [应用与工具]
 tags: [Java, JNI]
 date: 2017-03-20
 authors: ["liubang"]

@@ -1,8 +1,8 @@
 ---
 title: Expression Templates
 description: "介绍 Expression Templates 的基本思路，以及它如何通过延迟求值减少中间对象和额外开销。"
-categories: [programming]
-tags: [c++, template]
+categories: [C++工程]
+tags: [cpp, template]
 date: 2022-04-06
 authors: ['liubang']
 ---

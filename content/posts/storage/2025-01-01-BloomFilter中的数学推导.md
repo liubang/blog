@@ -2,7 +2,7 @@
 title: BloomFilter中的数学推导
 description: "推导 Bloom Filter 的误判率公式，并给出最优哈希函数个数与位数组长度的数学结论。"
 tags: [storage]
-categories: [programming]
+categories: [存储与分布式]
 date: 2025-01-01
 authors: ["liubang"]
 ---

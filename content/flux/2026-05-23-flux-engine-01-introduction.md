@@ -2,7 +2,7 @@
 title: 从零实现一个 Flux 查询引擎：项目目标与整体能力
 description: "介绍 Flux C++ Playground 的项目定位、使用方式、当前能力边界，以及一个 Flux 查询从源码到输出经过的主要模块。"
 date: 2026-05-23
-categories: [programming]
+categories: [语言与编译]
 tags: [flux, compiler, database, cpp]
 authors: ["liubang"]
 weight: 1

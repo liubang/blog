@@ -1,8 +1,8 @@
 ---
 title: 动态连接器技巧之使用LD_PRELOAD改变程序的行为
 description: "我们有这样一段简单的代码，用来输出 10 个[0, 100)的随机数。"
-tags: [c, sp]
-categories: [programming]
+tags: [c, system-programming]
+categories: [底层系统]
 date: 2019-07-18
 authors: ['liubang']
 ---

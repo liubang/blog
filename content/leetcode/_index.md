@@ -4,6 +4,6 @@ title = "LeetCode"
   parent = "series"
 [[cascade]]
   type = "posts"
-  [cascade._target]
+  [cascade.target]
     kind = "page"
 +++

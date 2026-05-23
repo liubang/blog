@@ -1,7 +1,7 @@
 ---
 title: PHP扩展开发之打造一个简易的ArrayBuffer
 description: "ArrayBuffer 又叫二进制数组，是一个用来表示通用的，固定长度的二进制数据缓冲区。你不能直接操纵 ArrayBuffer 的内容。"
-categories: [programming]
+categories: [语言与编译]
 tags: [c, php]
 date: 2017-08-25
 authors: ['liubang']

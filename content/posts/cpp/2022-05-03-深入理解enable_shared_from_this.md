@@ -1,8 +1,8 @@
 ---
 title: 深入理解 enable_shared_from_this
 description: "shared_ptr是一种共享所有权的智能指针，它允许我们安全地访问和管理对象的生命周期。shared_ptr的多个实例通过共享控制块结构来控制对象的生命周期。"
-categories: [programming]
-tags: [c++11, c++14, c++17]
+categories: [C++工程]
+tags: [cpp11, cpp14, cpp17]
 date: 2022-05-03
 authors: ['liubang']
 ---

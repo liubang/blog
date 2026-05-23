@@ -1,8 +1,8 @@
 ---
 title: 数据结构之hashtable
 description: "哈希表又叫散列表，是实现字典操作的中有效数据结构。通常来说，一个 hash table 包含了一个数据，其中的数据通过 index 来访问。"
-categories: [programming]
-tags: [ds, algorithm]
+categories: [底层系统]
+tags: [data-structure, algorithm]
 date: 2017-08-22
 authors: ['liubang']
 ---

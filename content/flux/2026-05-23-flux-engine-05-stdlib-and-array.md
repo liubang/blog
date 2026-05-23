@@ -2,7 +2,7 @@
 title: 标准库设计：从 array package 看 builtin 扩展机制
 description: "以 array package 为主线，介绍 Flux 运行时的 builtin registry、package import、参数校验、错误处理和 conformance examples。"
 date: 2026-05-23
-categories: [programming]
+categories: [语言与编译]
 tags: [flux, stdlib, builtin, cpp]
 authors: ["liubang"]
 weight: 5

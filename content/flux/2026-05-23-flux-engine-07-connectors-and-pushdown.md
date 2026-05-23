@@ -2,7 +2,7 @@
 title: Connector 与 Pushdown：把 Flux 查询下推到 SQLite/MySQL
 description: "介绍 Flux 查询引擎的数据源入口、connector runtime、split/page source、SQLite/MySQL pushdown 规则和 fallback 边界。"
 date: 2026-05-23
-categories: [programming]
+categories: [语言与编译]
 tags: [flux, sqlite, mysql, query-optimizer, cpp]
 authors: ["liubang"]
 weight: 7

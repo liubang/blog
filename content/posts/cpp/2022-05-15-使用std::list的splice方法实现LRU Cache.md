@@ -1,8 +1,8 @@
 ---
 title: 使用std::list的splice方法实现LRU Cache
 description: "利用 std::list::splice 的常数时间节点移动能力，实现一个高效的 LRU Cache。"
-categories: [programming]
-tags: [c++, c++11]
+categories: [C++工程]
+tags: [cpp, cpp11]
 date: 2022-05-15
 authors: ['liubang']
 ---

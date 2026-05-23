@@ -1,8 +1,8 @@
 ---
 title: 一文讲透 AI 九大核心概念
 description: "从工程视角拆解 LLM、Token、Context、RAG、Prompt、Tool、MCP、Agent 与 Agent Skill 这九个核心 AI 概念。"
-categories: [llm]
-tags: [AI, LLM]
+categories: [应用与工具]
+tags: [ai, llm]
 date: 2026-04-12
 authors: ["liubang"]
 ---

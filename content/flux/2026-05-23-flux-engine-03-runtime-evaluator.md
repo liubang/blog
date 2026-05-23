@@ -2,7 +2,7 @@
 title: 表达式解释器：让 Flux 代码真正跑起来
 description: "介绍 Flux 运行时值模型、Environment、表达式求值、函数调用、闭包、pipe 参数和一次 numeric equality bug 的修复。"
 date: 2026-05-23
-categories: [programming]
+categories: [语言与编译]
 tags: [flux, runtime, interpreter, cpp]
 authors: ["liubang"]
 weight: 3

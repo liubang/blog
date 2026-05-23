@@ -1,8 +1,8 @@
 ---
 title: 为什么c++中有了函数指针却还需要std::function
 description: "在C/C++中，我们经常会像下面的代码那样使用一个指向函数的指针，我们称之为函数指针。"
-categories: [programming]
-tags: [c++]
+categories: [C++工程]
+tags: [cpp]
 date: 2022-09-28
 authors: ['liubang']
 ---
