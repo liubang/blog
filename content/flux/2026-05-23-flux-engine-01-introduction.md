@@ -50,35 +50,7 @@ array.from(rows: [
 
 从源码到输出，大致路径如下：
 
-```mermaid
-flowchart TD
-    Source(["Flux 源码"]) --> Scanner["Scanner"]
-    Scanner --> Parser["Parser"]
-    Parser --> AST["AST"]
-    AST --> Eval["表达式求值"]
-    Eval --> Builtin["Builtin Registry"]
-    Builtin --> Table["TableValue / Lazy Plan"]
-    Table --> Logical["Logical Plan"]
-    Logical --> RBO["RBO / CBO"]
-    RBO --> Physical["Physical Plan"]
-    Physical --> Pipeline["Pipeline"]
-    Pipeline --> Driver["Driver / Operator"]
-    Driver --> Output(["输出 human / csv / json"])
-
-    style Source fill:#e8f4fd,stroke:#4a90d9
-    style Scanner fill:#e8f4fd,stroke:#4a90d9
-    style Parser fill:#e8f4fd,stroke:#4a90d9
-    style AST fill:#e8f4fd,stroke:#4a90d9
-    style Eval fill:#fef3e2,stroke:#e8a838
-    style Builtin fill:#fef3e2,stroke:#e8a838
-    style Table fill:#fef3e2,stroke:#e8a838
-    style Logical fill:#e8fde8,stroke:#4a9f4a
-    style RBO fill:#e8fde8,stroke:#4a9f4a
-    style Physical fill:#e8fde8,stroke:#4a9f4a
-    style Pipeline fill:#fde8f4,stroke:#d94a90
-    style Driver fill:#fde8f4,stroke:#d94a90
-    style Output fill:#fde8f4,stroke:#d94a90
-```
+![Flux 查询执行路径](/images/flux/query-flow.svg)
 
 早期路径更接近 eager interpreter：builtin 直接操作 `TableValue`。现在 SQL provider 入口已经能携带 lazy logical plan，由 optimizer 和 physical executor 决定哪些前缀可以下推，哪些后缀需要 materialize 后回到内存执行。
 

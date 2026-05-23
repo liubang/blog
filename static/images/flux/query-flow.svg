@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520">
+  <defs>
+    <style>
+      .title { font: 600 20px 'PingFang SC', 'SF Pro Display', sans-serif; fill: #1c1917; }
+      .phase-label { font: 600 10px 'SF Mono', 'Fira Code', monospace; fill: #78716c; letter-spacing: 0.1em; }
+      .node-name { font: 600 12px 'PingFang SC', 'SF Pro Text', sans-serif; fill: #1c1917; }
+      .node-sub { font: 400 9px 'SF Mono', 'Fira Code', monospace; fill: #78716c; }
+      .legend-text { font: 400 9px 'SF Mono', 'Fira Code', monospace; fill: #78716c; }
+    </style>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a8a29e"/>
+    </marker>
+    <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ea580c"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="880" height="520" fill="#fafaf9" rx="4"/>
+
+  <!-- 标题 -->
+  <text x="40" y="40" class="title">Flux 查询执行路径</text>
+
+  <!-- 阶段分区背景 -->
+  <rect x="40" y="60" width="192" height="420" rx="6" fill="rgba(37,99,235,0.04)" stroke="rgba(37,99,235,0.12)" stroke-width="1"/>
+  <text x="136" y="84" text-anchor="middle" class="phase-label">FRONTEND</text>
+
+  <rect x="252" y="60" width="192" height="420" rx="6" fill="rgba(217,119,6,0.04)" stroke="rgba(217,119,6,0.12)" stroke-width="1"/>
+  <text x="348" y="84" text-anchor="middle" class="phase-label">RUNTIME</text>
+
+  <rect x="464" y="60" width="192" height="420" rx="6" fill="rgba(22,163,74,0.04)" stroke="rgba(22,163,74,0.12)" stroke-width="1"/>
+  <text x="560" y="84" text-anchor="middle" class="phase-label">OPTIMIZER</text>
+
+  <rect x="676" y="60" width="168" height="420" rx="6" fill="rgba(147,51,234,0.04)" stroke="rgba(147,51,234,0.12)" stroke-width="1"/>
+  <text x="760" y="84" text-anchor="middle" class="phase-label">EXECUTION</text>
+
+  <!-- ===== 箭头（先画，z-order 在节点下方） ===== -->
+
+  <!-- 源码 → Scanner -->
+  <line x1="136" y1="156" x2="136" y2="184" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Scanner → Parser -->
+  <line x1="136" y1="236" x2="136" y2="264" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Parser → AST -->
+  <line x1="136" y1="316" x2="136" y2="344" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- AST → 表达式求值 -->
+  <path d="M 196 372 H 228 V 172 H 286" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- 表达式求值 → Builtin -->
+  <line x1="348" y1="196" x2="348" y2="224" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Builtin → TableValue -->
+  <line x1="348" y1="276" x2="348" y2="304" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- TableValue → Logical Plan -->
+  <path d="M 408 332 H 440 V 172 H 498" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Logical → RBO -->
+  <line x1="560" y1="196" x2="560" y2="244" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- RBO → Physical -->
+  <line x1="560" y1="296" x2="560" y2="344" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Physical → Pipeline -->
+  <path d="M 620 372 H 652 V 212 H 710" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Pipeline → 输出 -->
+  <line x1="760" y1="236" x2="760" y2="304" stroke="#ea580c" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+
+  <!-- ===== 节点 ===== -->
+
+  <!-- 1. Flux 源码 (入口 accent) -->
+  <rect x="76" y="108" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="76" y="108" width="120" height="48" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+  <text x="136" y="132" text-anchor="middle" class="node-name">Flux 源码</text>
+  <text x="136" y="146" text-anchor="middle" class="node-sub">.flux file / -e</text>
+
+  <!-- 2. Scanner -->
+  <rect x="76" y="188" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="76" y="188" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="136" y="212" text-anchor="middle" class="node-name">Scanner</text>
+  <text x="136" y="226" text-anchor="middle" class="node-sub">lexer / tokens</text>
+
+  <!-- 3. Parser -->
+  <rect x="76" y="268" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="76" y="268" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="136" y="292" text-anchor="middle" class="node-name">Parser</text>
+  <text x="136" y="306" text-anchor="middle" class="node-sub">recursive descent</text>
+
+  <!-- 4. AST -->
+  <rect x="76" y="348" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="76" y="348" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="136" y="372" text-anchor="middle" class="node-name">AST</text>
+  <text x="136" y="386" text-anchor="middle" class="node-sub">typed node tree</text>
+
+  <!-- 5. 表达式求值 -->
+  <rect x="288" y="148" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="288" y="148" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="348" y="172" text-anchor="middle" class="node-name">表达式求值</text>
+  <text x="348" y="186" text-anchor="middle" class="node-sub">runtime_eval</text>
+
+  <!-- 6. Builtin Registry -->
+  <rect x="288" y="228" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="288" y="228" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="348" y="252" text-anchor="middle" class="node-name">Builtin Registry</text>
+  <text x="348" y="266" text-anchor="middle" class="node-sub">package + fn</text>
+
+  <!-- 7. TableValue -->
+  <rect x="288" y="308" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="288" y="308" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="348" y="332" text-anchor="middle" class="node-name">TableValue</text>
+  <text x="348" y="346" text-anchor="middle" class="node-sub">lazy plan node</text>
+
+  <!-- 8. Logical Plan -->
+  <rect x="500" y="148" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="500" y="148" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="560" y="172" text-anchor="middle" class="node-name">Logical Plan</text>
+  <text x="560" y="186" text-anchor="middle" class="node-sub">relational tree</text>
+
+  <!-- 9. RBO / CBO -->
+  <rect x="500" y="248" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="500" y="248" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="560" y="272" text-anchor="middle" class="node-name">RBO / CBO</text>
+  <text x="560" y="286" text-anchor="middle" class="node-sub">pushdown + rewrite</text>
+
+  <!-- 10. Physical Plan -->
+  <rect x="500" y="348" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="500" y="348" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="560" y="372" text-anchor="middle" class="node-name">Physical Plan</text>
+  <text x="560" y="386" text-anchor="middle" class="node-sub">operator tree</text>
+
+  <!-- 11. Pipeline -->
+  <rect x="700" y="188" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="700" y="188" width="120" height="48" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="760" y="212" text-anchor="middle" class="node-name">Pipeline</text>
+  <text x="760" y="226" text-anchor="middle" class="node-sub">driver + operator</text>
+
+  <!-- 12. 输出 (出口 accent) -->
+  <rect x="700" y="308" width="120" height="48" rx="6" fill="#fafaf9"/>
+  <rect x="700" y="308" width="120" height="48" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+  <text x="760" y="332" text-anchor="middle" class="node-name">输出</text>
+  <text x="760" y="346" text-anchor="middle" class="node-sub">human / csv / json</text>
+
+  <!-- ===== 图例 ===== -->
+  <line x1="40" y1="496" x2="840" y2="496" stroke="rgba(28,25,23,0.1)" stroke-width="0.8"/>
+  <text x="40" y="512" class="phase-label">LEGEND</text>
+  <rect x="120" y="502" width="12" height="12" rx="2" fill="#fff7ed" stroke="#ea580c" stroke-width="1"/>
+  <text x="140" y="512" class="legend-text">入口 / 出口</text>
+  <rect x="240" y="502" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="260" y="512" class="legend-text">处理节点</text>
+  <line x1="360" y1="508" x2="388" y2="508" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="396" y="512" class="legend-text">数据流向</text>
+</svg>
