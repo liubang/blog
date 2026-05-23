@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="360" viewBox="0 0 880 360">
+  <defs>
+    <style>
+      .title { font: 600 20px 'PingFang SC', 'SF Pro Display', sans-serif; fill: #1c1917; }
+      .node-name { font: 600 12px 'PingFang SC', 'SF Pro Text', sans-serif; fill: #1c1917; }
+      .node-sub { font: 400 9px 'SF Mono', 'Fira Code', monospace; fill: #78716c; }
+      .group-label { font: 600 10px 'SF Mono', 'Fira Code', monospace; fill: #78716c; letter-spacing: 0.08em; }
+      .legend-text { font: 400 9px 'SF Mono', 'Fira Code', monospace; fill: #78716c; }
+    </style>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a8a29e"/>
+    </marker>
+    <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ea580c"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="880" height="360" fill="#fafaf9" rx="4"/>
+
+  <!-- 标题 -->
+  <text x="40" y="36" class="title">Connector Runtime 分层</text>
+
+  <!-- 分组背景：注册层 -->
+  <rect x="40" y="52" width="800" height="60" rx="6" fill="rgba(147,51,234,0.03)" stroke="rgba(147,51,234,0.12)" stroke-width="1"/>
+  <text x="60" y="68" class="group-label">REGISTRY</text>
+
+  <!-- 分组背景：运行时层 -->
+  <rect x="40" y="124" width="800" height="60" rx="6" fill="rgba(37,99,235,0.03)" stroke="rgba(37,99,235,0.12)" stroke-width="1"/>
+  <text x="60" y="140" class="group-label">RUNTIME</text>
+
+  <!-- 分组背景：能力层 -->
+  <rect x="40" y="196" width="800" height="60" rx="6" fill="rgba(217,119,6,0.03)" stroke="rgba(217,119,6,0.12)" stroke-width="1"/>
+  <text x="60" y="212" class="group-label">CAPABILITY</text>
+
+  <!-- 分组背景：数据层 -->
+  <rect x="40" y="268" width="800" height="60" rx="6" fill="rgba(22,163,74,0.03)" stroke="rgba(22,163,74,0.12)" stroke-width="1"/>
+  <text x="60" y="284" class="group-label">DATA</text>
+
+  <!-- ===== 箭头（先画） ===== -->
+
+  <!-- Registry → Runtime -->
+  <line x1="440" y1="100" x2="440" y2="132" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Runtime → Metadata -->
+  <path d="M 340 172 V 188 H 220 V 204" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Runtime → Split -->
+  <line x1="440" y1="172" x2="440" y2="204" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <!-- Runtime → PageSource -->
+  <path d="M 540 172 V 188 H 660 V 204" fill="none" stroke="#a8a29e" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- PageSource → Page -->
+  <path d="M 660 244 V 260 H 440 V 276" fill="none" stroke="#ea580c" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+
+  <!-- ===== 节点 ===== -->
+
+  <!-- Connector Registry -->
+  <rect x="340" y="76" width="200" height="44" rx="6" fill="#fafaf9"/>
+  <rect x="340" y="76" width="200" height="44" rx="6" fill="#faf5ff" stroke="#9333ea" stroke-width="1.2"/>
+  <text x="440" y="98" text-anchor="middle" class="node-name">Connector Registry</text>
+  <text x="440" y="112" text-anchor="middle" class="node-sub">sqlite / mysql / memory</text>
+
+  <!-- Connector Runtime -->
+  <rect x="340" y="148" width="200" height="44" rx="6" fill="#fafaf9"/>
+  <rect x="340" y="148" width="200" height="44" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.2"/>
+  <text x="440" y="170" text-anchor="middle" class="node-name">Connector Runtime</text>
+  <text x="440" y="184" text-anchor="middle" class="node-sub">lifecycle + config</text>
+
+  <!-- Metadata -->
+  <rect x="140" y="220" width="160" height="44" rx="6" fill="#fafaf9"/>
+  <rect x="140" y="220" width="160" height="44" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="220" y="242" text-anchor="middle" class="node-name">Metadata</text>
+  <text x="220" y="256" text-anchor="middle" class="node-sub">schema + statistics</text>
+
+  <!-- Split Manager -->
+  <rect x="360" y="220" width="160" height="44" rx="6" fill="#fafaf9"/>
+  <rect x="360" y="220" width="160" height="44" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="440" y="242" text-anchor="middle" class="node-name">Split Manager</text>
+  <text x="440" y="256" text-anchor="middle" class="node-sub">range / rowid partition</text>
+
+  <!-- Page Source Provider -->
+  <rect x="580" y="220" width="160" height="44" rx="6" fill="#fafaf9"/>
+  <rect x="580" y="220" width="160" height="44" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="660" y="242" text-anchor="middle" class="node-name">Page Source</text>
+  <text x="660" y="256" text-anchor="middle" class="node-sub">split → page stream</text>
+
+  <!-- Page -->
+  <rect x="320" y="292" width="240" height="44" rx="6" fill="#fafaf9"/>
+  <rect x="320" y="292" width="240" height="44" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="440" y="314" text-anchor="middle" class="node-name">Page / PageChunk / ColumnVector</text>
+  <text x="440" y="328" text-anchor="middle" class="node-sub">columnar batch output</text>
+
+  <!-- 图例 -->
+  <line x1="40" y1="344" x2="840" y2="344" stroke="rgba(28,25,23,0.1)" stroke-width="0.8"/>
+  <text x="40" y="356" font-size="10" font-family="'SF Mono', monospace" fill="#78716c" letter-spacing="0.1em">LEGEND</text>
+  <rect x="120" y="346" width="12" height="12" rx="2" fill="#faf5ff" stroke="#9333ea" stroke-width="1"/>
+  <text x="140" y="356" class="legend-text">入口注册</text>
+  <rect x="240" y="346" width="12" height="12" rx="2" fill="#eff6ff" stroke="#2563eb" stroke-width="1"/>
+  <text x="260" y="356" class="legend-text">运行时核心</text>
+  <rect x="380" y="346" width="12" height="12" rx="2" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="400" y="356" class="legend-text">能力模块</text>
+  <rect x="500" y="346" width="12" height="12" rx="2" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+  <text x="520" y="356" class="legend-text">数据输出</text>
+  <line x1="620" y1="352" x2="648" y2="352" stroke="#ea580c" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+  <text x="656" y="356" class="legend-text">数据流</text>
+</svg>

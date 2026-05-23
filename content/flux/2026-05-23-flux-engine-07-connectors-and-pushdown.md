@@ -57,28 +57,7 @@ mysql.from(dsn: "mysql://flux:flux@127.0.0.1:3306/flux_test", table: "cpu")
 
 当前 SQLite、MySQL 和 memory runtime 都走类似边界：
 
-```mermaid
-flowchart TD
-    Registry["connector registry"]
-    Runtime["connector runtime"]
-    Metadata["metadata / statistics"]
-    Split["split manager"]
-    PageSource["page source provider"]
-    Page["Page / PageChunk / ColumnVector"]
-
-    Registry --> Runtime
-    Runtime --> Metadata
-    Runtime --> Split
-    Runtime --> PageSource
-    PageSource --> Page
-
-    style Registry fill:#e8daef,stroke:#8e44ad
-    style Runtime fill:#d6eaf8,stroke:#2980b9
-    style Metadata fill:#fef9e7,stroke:#f39c12
-    style Split fill:#fef9e7,stroke:#f39c12
-    style PageSource fill:#fef9e7,stroke:#f39c12
-    style Page fill:#e8f8f5,stroke:#27ae60
-```
+![connector runtime 分层](/images/flux/connector-runtime.svg)
 
 这比早期直接 scan factory 更接近真实查询引擎。metadata 负责表结构和统计信息；split manager 负责把扫描拆成多个 split；page source provider 负责把 split 读成 Page 流。
 

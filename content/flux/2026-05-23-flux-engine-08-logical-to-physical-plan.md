@@ -16,29 +16,7 @@ series_weight: 8
 
 目标结构可以概括为：
 
-```mermaid
-flowchart TD
-    AST["Flux AST"] --> Binder["Analyzer / Binder"]
-    Binder --> Logical["LogicalPlan"]
-    Logical --> RBO["Rule-based Optimizer"]
-    RBO --> CBO["CBO Framework"]
-    CBO --> Physical["PhysicalPlan"]
-    Physical --> Scheduler["Scheduler"]
-    Scheduler --> Driver["Driver / Operator Pipeline"]
-    Driver --> Pages["Page / Chunk Stream"]
-    Pages --> Materialize["TableValue Materialization"]
-
-    style AST fill:#e8daef,stroke:#8e44ad
-    style Binder fill:#e8daef,stroke:#8e44ad
-    style Logical fill:#e8daef,stroke:#8e44ad
-    style RBO fill:#fef9e7,stroke:#f39c12
-    style CBO fill:#fef9e7,stroke:#f39c12
-    style Physical fill:#d6eaf8,stroke:#2980b9
-    style Scheduler fill:#d6eaf8,stroke:#2980b9
-    style Driver fill:#d6eaf8,stroke:#2980b9
-    style Pages fill:#e8f8f5,stroke:#27ae60
-    style Materialize fill:#e8f8f5,stroke:#27ae60
-```
+![Logical → Physical Plan 目标结构](/images/flux/logical-to-physical.svg)
 
 当前 analyzer/binder 还不是完整类型化语义层，但 connector、logical plan skeleton、RBO/CBO framework、physical plan 和 Page-based execution 主干已经落地。
 
@@ -95,23 +73,7 @@ Physical plan 描述执行形态，不直接执行。它会被 scheduler 转成 
 
 当前主干已经进入：
 
-```mermaid
-flowchart LR
-    CR["ConnectorRuntime"] --> Split["Split"]
-    Split --> PS["PageSource"]
-    PS --> Pipeline["Pipeline"]
-    Pipeline --> Drv["Driver"]
-    Drv --> Op["Operator"]
-    Op --> Page["Page"]
-
-    style CR fill:#e8daef,stroke:#8e44ad
-    style Split fill:#e8daef,stroke:#8e44ad
-    style PS fill:#e8daef,stroke:#8e44ad
-    style Pipeline fill:#d6eaf8,stroke:#2980b9
-    style Drv fill:#d6eaf8,stroke:#2980b9
-    style Op fill:#d6eaf8,stroke:#2980b9
-    style Page fill:#e8f8f5,stroke:#27ae60
-```
+![Physical Plan Pipeline 执行路径](/images/flux/physical-pipeline.svg)
 
 operator 之间的主通道是 `Page` / `PageChunk` / `ColumnVector`。row-by-row 可以作为某个 operator 内部实现细节，但不再作为长期跨层接口。
 
