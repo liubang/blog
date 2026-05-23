@@ -1,4 +1,0 @@
-{{- $links := site.Params.author.social | default site.Params.social -}}
-{{- with $links -}}
-{{- partial "helpers/social-links" (dict "class" "mt-1 justify-content-around" "links" . "size" "fa-2x" "OutputFormats" $.OutputFormats "home" ($.GetPage "/") "params" $.Site.Params) -}}
-{{- end -}}

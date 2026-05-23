@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, performance, query-engine, benchmark, cpp]
 authors: ["liubang"]
-draft: true
+weight: 11
+series: ["Flux"]
+series_weight: 11
 ---
 
 性能优化不能脱离架构。`cpp/pl/flux` 早期是 eager interpreter，所有数据尽量变成 `TableValue` 再由 builtin 处理。这条路径简单、可测、适合小数据，但对于 SQLite/MySQL 这类外部表扫描，全量 materialization 很快会成为瓶颈。

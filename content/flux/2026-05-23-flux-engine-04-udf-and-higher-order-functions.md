@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, udf, functional-programming, cpp]
 authors: ["liubang"]
-draft: true
+weight: 4
+series: ["Flux"]
+series_weight: 4
 ---
 
 Flux 查询的一个重要特点是函数无处不在。`filter(fn:)`、`map(fn:)`、`reduce(fn:)` 都要求用户把函数作为参数传进去。对这个项目来说，UDF 和高阶函数不是锦上添花，而是让查询语言真正可组合的核心能力。

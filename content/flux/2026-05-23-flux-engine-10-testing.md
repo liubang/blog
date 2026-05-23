@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, testing, bazel, cpp]
 authors: ["liubang"]
-draft: true
+weight: 10
+series: ["Flux"]
+series_weight: 10
 ---
 
 语言和查询引擎项目最容易出现一种问题：功能越加越多，某个旧语义悄悄坏掉。`cpp/pl/flux` 现在已经有 parser、runtime、stdlib、table pipeline、connector、physical executor 和 LSP，如果没有测试分层，维护成本会很快失控。

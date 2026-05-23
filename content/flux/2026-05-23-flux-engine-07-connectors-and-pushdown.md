@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, sqlite, mysql, query-optimizer, cpp]
 authors: ["liubang"]
-draft: true
+weight: 7
+series: ["Flux"]
+series_weight: 7
 ---
 
 当查询只跑内存数组和 CSV 时，eager interpreter 足够简单。但一旦数据源变成 SQLite 或 MySQL，全量读入再过滤就不再合理。`cpp/pl/flux` 现在的 connector 架构目标，是让 Flux 仍然作为统一查询入口，同时把能安全下推的算子推到数据源附近执行。
@@ -57,11 +59,25 @@ mysql.from(dsn: "mysql://flux:flux@127.0.0.1:3306/flux_test", table: "cpu")
 
 ```mermaid
 flowchart TD
-    Registry["connector registry"] --> Runtime["connector runtime"]
-    Runtime --> Metadata["metadata / statistics"]
-    Runtime --> Split["split manager"]
-    Runtime --> PageSource["page source provider"]
-    PageSource --> Page["Page / PageChunk / ColumnVector"]
+    Registry["connector registry"]
+    Runtime["connector runtime"]
+    Metadata["metadata / statistics"]
+    Split["split manager"]
+    PageSource["page source provider"]
+    Page["Page / PageChunk / ColumnVector"]
+
+    Registry --> Runtime
+    Runtime --> Metadata
+    Runtime --> Split
+    Runtime --> PageSource
+    PageSource --> Page
+
+    style Registry fill:#e8daef,stroke:#8e44ad
+    style Runtime fill:#d6eaf8,stroke:#2980b9
+    style Metadata fill:#fef9e7,stroke:#f39c12
+    style Split fill:#fef9e7,stroke:#f39c12
+    style PageSource fill:#fef9e7,stroke:#f39c12
+    style Page fill:#e8f8f5,stroke:#27ae60
 ```
 
 这比早期直接 scan factory 更接近真实查询引擎。metadata 负责表结构和统计信息；split manager 负责把扫描拆成多个 split；page source provider 负责把 split 读成 Page 流。

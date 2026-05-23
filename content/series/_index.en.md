@@ -1,3 +1,3 @@
-+++
-title = "Series"
-+++
+---
+title: "Series"
+---

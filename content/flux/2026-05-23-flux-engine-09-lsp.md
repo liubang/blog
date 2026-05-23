@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, lsp, language-server, cpp]
 authors: ["liubang"]
-draft: true
+weight: 9
+series: ["Flux"]
+series_weight: 9
 ---
 
 一个自研语言只提供 CLI 是不够的。真正写起来舒服，还需要编辑器支持：诊断、补全、跳转、引用、重命名、语义高亮、签名帮助。`cpp/pl/flux/contrib/lsp` 就是为这个目标准备的 Flux Language Server。

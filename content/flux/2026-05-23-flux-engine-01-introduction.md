@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, compiler, database, cpp]
 authors: ["liubang"]
-draft: true
+weight: 1
+series: ["Flux"]
+series_weight: 1
 ---
 
 这几年我一直在写一个 C++20 实现的 Flux 查询语言实验项目：`cpp/pl/flux`。它不是为了完整复刻 InfluxData 官方 Flux，也不是为了立刻做成生产级数据库，而是为了回答一个更工程化的问题：如果从零实现一个可运行、可调试、可测试的 Flux 子集，需要哪些模块，它们之间应该如何分层？
@@ -49,17 +51,33 @@ array.from(rows: [
 从源码到输出，大致路径如下：
 
 ```mermaid
-flowchart LR
-    Source["Flux source"] --> Scanner["scanner"]
-    Scanner --> Parser["parser"]
+flowchart TD
+    Source(["Flux 源码"]) --> Scanner["Scanner"]
+    Scanner --> Parser["Parser"]
     Parser --> AST["AST"]
-    AST --> Runtime["statement / expression runtime"]
-    Runtime --> Builtin["builtin registry"]
-    Builtin --> Table["TableValue or lazy table plan"]
-    Table --> Optimizer["RBO / CBO framework"]
-    Optimizer --> Physical["physical plan"]
-    Physical --> Exec["pipeline / driver / operator"]
-    Exec --> Output["human / csv / json output"]
+    AST --> Eval["表达式求值"]
+    Eval --> Builtin["Builtin Registry"]
+    Builtin --> Table["TableValue / Lazy Plan"]
+    Table --> Logical["Logical Plan"]
+    Logical --> RBO["RBO / CBO"]
+    RBO --> Physical["Physical Plan"]
+    Physical --> Pipeline["Pipeline"]
+    Pipeline --> Driver["Driver / Operator"]
+    Driver --> Output(["输出 human / csv / json"])
+
+    style Source fill:#e8f4fd,stroke:#4a90d9
+    style Scanner fill:#e8f4fd,stroke:#4a90d9
+    style Parser fill:#e8f4fd,stroke:#4a90d9
+    style AST fill:#e8f4fd,stroke:#4a90d9
+    style Eval fill:#fef3e2,stroke:#e8a838
+    style Builtin fill:#fef3e2,stroke:#e8a838
+    style Table fill:#fef3e2,stroke:#e8a838
+    style Logical fill:#e8fde8,stroke:#4a9f4a
+    style RBO fill:#e8fde8,stroke:#4a9f4a
+    style Physical fill:#e8fde8,stroke:#4a9f4a
+    style Pipeline fill:#fde8f4,stroke:#d94a90
+    style Driver fill:#fde8f4,stroke:#d94a90
+    style Output fill:#fde8f4,stroke:#d94a90
 ```
 
 早期路径更接近 eager interpreter：builtin 直接操作 `TableValue`。现在 SQL provider 入口已经能携带 lazy logical plan，由 optimizer 和 physical executor 决定哪些前缀可以下推，哪些后缀需要 materialize 后回到内存执行。

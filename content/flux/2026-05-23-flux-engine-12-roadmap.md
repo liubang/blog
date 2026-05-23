@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, roadmap, query-engine, lsp, cpp]
 authors: ["liubang"]
-draft: true
+weight: 12
+series: ["Flux"]
+series_weight: 12
 ---
 
 到目前为止，`cpp/pl/flux` 已经具备一个语言项目和查询引擎项目的基本骨架：能解析、能执行、能导入标准库、能跑表流查询、能接 SQLite/MySQL、能做部分 pushdown、能输出 explain/profile，也有 LSP 和 conformance tests。

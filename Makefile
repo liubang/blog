@@ -14,11 +14,16 @@
 
 # Authors: liubang (it.liubang@gmail.com)
 
+.PHONY: run build clean update
+
 run:
-	hugo serve
+	hugo serve --buildDrafts --buildFuture --disableFastRender --navigateToChanged
+
+build:
+	hugo build --gc --minify
+
+clean:
+	rm -rf public resources/_gen
 
 update:
-	hugo mod get -u ./...
-	hugo mod tidy
-	hugo mod npm pack
-	npm install
+	git submodule update --remote --merge

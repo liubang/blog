@@ -8,6 +8,12 @@ table = true
 taskList = true
 typographer = true
 
+[goldmark.extensions.passthrough]
+enable = true
+[goldmark.extensions.passthrough.delimiters]
+block = [['\[', '\]'], ['$$', '$$']]
+inline = [['\(', '\)'], ['$', '$']]
+
 [goldmark.parser]
 autoHeadingID = true
 autoHeadingIDType = 'github'
@@ -21,14 +27,15 @@ unsafe = true
 xhtml = false
 
 [highlight]
-anchorLineNos = true
+anchorLineNos = false
 codeFences = true
 guessSyntax = true
 hl_Lines = ""
 lineAnchors = ""
 lineNoStart = 1
 lineNos = true
-lineNumbersInTable = false
-noClasses = true
+lineNumbersInTable = true
+# DoIt requires noClasses = false to use its own highlight styles
+noClasses = false
 style = "onedark"
 tabWidth = 2

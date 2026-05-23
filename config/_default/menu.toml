@@ -1,77 +1,44 @@
 [[main]]
-  parent = "categories"
-  name = "Programming"
-  url = "categories/programming"
-  pre = '<i class="fas fa-fw fa-code me-1"></i>'
+  identifier = "posts"
+  pre = ""
+  post = ""
+  name = "文章"
+  url = "/posts/"
+  title = ""
   weight = 1
 
 [[main]]
-  parent = "categories"
-  name = "Reading"
-  url = "categories/reading"
-  pre = '<i class="fas fa-fw fa-book-reader me-1"></i>'
+  identifier = "categories"
+  pre = ""
+  post = ""
+  name = "分类"
+  url = "/categories/"
+  title = ""
   weight = 2
 
 [[main]]
-  parent = "categories"
-  name = "Linux"
-  url = "categories/linux"
-  pre = '<i class="fab fa-fw fa-linux me-1"></i>'
-  weight = 3
-
-[[main]]
-  parent = "categories"
-  name = "所有分类"
-  url = "categories"
-  pre = '<i class="fas fa-fw fa-folder me-1"></i>'
-  weight = 100
-
-[[main]]
-  name = "标签"
   identifier = "tags"
-  weight = 30
-  url = "tags"
-  pre = '<i class="fas fa-fw fa-tags me-1"></i>'
-[[main]]
-  parent = "tags"
-  name = "Algorithm"
-  url = "tags/algorithm"
-  pre = '<i class="fas fa-fw fa-square-root-alt me-1"></i>'
-  weight = 1
-[[main]]
-  parent = "tags"
-  name = "C++"
-  url = "tags/c++"
-  pre = '<i class="fab fa-fw fa-google me-1"></i>'
-  weight = 2
-[[main]]
-  parent = "tags"
-  name = "Go"
-  url = "tags/go"
-  pre = '<i class="fab fa-fw fa-google me-1"></i>'
+  pre = ""
+  post = ""
+  name = "标签"
+  url = "/tags/"
+  title = ""
   weight = 3
-[[main]]
-  parent = "tags"
-  name = "Java"
-  url = "tags/java"
-  pre = '<i class="fab fa-fw fa-java me-1"></i>'
-  weight = 4
-[[main]]
-  parent = "tags"
-  name = "Storage"
-  url = "tags/storage"
-  pre = '<i class="fas fa-fw fa-database me-1"></i>'
-  weight = 5
-[[main]]
-  parent = "tags"
-  name = "所有标签"
-  url = "tags"
-  pre = '<i class="fas fa-fw fa-tags me-1"></i>'
-  weight = 100
 
 [[main]]
-  name = "专栏"
   identifier = "series"
-  weight = 40
-  url = "series"
-  pre = '<i class="fas fa-fw fa-columns me-1"></i>'
+  pre = ""
+  post = ""
+  name = "专栏"
+  url = "/series/"
+  title = ""
+  weight = 4
+
+[[main]]
+  identifier = "about"
+  pre = ""
+  post = ""
+  name = "关于"
+  url = "/about/"
+  title = ""
+  weight = 5

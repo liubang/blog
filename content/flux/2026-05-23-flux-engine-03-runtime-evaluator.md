@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, runtime, interpreter, cpp]
 authors: ["liubang"]
-draft: true
+weight: 3
+series: ["Flux"]
+series_weight: 3
 ---
 
 Parser 负责把源码变成 AST，但 AST 本身不会执行。`cpp/pl/flux` 的执行入口主要在 `runtime/runtime_eval.cpp` 和 `runtime/runtime_exec.cpp`：前者处理表达式求值，后者处理文件级语句执行、结果收集和顶层环境。

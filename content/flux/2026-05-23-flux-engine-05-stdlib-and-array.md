@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, stdlib, builtin, cpp]
 authors: ["liubang"]
-draft: true
+weight: 5
+series: ["Flux"]
+series_weight: 5
 ---
 
 一个语言运行时真正变得可用，往往不是因为表达式求值器支持了多少 operator，而是因为标准库让用户能完成真实任务。`cpp/pl/flux` 当前已经有一批 package：`array`、`csv`、`date`、`dict`、`join`、`json`、`math`、`regexp`、`runtime`、`sqlite`、`strings`、`system`、`types` 等。

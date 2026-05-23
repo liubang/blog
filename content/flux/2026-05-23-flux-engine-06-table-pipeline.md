@@ -5,7 +5,9 @@ date: 2026-05-23
 categories: [programming]
 tags: [flux, query-engine, table, cpp]
 authors: ["liubang"]
-draft: true
+weight: 6
+series: ["Flux"]
+series_weight: 6
 ---
 
 Flux 查询的核心不是单个表达式，而是 table stream。`filter`、`map`、`group`、`window`、`join` 这些操作都围绕表流展开。`cpp/pl/flux` 的内存执行路径以 `TableValue` 为中心，它既服务早期 eager interpreter，也作为 physical execution fallback 和最终输出 materialization 的承载格式。

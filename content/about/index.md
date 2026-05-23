@@ -1,9 +1,9 @@
-+++
-title = "关于"
-date = "2017-01-01"
-comment = false
-toc = false
-+++
+---
+title: "关于"
+date: "2017-01-01"
+comment: false
+toc: false
+---
 
 <!--more-->
 

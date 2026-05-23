@@ -1,38 +1,25 @@
 baseURL = "https://blog.liubang.cc"
-title = "liubang's blog"
-theme = "github.com/razonyang/hugo-theme-bootstrap"
-copyright = "Copyright © 2019-{year} LiuBang. All Rights Reserved."
-
-[author]
-name = "liubang"
-avatar = "images/profile.png"
-bio = "Whether you are an antelope or a lion, you ought to dash forward without hesitation when the sun rises."
-company = "Baidu"
-location = "China"
-email = "it.liubang@gmail.com"
+title = "星河拾贝录"
+theme = "DoIt"
+copyright = "Copyright © 2019-2026 LiuBang. All Rights Reserved."
 
 # Multilingual mode
 defaultContentLanguage = "zh-cn"
 defaultContentLanguageInSubdir = false
-disableLanguages = ["fr", "zh-tw"]
 
 # Pagination
 [pagination]
-pagerSize = 10
+pagerSize = 30
+path = "page"
 
-paginatePath = "page"
 enableRobotsTXT = true
 enableEmoji = true
 enableGitInfo = true
 hasCJKLanguage = true
-pygmentsUseClasses = true
 timeout = "120s"
 
-[blackfriday]
-hrefTargetBlank = true
-
 [outputs]
-home = ["HTML", "RSS"]
+home = ["HTML", "RSS", "JSON"]
 
 # 分类
 [taxonomies]
