@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="440" viewBox="0 0 880 440">
+  <defs>
+    <style>
+      .title { font: 600 20px 'PingFang SC', 'SF Pro Display', sans-serif; fill: #1c1917; }
+      .node-name { font: 600 12px 'PingFang SC', 'SF Pro Text', sans-serif; fill: #1c1917; }
+      .node-sub { font: 400 9px 'SF Mono', 'Fira Code', monospace; fill: #78716c; }
+      .level-label { font: 500 9px 'SF Mono', 'Fira Code', monospace; fill: #a8a29e; }
+      .group-label { font: 600 10px 'SF Mono', 'Fira Code', monospace; letter-spacing: 0.08em; }
+      .legend-text { font: 400 9px 'SF Mono', 'Fira Code', monospace; fill: #78716c; }
+    </style>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a8a29e"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="880" height="440" fill="#fafaf9" rx="4"/>
+
+  <!-- 标题 -->
+  <text x="40" y="36" class="title">表达式优先级分层（低 → 高）</text>
+
+  <!-- 左侧优先级标尺 -->
+  <line x1="60" y1="68" x2="60" y2="388" stroke="#e7e5e4" stroke-width="1"/>
+  <text x="56" y="80" text-anchor="end" class="level-label">低</text>
+  <text x="56" y="392" text-anchor="end" class="level-label">高</text>
+  <!-- 标尺箭头（向下=高优先级） -->
+  <polygon points="60,388 56,378 64,378" fill="#a8a29e"/>
+
+  <!-- 分组背景 -->
+  <!-- 控制流组 (pipe, logical) -->
+  <rect x="80" y="56" width="760" height="148" rx="6" fill="rgba(220,38,38,0.03)" stroke="rgba(220,38,38,0.12)" stroke-width="1"/>
+  <text x="100" y="74" class="group-label" fill="#b91c1c">CONTROL FLOW</text>
+
+  <!-- 算术/比较组 -->
+  <rect x="80" y="216" width="760" height="108" rx="6" fill="rgba(217,119,6,0.03)" stroke="rgba(217,119,6,0.12)" stroke-width="1"/>
+  <text x="100" y="234" class="group-label" fill="#b45309">ARITHMETIC / COMPARISON</text>
+
+  <!-- 原子组 -->
+  <rect x="80" y="336" width="760" height="56" rx="6" fill="rgba(22,163,74,0.03)" stroke="rgba(22,163,74,0.12)" stroke-width="1"/>
+  <text x="100" y="354" class="group-label" fill="#15803d">ATOMIC</text>
+
+  <!-- ===== 节点（从上到下 = 低优先级到高优先级） ===== -->
+
+  <!-- Level 1: Pipe (最低) -->
+  <rect x="160" y="84" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="160" y="84" width="140" height="40" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.2"/>
+  <text x="230" y="104" text-anchor="middle" class="node-name">Pipe</text>
+  <text x="230" y="116" text-anchor="middle" class="node-sub">|&gt;</text>
+
+  <!-- Level 2: Logical Or -->
+  <rect x="320" y="84" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="320" y="84" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="390" y="104" text-anchor="middle" class="node-name">Logical Or</text>
+  <text x="390" y="116" text-anchor="middle" class="node-sub">or</text>
+
+  <!-- Level 3: Logical And -->
+  <rect x="480" y="84" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="480" y="84" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="550" y="104" text-anchor="middle" class="node-name">Logical And</text>
+  <text x="550" y="116" text-anchor="middle" class="node-sub">and</text>
+
+  <!-- Level 4: Logical Unary -->
+  <rect x="640" y="84" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="640" y="84" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="710" y="104" text-anchor="middle" class="node-name">Logical Unary</text>
+  <text x="710" y="116" text-anchor="middle" class="node-sub">not / exists</text>
+
+  <!-- Level 5: Comparison -->
+  <rect x="160" y="136" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="160" y="136" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="230" y="156" text-anchor="middle" class="node-name">Comparison</text>
+  <text x="230" y="168" text-anchor="middle" class="node-sub">&gt; &lt; == != =~ !~</text>
+
+  <!-- Level 6: Additive -->
+  <rect x="160" y="248" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="160" y="248" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="230" y="268" text-anchor="middle" class="node-name">Additive</text>
+  <text x="230" y="280" text-anchor="middle" class="node-sub">+ -</text>
+
+  <!-- Level 7: Multiplicative -->
+  <rect x="400" y="248" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="400" y="248" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="470" y="268" text-anchor="middle" class="node-name">Multiplicative</text>
+  <text x="470" y="280" text-anchor="middle" class="node-sub">* / %</text>
+
+  <!-- Level 8: Postfix -->
+  <rect x="640" y="248" width="140" height="40" rx="6" fill="#fafaf9"/>
+  <rect x="640" y="248" width="140" height="40" rx="6" fill="#ffffff" stroke="#1c1917" stroke-width="1"/>
+  <text x="710" y="268" text-anchor="middle" class="node-name">Postfix</text>
+  <text x="710" y="280" text-anchor="middle" class="node-sub">call / member / index</text>
+
+  <!-- Level 9: Primary (最高) -->
+  <rect x="160" y="348" width="300" height="36" rx="6" fill="#fafaf9"/>
+  <rect x="160" y="348" width="300" height="36" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="310" y="370" text-anchor="middle" class="node-name">Primary</text>
+  <text x="460" y="370" class="node-sub">literal / ident / paren / array / object / func</text>
+
+  <!-- 连接箭头：表示解析调用关系 -->
+  <!-- Pipe → LogOr -->
+  <line x1="300" y1="104" x2="318" y2="104" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- LogOr → LogAnd -->
+  <line x1="460" y1="104" x2="478" y2="104" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- LogAnd → LogUnary -->
+  <line x1="620" y1="104" x2="638" y2="104" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- LogUnary → Comparison -->
+  <path d="M 710 124 V 148 H 302" fill="none" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- Comparison → Additive -->
+  <path d="M 230 176 V 200 V 246" fill="none" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- Additive → Multiplicative -->
+  <line x1="300" y1="268" x2="398" y2="268" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- Multiplicative → Postfix -->
+  <line x1="540" y1="268" x2="638" y2="268" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <!-- Postfix → Primary -->
+  <path d="M 710 288 V 320 H 310 V 346" fill="none" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 图例 -->
+  <line x1="40" y1="416" x2="840" y2="416" stroke="rgba(28,25,23,0.1)" stroke-width="0.8"/>
+  <text x="40" y="432" font-size="10" font-family="'SF Mono', monospace" fill="#78716c" letter-spacing="0.1em">LEGEND</text>
+  <rect x="120" y="422" width="12" height="12" rx="2" fill="#fff7ed" stroke="#ea580c" stroke-width="1"/>
+  <text x="140" y="432" class="legend-text">最低优先级（最后绑定）</text>
+  <rect x="340" y="422" width="12" height="12" rx="2" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+  <text x="360" y="432" class="legend-text">最高优先级（最先绑定）</text>
+  <line x1="560" y1="428" x2="588" y2="428" stroke="#a8a29e" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="596" y="432" class="legend-text">解析时调用方向</text>
+</svg>
