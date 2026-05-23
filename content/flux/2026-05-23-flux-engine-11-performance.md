@@ -10,118 +10,364 @@ series: ["Flux"]
 series_weight: 11
 ---
 
-性能优化不能脱离架构。`cpp/pl/flux` 早期是 eager interpreter，所有数据尽量变成 `TableValue` 再由 builtin 处理。这条路径简单、可测、适合小数据，但对于 SQLite/MySQL 这类外部表扫描，全量 materialization 很快会成为瓶颈。
+性能优化不能脱离架构。`cpp/pl/flux` 早期是 eager interpreter，所有数据尽量变成 `TableValue`，再由 builtin 一步步处理。这条路径简单、可测、适合小数据，也非常适合把语言语义先跑通。
+
+但查询引擎一旦开始面对 SQLite/MySQL、大表 scan、group aggregate、top-n、join 和 profile，性能问题就不再是“某个函数慢一点”。真正的瓶颈往往来自执行模型：整表 materialization、row object 中间态、重复 key 构造、connector 读了太多列、blocking operator 没有内存边界。
+
+这一篇讲 Flux 性能优化的主线：先用 profile 定位瓶颈，再把热路径从 `TableValue` 推向 Page streaming，通过 connector pushdown 减少数据移动，用 partial/final accumulator 降低 root 阶段压力，最后用 benchmark 固定同机同口径的比较方法。
+
+## 一条查询背后的成本
+
+先看一条典型查询：
+
+```flux
+import "sqlite"
+
+sqlite.from(path: "metrics.db", table: "cpu")
+    |> range(start: 2024-01-01T00:00:00Z, stop: 2024-01-01T01:00:00Z)
+    |> filter(fn: (r) => r.region == "west" and r._value > 80.0)
+    |> keep(columns: ["_time", "host", "_value"])
+    |> group(columns: ["host"])
+    |> mean(column: "_value")
+    |> sort(columns: ["_value"], desc: true)
+    |> limit(n: 10)
+```
+
+它看起来只是几行 pipe，但执行时至少有几类成本：
+
+- source scan：SQLite 打开表、生成 SQL、读取 rows。
+- decode/build：把外部数据转成 runtime 能消费的 Page 或 row。
+- filter/project：丢弃无用行和无用列。
+- group key：构造 group key、hash、查找 accumulator state。
+- aggregate update：更新 count/sum/min/max 等状态。
+- top-n：维护 heap 或排序结果。
+- output：把结果转成 JSON/CSV/human 格式。
+
+如果所有数据先进入 `TableValue`，这些成本会被 row object 构造和 materialization 放大。比如 filter 本来可以在 SQLite 的 `WHERE` 里完成，projection 本来可以减少读取列，group aggregate 本来可以逐 Page 吸收，但 eager 路径会先把很多本不该进入 runtime 的数据搬进来。
+
+性能优化的第一步不是写更快的循环，而是确认数据有没有在正确层级被处理。
 
 ## 性能热点在哪里
 
-当前项目的性能热点大致分几类：
+当前项目的热点大致分成几类：
 
 - parser/evaluator 的重复工作。
 - table pipeline 中 row/object 的构造和拷贝。
-- group/distinct/aggregate 的 key 构造和 hash。
-- sort/topN/join 这类 blocking operator。
-- connector metadata、split discovery、SQL 执行、协议解码和 page build。
-- materialize boundary 把 Page 流转回 `TableValue` 的成本。
+- `group/distinct/aggregate` 的 key 构造、hash 和 state update。
+- `sort/topN/join/materialize` 这类 blocking operator。
+- connector metadata、split discovery、SQL 执行、协议 decode 和 page build。
+- Page 流转回 `TableValue` 的 materialize boundary。
+- CLI output formatter 的 JSON/CSV/human 序列化成本。
 
-不同阶段的优化重点不同。语言前端更关注避免重复 parse；执行引擎更关注数据通道和内存布局；connector 更关注下推和流式读取。
+这些热点分布在不同层。前端重复 parse 是 LSP 和 CLI 的问题；row/object 拷贝是内存执行器问题；split、SQL、decode 是 connector 问题；accumulator 和 top-n 是 physical pipeline 问题。把所有慢都归因于“C++ 不够快”没有意义。
 
-## 先定位瓶颈，再选择优化层
+更重要的是，不同查询的瓶颈不同。`filter_project` 可能主要受 pushdown 和 page source 影响；`group_count` 可能主要受 key/hash/update 影响；`pivot_wide` 可能死在宽表对象属性更新；远程 MySQL scan 可能慢在网络和协议 decode。
 
-性能问题不能只看总耗时。一个查询慢，可能慢在 parser 重复解析，可能慢在 CSV decode，可能慢在 SQLite page source，也可能慢在 group key hash 或最终 materialization。
+## 先 Profile，再优化
 
-所以 profile 需要分层：
+性能优化最怕凭感觉。
 
-- CLI 总耗时适合观察用户体验。
-- connector split profile 适合观察读数据成本。
-- pipeline profile 适合观察 driver、page、row 和 blocking 状态。
-- accumulator profile 适合观察 key 构造、hash、update、result build。
-- query memory profile 适合观察 blocking operator 风险。
+看到一个查询慢，至少要分几层看：
 
-没有这些分层指标时，优化很容易变成猜测。比如看到 `group_count` 慢，真正瓶颈可能不是 count，而是把所有输入先 materialize 成 row object。
+- CLI 总耗时：用户看到的端到端延迟。
+- explain plan：算子有没有下推，是否插入 materialize。
+- pipeline profile：drivers、pages、rows、blocking、finished、error。
+- connector split profile：pages、rows、bytes、wall time。
+- connector phase profile：metadata、split、connect、schema、sql、execute、read、decode、page-build。
+- accumulator profile：input rows、output rows、groups、key/hash/update/result build、partial/final。
+- query memory：used、peak、limit、limited。
+
+没有这些指标时，优化很容易走偏。例如 `group_count` 慢，直觉可能会去优化 count 自身；但真实瓶颈可能是整表 row-object materialization，或者 string key 构造，或者 final 阶段吞了所有 split 输出。
+
+Profile 的作用不是把数字堆出来，而是给出下一步优化位置。如果 split read 很慢，就看 connector；如果 key/hash 很高，就看 group key 表示；如果 pages 很少但 wall time 很高，可能是 blocking operator；如果 materialize 出现在不该出现的地方，说明执行计划退回了旧路径。
 
 ## 从 TableValue 到 Page
 
-`TableValue` 很适合表达 Flux table stream，但不是高吞吐扫描的理想跨层数据格式。Page-based execution 使用 `Page`、`PageChunk`、`ColumnVector` 作为 operator 之间的主通道，可以减少 row object 中间态。
+`TableValue` 是 Flux table stream 的自然表示。它能表达多 logical table、group key、rows、tables 和输出边界，非常适合把语义先实现正确。
 
-当前 scan/filter/project/range 和 root exchange 已经可以逐 Page 执行。group/distinct/aggregate 是 streaming accumulator：输入逐 Page 吸收，最终产出结果。
+但它不是高吞吐路径的理想跨层格式。每一行都变成 object，意味着字段查找、属性向量、字符串列名、Value 包装、对象复制都会进入热路径。对小数据没问题，对百万行 scan 或 grouped aggregate 就很贵。
 
-这意味着很多查询不再需要先把 100 万行全部拼成对象数组，再做聚合。
+Page-based execution 把 operator 之间的主通道改成：
 
-## Page 化不是为了抽象而抽象
+```text
+Page
+  -> PageChunk
+      -> ColumnVector
+```
 
-Page 的价值在于批量和列式边界。即使内部还不是完整列式执行，只要 operator 之间按 Page 传递，就可以减少函数调用次数、降低对象分配压力，并为后续 SIMD、向量化或批量 decode 留空间。
+这样 scan/filter/project/range 可以逐 Page streaming，connector page source 可以直接把外部数据写成列向量，accumulator 可以从 Page 中批量吸收输入，exchange 可以传递 Page 而不是散碎 row。
 
-更重要的是，Page 是 connector 和 executor 之间的共同语言。SQLite/MySQL page source 读出 Page，filter/project operator 消费 Page，accumulator 吸收 Page，sink 输出 Page。如果中间某个环节回到 `TableValue`，整个流式主干就被打断。
+Page 化的收益主要来自三点：
 
-当然，Page 化也会提高实现复杂度。小数据、调试输出和复杂 fallback 仍然可以 materialize 成 `TableValue`。性能优化不是消灭 `TableValue`，而是让它出现在正确边界。
+- 减少 row object 中间态。
+- 批量处理降低函数调用和分配成本。
+- 为后续 typed vector、SIMD、批量 decode 留接口。
 
-## Connector Pushdown
+它不是为了抽象而抽象。只要中间某个环节无理由 materialize 成 `TableValue`，整个 streaming 主干就被打断了。
 
-SQLite/MySQL 的保守 pushdown 是最直接的性能来源。能在数据源执行的 filter、projection、sort、limit、distinct 和简单 aggregate，就不要搬到运行时再做。
+## Page 化的边界
 
-但 pushdown 不能牺牲语义。复杂 Flux 函数、跨源 join、不确定 group/window 语义都应该 fallback。性能优化的底线是结果正确。
+Page 化也不是要消灭 `TableValue`。
 
-## 下推收益来自减少数据移动
+这些场景仍然适合或必须 materialize：
 
-很多时候 pushdown 的收益不只是数据库执行更快，而是减少了数据移动和 runtime 解码成本。
+- CLI/JSON/CSV/human 输出。
+- `yield` 结果收集。
+- inspect helper，例如 `findRecord`、`findColumn`。
+- 不支持 lazy/Page 的旧 builtin fallback。
+- 复杂用户函数、动态对象构造、跨源 join。
+- 调试和小规模 conformance 示例。
 
-例如 `keep(columns:)` 下推后，connector 不必读取不需要的列；`filter` 下推后，runtime 不必解码被过滤掉的行；`limit` 下推后，page source 可以更早结束。对于远程 MySQL，网络传输和协议 decode 成本也会明显下降。
+性能优化的关键不是把所有东西都 Page 化，而是让 materialize 成为显式边界。只要 explain/profile 能看到这个 boundary，用户和开发者就能判断它是合理 fallback，还是性能退化。
 
-但如果下推导致 split 失效或破坏全局语义，收益就不成立。因此 pushdown 和 split planning 必须一起看。
+这也是第 08 篇强调 physical plan 的原因。一个查询是否走 Page pipeline，不应该由某个 builtin 随手决定，而应该在 physical planning 阶段明确表达。
 
-## Two-stage accumulator
+## Connector Pushdown 的收益
 
-高基数 grouped aggregate、root group 和 root distinct 已经可以走 partial/final 两阶段。split 内先做 partial，root 再合并 partial 结果。
+SQLite/MySQL 的保守 pushdown 是最直接的性能来源之一。
 
-这类优化的收益非常明显。benchmark 文档中记录过，1M rows 的 `group_count` 从旧路径的二十多秒降到 release baseline 约 0.1 秒量级。核心原因不是某个小函数快了，而是数据通道从整表 row-object materialization 转成了 Page-native accumulator，并减少了 final 阶段输入规模。
+能在数据源执行的前缀，就尽量不要搬到 runtime：
 
-## partial/final 的代价
+- `range` 变成 `_time` 约束。
+- simple `filter` 变成 SQL predicate。
+- `keep/drop` 变成 projection pruning。
+- `rename` 维护 column assignment。
+- `sort/limit` 在安全时变成 order/top-n。
+- 简单 `group |> count/sum/mean/min/max` 可以进入 aggregate pushdown。
 
-两阶段聚合不是免费午餐。partial 阶段需要为每个 split 维护状态，final 阶段需要合并 partial 输出。如果 group 基数很低，这通常很划算；如果 group 基数接近行数，partial 输出可能仍然很大，hash 和内存成本也会上升。
+Pushdown 的收益常常不是“数据库算得更快”这么简单，而是减少数据移动：
 
-所以 profile 里要看 partial input rows、partial output rows、final input rows、groups、key/hash/update 耗时。只看总耗时，很难判断下一步应该优化 key 构造、hash table、page decode 还是 final merge。
+- filter 下推后，被过滤掉的行不需要 decode。
+- projection 下推后，不需要读取无用列。
+- limit 下推后，page source 可以更早结束。
+- aggregate 下推后，runtime 不需要吸收全量输入。
+- 对 MySQL 来说，网络传输和协议 decode 都会减少。
 
-## Top-N 与 blocking boundary
+但 pushdown 不能牺牲语义。复杂 Flux 函数、正则/字符串函数、跨源 join、不确定 group/window 语义都应该 fallback。性能优化的底线是结果正确。
 
-`sort |> limit` 如果全量排序，成本很高。当前 Top-N 可以两阶段执行：split 内做 partial Top-N，root pipeline 再做全局 heap Top-N。这可以显著减少 root 阶段需要处理的数据量。
+## Pushdown 与 Split 必须一起看
 
-但 sort/topN 仍然是 blocking boundary。优化的关键是承认它 blocking，并在 profile、memory context 和 executor 中明确表达，而不是假装它是普通 streaming transform。
+Pushdown 和 split planning 不能分开。
 
-## 内存预算比平均耗时更重要
+比如：
 
-blocking operator 的风险不只在慢，还在内存峰值。sort、join、distinct、高基数 group 都可能积累大量状态。平均耗时看起来稳定，不代表线上或大输入下安全。
+```flux
+sqlite.from(path: "metrics.db", table: "cpu")
+    |> sort(columns: ["_time"])
+    |> limit(n: 10)
+```
 
-当前项目选择超过预算直接 `ResourceExhausted`，暂不做 spill。这个策略比较保守，但语义清楚。等执行主干和 memory accounting 更稳定后，再考虑外部排序或落盘会更稳。
+如果每个 split 都执行 `ORDER BY _time LIMIT 10`，然后直接拼起来，结果不是全局前 10 行。正确策略要么 single split，要么 split 内 partial top-n，再由 root pipeline 做 global top-n。
 
-## Benchmark 方法
+同理，`distinct/group/aggregate` 如果分 split 执行，就必须考虑 partial/final 合并。否则局部结果看起来对，全局语义会错。
 
-项目中的 benchmark 分三类：
+所以性能优化不能只说“多 split 更快”或“下推更多更快”。split 是并行策略，global merge 才是语义保证。Profile 也要能告诉我们 drivers 数量、split pages/bytes/wall time、root pipeline 是否 blocking。
 
-- 内存执行基准：覆盖 table builtin、window、pivot、join 等。
-- SQLite connector scan：构造真实 SQLite 表，覆盖 multi-split page source、Page sink、Top-N、group/distinct accumulator。
-- MySQL connector scan：读取真实 MySQL 表，覆盖 range split、Boost.MySQL page source 和远程协议成本。
+## Two-stage Accumulator
 
-benchmark 输出 median、mean、samples，也会输出 drivers、pages、rows、split bytes、wall time、accumulator 分段耗时和 query memory。正式比较时必须同机、同数据、同构建配置、同 warmup/repeat 口径。
+`group/distinct/aggregate` 是查询引擎里最值得优化的路径之一。旧路径如果先把输入 materialize 成 row object，再按字符串 group key 聚合，成本会非常高。
+
+当前高基数 `group |> aggregate`、root `group` 和 root `distinct` 可以走 partial/final 两阶段：
+
+```text
+split driver: Page -> partial accumulator -> partial Page
+root driver:  partial Page -> final accumulator -> result Page
+```
+
+这一刀的收益来自两个方向。
+
+第一，输入逐 Page 被吸收到 accumulator state，不再需要整表 row-object 中间态。
+
+第二，root 阶段处理的是 partial 结果，而不是原始 100 万行。低基数 group 场景尤其明显：每个 split 可能只输出几十个 group，root final 合并的数据量会小很多。
+
+Benchmark 里有一个很有代表性的结果：1M rows 的 `group_count`，旧路径曾经在二十多秒量级，Page-native two-stage grouped accumulator 的 release baseline 约 `0.094s`。这不是某个小函数快了 200 倍，而是执行形态从整表 materialization 变成了流式 partial/final。
+
+## Two-stage 也有代价
+
+两阶段聚合不是免费午餐。
+
+Partial 阶段要维护每个 split 的 hash state，final 阶段要合并 partial 输出。如果 group 基数很低，它通常非常划算；如果 group 基数接近行数，partial 输出仍然很大，hash table 和内存压力也会升高。
+
+所以不能只看总耗时，还要看 accumulator profile：
+
+- `accumulator_input_rows`
+- `accumulator_output_rows`
+- `accumulator_groups`
+- `accumulator_key_ms`
+- `accumulator_hash_ms`
+- `accumulator_update_ms`
+- `accumulator_result_build_ms`
+- `accumulator_partial_input_rows`
+- `accumulator_final_input_rows`
+
+如果 key/hash 耗时占比很高，下一步可能要优化 typed key/hash state；如果 final input rows 很高，可能需要更好的 partition strategy；如果 result build 很高，可能是输出 Page 构造或 Value 转换成本。
+
+性能优化要避免把“一个 benchmark 变快”误读成“所有场景都变快”。两阶段策略需要和 cardinality、driver 数、memory limit 一起看。
+
+## Typed Key 与字符串成本
+
+Flux 的很多表操作都绕不开 key：group key、join key、pivot row identity、distinct key、window bucket key。
+
+早期实现里，为了简单，很多 key 会被序列化成字符串。这样容易调试，也容易放进 `unordered_map`，但热路径上会带来大量分配、拼接和比较成本。
+
+优化方向有两类：
+
+- 减少重复构造：预建 `unordered_set`，复用列名，直接往目标 buffer 写。
+- 避免字符串化：用 typed key/hash state 保存列值类型和 hash。
+
+这类优化不如 connector pushdown 那么显眼，但对 `group/pivot/join` 很关键。比如宽表 `pivot` 中，重复构造 pivot 列名、每次更新都线性扫描输出属性，都会在字段基数变宽后迅速放大。
+
+性能文章里最该警惕的就是“看上去只是字符串”。在查询引擎里，字符串 key 往往就是热点。
+
+## Top-N 与 Blocking Boundary
+
+`sort |> limit` 是另一个典型例子。
+
+全量 sort 的成本很高，而且必须看到所有输入才能输出。Top-N 可以把它改成 heap 维护前 N 个元素，进一步在 multi-split 场景中做两阶段：
+
+```text
+split driver 0: scan -> partial topN(10) -> exchange
+split driver 1: scan -> partial topN(10) -> exchange
+root driver: exchange -> global topN(10) -> output
+```
+
+这样 root 阶段不需要处理所有原始行，只需要处理各 split 的候选集。
+
+但 top-n 仍然是 blocking boundary。它不是普通 streaming transform。它需要内存预算，需要 profile 标出 blocking，需要在 root 阶段保证全局语义。
+
+这类优化的正确姿势是：承认 blocking，然后缩小 blocking 输入规模，而不是假装它可以无状态 streaming。
+
+## Memory 比平均耗时更重要
+
+性能不只是平均耗时。
+
+对查询引擎来说，内存峰值往往比均值更危险。`sort`、`join`、`distinct`、高基数 `group`、`pivot_wide` 都可能积累大量状态。一次 benchmark 的 median 很好看，不代表大输入下不会打爆内存。
+
+当前项目选择 query 级 memory context：
+
+- `query_memory_used_bytes`
+- `query_memory_peak_bytes`
+- `query_memory_limit_bytes`
+- `query_memory_limited`
+
+暂不实现 spill。超过预算时，blocking query 返回 `ResourceExhausted`。
+
+这个策略保守，但边界清楚。Spill 不是在某个 sort 里临时写个文件那么简单，它会影响 external sort、join、aggregate、resource manager、profile、错误恢复和测试。等 Page pipeline、memory accounting 和 blocking boundary 更稳定后，再做 spill 才不会把复杂度压到错误层。
+
+## Connector 成本不是只有 SQL
+
+对 SQLite/MySQL 来说，SQL 执行只是成本的一部分。
+
+Connector profile 至少要拆出：
+
+- metadata：表结构、统计信息、capability。
+- split：rowid/range split discovery。
+- connect：连接建立或连接池取连接。
+- schema：列类型解析。
+- sql：SQL 生成和准备。
+- execute：执行语句。
+- read：从数据源读取 batch。
+- decode：协议或 SQLite value 解码。
+- page-build：写入 Page/ColumnVector。
+
+SQLite 是本地文件，很多成本集中在本地扫描和 page build。MySQL 是远端服务，网络、连接池、prepared statement、协议 decode 都可能成为瓶颈。
+
+所以 MySQL 优化不能只盯 SQL 文本。`rows_per_page`、目标 split 数、连接池、range split、prepared statement 与 direct connection 路径，都会影响 profile。没有分段 profile，就很难知道是数据库慢，还是 runtime decode 慢。
+
+## Benchmark 的正确打开方式
+
+项目里的 benchmark 分三类：
+
+- 内存执行基准：`run_benchmarks.py` 生成 annotated CSV，覆盖 table builtin、window、pivot、join 等。
+- SQLite connector scan：临时构造真实 SQLite 表，覆盖 multi-split page source、Page sink、Top-N、group/distinct accumulator。
+- MySQL connector scan：读取真实 MySQL 表，覆盖 range split、Boost.MySQL page source、远端服务和协议 decode。
+
+运行内存基准：
+
+```bash
+bazel build //cpp/pl/flux:flux
+python3 cpp/pl/flux/benchmark/generate_benchmark_data.py
+python3 cpp/pl/flux/benchmark/run_benchmarks.py
+```
+
+运行 SQLite connector baseline：
+
+```bash
+python3 cpp/pl/flux/benchmark/run_connector_benchmarks.py \
+  --build \
+  --bazel-config release \
+  --connector sqlite \
+  --sqlite-rows 1000000 \
+  --warmup 1 \
+  --repeat 3 \
+  --output /tmp/flux_sqlite_baseline.json
+```
+
+做回归对比：
+
+```bash
+python3 cpp/pl/flux/benchmark/run_connector_benchmarks.py \
+  --connector sqlite \
+  --sqlite-rows 1000000 \
+  --warmup 1 \
+  --repeat 3 \
+  --compare-baseline /tmp/flux_sqlite_baseline.json \
+  --regression-threshold 0.10
+```
+
+这些数字默认只用于同机同口径前后对比。不同机器、不同 release/debug 配置、冷热缓存、远程 MySQL 网络条件都不能直接比较。
+
+正式解读时优先看 median，不要看单次最好值；同时看 samples 是否稳定。如果 samples 抖动很大，先找环境噪音，不要急着给代码下结论。
+
+## 读 Benchmark 不要只看秒数
+
+一个健康的 benchmark 输出，应该能回答“为什么这个秒数是这样”。
+
+比如 SQLite 1M rows，8 drivers，release build 的一组 baseline 里：
+
+- `scan` 输出 1M rows，约 984 pages。
+- `filter_project` 输出 50 万 rows，约 496 pages。
+- `topn` 输出 100 rows，只有少量 pages，但它是 blocking。
+- `group_count/group_sum/group_mean` 输出 64 rows，最终输出前只交换 partial pages 和 final page。
+
+这些信息比单个 seconds 更重要。`topn` 快，不代表它 streaming；它快是因为 partial top-n 缩小了 root 输入。`group_count` 快，不代表 group 没成本；profile 里 key/hash/update 仍然是主要开销。`filter_project` 快，说明 pushdown 和 projection 减少了 decode 和 runtime 处理。
+
+性能结论要带着 plan/profile 一起说，不能只贴一个耗时数字。
 
 ## 不做什么也很重要
 
-当前不实现 spill。blocking operator 超过查询内存预算时返回 `ResourceExhausted`。这比仓促做一个不完整 spill 更稳，因为 spill 会影响 sort、join、aggregate、resource manager 和 profile，不能只在单点补一个临时文件。
+性能优化里，“暂时不做”也是设计。
 
-当前 CBO 也不伪造精确 cost。缺 statistics 时退化为 RBO。优化器最重要的是可解释和可回归，不能为了“看起来智能”引入不可预测选择。
+当前几个边界很明确：
+
+- 不为了快而下推不确定 Flux 语义。
+- 不伪造成熟 CBO；缺 statistics 时退化为 RBO。
+- 不做 spill；超过 memory budget 返回 `ResourceExhausted`。
+- 不把 raw SQL API 当作 pushdown 替代品。
+- 不让 benchmark 单次数字替代 correctness test。
+- 不把所有旧 builtin 一次性重写成 Page-native。
+
+这些边界让优化节奏更慢，但也更稳。查询引擎最怕的是“快但不确定”。一旦用户不能相信结果，性能数字就没有意义。
 
 ## 后续优化方向
 
-后续值得做的方向包括：
+后续值得继续推进的方向包括：
 
 - 进一步减少 `Value` / object row 拷贝。
+- 更多 table transform 的 Page-native 实现。
 - metadata/statistics 缓存。
-- MySQL page source 解码路径优化。
+- MySQL page source decode 路径优化。
 - typed key/hash state 继续细化。
-- 更细的 memory accounting。
+- 高基数 group 的 partition/final 策略。
+- 更细的 memory accounting 和 blocking profile。
 - parser/LSP incremental parse。
 - workspace index 缓存。
 - benchmark baseline 纳入回归门禁。
 
+这里面最有价值的不是某一个单点，而是形成持续闭环：profile 发现问题，设计选择正确层级，测试锁住语义，benchmark 复验趋势，文档记录原因。
+
 ## 小结
 
-这个项目的性能演进不是单点微优化，而是执行模型升级：从 eager `TableValue` 到 lazy plan，从全量 materialization 到 Page streaming，从单阶段聚合到 partial/final accumulator，从盲目执行到 connector pushdown。这样的优化路径更慢，但结构更稳，也更容易解释每一次性能变化来自哪里。
+Flux 的性能演进不是单点微优化，而是执行模型升级：从 eager `TableValue` 到 lazy plan，从全量 materialization 到 Page streaming，从单阶段聚合到 partial/final accumulator，从盲目执行到 connector pushdown，从单次耗时到 plan/profile/benchmark 的组合判断。
+
+这条路比“哪里慢改哪里”更慢，但结构更稳。它让每一次性能变化都能被解释：少读了哪些列，少解码了多少行，少 materialize 了哪个边界，partial/final 把 root 输入缩小到多少，memory peak 是否还安全。对查询引擎来说，能解释的性能，才是可以长期维护的性能。
