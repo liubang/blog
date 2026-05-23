@@ -1,44 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="380" viewBox="0 0 880 380">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .l1 { fill: #eaf3ff; stroke: #5f95d1; stroke-width: 1.5; rx: 12; }
-      .l2 { fill: #eefaf3; stroke: #71b78d; stroke-width: 1.5; rx: 12; }
-      .l3 { fill: #fff8e8; stroke: #d6b15a; stroke-width: 1.5; rx: 12; }
-      .l4 { fill: #f8fbff; stroke: #93b6dc; stroke-width: 1.5; rx: 12; }
-      .arrow { stroke: #5f8ec0; stroke-width: 2.5; fill: none; marker-end: url(#arr); }
-    </style>
-    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#5f8ec0"/>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
     </marker>
   </defs>
-  <rect width="880" height="380" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">AI 技术栈全景图</text>
-  <!-- 第1层：Agent Skill -->
-  <rect x="260" y="60" width="360" height="55" class="l1"/>
-  <text x="440" y="84" text-anchor="middle" class="label">Agent Skill</text>
-  <text x="440" y="102" text-anchor="middle" class="sub">给 Agent 的操作手册和工作规范</text>
-  <!-- 第2层：Agent -->
-  <rect x="200" y="135" width="480" height="55" class="l2"/>
-  <text x="440" y="159" text-anchor="middle" class="label">Agent</text>
-  <text x="440" y="177" text-anchor="middle" class="sub">规划步骤、调用工具、根据结果持续推进任务</text>
-  <!-- 第3层左：Tool / MCP -->
-  <rect x="80" y="215" width="320" height="55" class="l3"/>
-  <text x="240" y="239" text-anchor="middle" class="label">Tool / MCP</text>
-  <text x="240" y="257" text-anchor="middle" class="sub">连接外部能力（搜索、数据库、文件系统等）</text>
-  <!-- 第3层右：LLM + Context -->
-  <rect x="420" y="215" width="380" height="55" class="l4"/>
-  <text x="610" y="239" text-anchor="middle" class="label">LLM + Context Window</text>
-  <text x="610" y="257" text-anchor="middle" class="sub">在上下文容量内完成推理与生成</text>
-  <!-- 第4层：Prompt / Token / RAG -->
-  <rect x="260" y="295" width="360" height="55" class="l1"/>
-  <text x="440" y="319" text-anchor="middle" class="label">Prompt / Token / RAG</text>
-  <text x="440" y="337" text-anchor="middle" class="sub">决定输入如何组织、切分与补充</text>
-  <!-- 箭头 -->
-  <path d="M440 115 V133" class="arrow"/>
-  <path d="M350 190 L280 213" class="arrow"/>
-  <path d="M530 190 L580 213" class="arrow"/>
-  <path d="M610 270 V293" class="arrow"/>
+
+  <rect width="880" height="380" fill="#020617"/>
+  <rect width="880" height="380" fill="url(#grid)"/>
+
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">AI 技术栈全景图</text>
+
+  <!-- Arrows (behind nodes) -->
+  <line x1="440" y1="112" x2="440" y2="128" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="350" y1="186" x2="280" y2="208" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="530" y1="186" x2="580" y2="208" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="610" y1="268" x2="500" y2="288" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- Layer 1: Agent Skill -->
+  <rect x="260" y="56" width="360" height="56" rx="6" fill="#0f172a"/>
+  <rect x="260" y="56" width="360" height="56" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+  <text x="440" y="80" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600">Agent Skill</text>
+  <text x="440" y="100" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">给 Agent 的操作手册和工作规范</text>
+
+  <!-- Layer 2: Agent -->
+  <rect x="200" y="130" width="480" height="56" rx="6" fill="#0f172a"/>
+  <rect x="200" y="130" width="480" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="440" y="154" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600">Agent</text>
+  <text x="440" y="174" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">规划步骤、调用工具、根据结果持续推进任务</text>
+
+  <!-- Layer 3 left: Tool / MCP -->
+  <rect x="80" y="212" width="320" height="56" rx="6" fill="#0f172a"/>
+  <rect x="80" y="212" width="320" height="56" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="240" y="236" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600">Tool / MCP</text>
+  <text x="240" y="256" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">连接外部能力（搜索、数据库、文件系统等）</text>
+
+  <!-- Layer 3 right: LLM + Context -->
+  <rect x="420" y="212" width="380" height="56" rx="6" fill="#0f172a"/>
+  <rect x="420" y="212" width="380" height="56" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="610" y="236" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600">LLM + Context Window</text>
+  <text x="610" y="256" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">在上下文容量内完成推理与生成</text>
+
+  <!-- Layer 4: Prompt / Token / RAG -->
+  <rect x="260" y="292" width="360" height="56" rx="6" fill="#0f172a"/>
+  <rect x="260" y="292" width="360" height="56" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="440" y="316" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600">Prompt / Token / RAG</text>
+  <text x="440" y="336" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">决定输入如何组织、切分与补充</text>
+
+  <!-- Legend -->
+  <rect x="40" y="362" width="800" height="14" rx="2" fill="rgba(15, 23, 42, 0.3)"/>
+  <text x="440" y="373" text-anchor="middle" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="8">上层依赖下层能力，层层组合构成完整 AI 应用</text>
 </svg>

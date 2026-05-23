@@ -1,41 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="220" viewBox="0 0 880 220">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 13px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .note { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #6b8299; }
-      .box1 { fill: #f7fbff; stroke: #77a6d8; stroke-width: 1.5; rx: 12; }
-      .box2 { fill: #eefaf3; stroke: #6bb58d; stroke-width: 1.5; rx: 12; }
-      .box3 { fill: #fff8e8; stroke: #d8b15a; stroke-width: 1.5; rx: 12; }
-      .arrow { stroke: #5e8fbe; stroke-width: 2.5; fill: none; marker-end: url(#arr); }
-    </style>
-    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#5e8fbe"/>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
     </marker>
   </defs>
-  <rect width="880" height="220" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">Tokenizer 编解码流程</text>
+
+  <rect width="880" height="220" fill="#020617"/>
+  <rect width="880" height="220" fill="url(#grid)"/>
+
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">Tokenizer 编解码流程</text>
+
+  <!-- Arrows -->
+  <line x1="208" y1="100" x2="236" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="418" y1="100" x2="446" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="628" y1="100" x2="656" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
   <!-- 原始文本 -->
-  <rect x="40" y="65" width="170" height="80" class="box1"/>
-  <text x="125" y="96" text-anchor="middle" class="label">原始文本</text>
-  <text x="125" y="118" text-anchor="middle" class="sub">helpfulness</text>
+  <rect x="40" y="64" width="170" height="72" rx="6" fill="#0f172a"/>
+  <rect x="40" y="64" width="170" height="72" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="125" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">原始文本</text>
+  <text x="125" y="114" text-anchor="middle" fill="#a78bfa" font-family="'JetBrains Mono', monospace" font-size="9">helpfulness</text>
+
   <!-- 切分 Token -->
-  <rect x="250" y="65" width="170" height="80" class="box2"/>
-  <text x="335" y="96" text-anchor="middle" class="label">切分 Token</text>
-  <text x="335" y="118" text-anchor="middle" class="sub">help + fulness</text>
+  <rect x="238" y="64" width="182" height="72" rx="6" fill="#0f172a"/>
+  <rect x="238" y="64" width="182" height="72" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="329" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">切分 Token</text>
+  <text x="329" y="114" text-anchor="middle" fill="#22d3ee" font-family="'JetBrains Mono', monospace" font-size="9">help + fulness</text>
+
   <!-- 映射 ID -->
-  <rect x="460" y="65" width="170" height="80" class="box3"/>
-  <text x="545" y="96" text-anchor="middle" class="label">映射 Token ID</text>
-  <text x="545" y="118" text-anchor="middle" class="sub">[1839, 52177]</text>
+  <rect x="448" y="64" width="182" height="72" rx="6" fill="#0f172a"/>
+  <rect x="448" y="64" width="182" height="72" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="539" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">映射 Token ID</text>
+  <text x="539" y="114" text-anchor="middle" fill="#fbbf24" font-family="'JetBrains Mono', monospace" font-size="9">[1839, 52177]</text>
+
   <!-- 解码输出 -->
-  <rect x="670" y="65" width="170" height="80" class="box1"/>
-  <text x="755" y="96" text-anchor="middle" class="label">解码输出</text>
-  <text x="755" y="118" text-anchor="middle" class="sub">还原为人类可读文本</text>
-  <!-- 箭头 -->
-  <path d="M210 105 H248" class="arrow"/>
-  <path d="M420 105 H458" class="arrow"/>
-  <path d="M630 105 H668" class="arrow"/>
+  <rect x="658" y="64" width="182" height="72" rx="6" fill="#0f172a"/>
+  <rect x="658" y="64" width="182" height="72" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="749" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">解码输出</text>
+  <text x="749" y="114" text-anchor="middle" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="9">还原为人类可读文本</text>
+
   <!-- 底部说明 -->
-  <text x="440" y="190" text-anchor="middle" class="note">模型只处理数字；Tokenizer 负责在人类语言和 Token ID 之间翻译。</text>
+  <rect x="140" y="164" width="600" height="28" rx="4" fill="rgba(15, 23, 42, 0.5)" stroke="#1e293b" stroke-width="1"/>
+  <text x="440" y="182" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">模型只处理数字；Tokenizer 负责在人类语言和 Token ID 之间翻译</text>
 </svg>

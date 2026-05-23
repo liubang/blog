@@ -1,41 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="340" viewBox="0 0 880 340">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="320" viewBox="0 0 880 320">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .note { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #6b8299; }
-      .shell { fill: #f7fbff; stroke: #5c8fcb; stroke-width: 2; rx: 16; }
-      .chip1 { fill: #eaf3ff; stroke: #7da6d9; stroke-width: 1.5; rx: 10; }
-      .chip2 { fill: #eefaf3; stroke: #77ba92; stroke-width: 1.5; rx: 10; }
-      .chip3 { fill: #fff8e7; stroke: #d7b25c; stroke-width: 1.5; rx: 10; }
-    </style>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
   </defs>
-  <rect width="880" height="340" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">Context 与 Context Window</text>
-  <!-- 外框 -->
-  <rect x="40" y="60" width="800" height="230" class="shell"/>
-  <text x="440" y="88" text-anchor="middle" class="label">Context Window：一次请求最多能装下的 Token 总量</text>
-  <!-- 第一行 -->
-  <rect x="70" y="108" width="230" height="60" class="chip1"/>
-  <text x="185" y="134" text-anchor="middle" class="label">System Prompt</text>
-  <text x="185" y="152" text-anchor="middle" class="sub">角色、规则、边界</text>
-  <rect x="320" y="108" width="230" height="60" class="chip2"/>
-  <text x="435" y="134" text-anchor="middle" class="label">历史对话</text>
-  <text x="435" y="152" text-anchor="middle" class="sub">之前聊过的内容</text>
-  <rect x="570" y="108" width="240" height="60" class="chip3"/>
-  <text x="690" y="134" text-anchor="middle" class="label">当前问题</text>
-  <text x="690" y="152" text-anchor="middle" class="sub">这一次想让模型做什么</text>
-  <!-- 第二行 -->
-  <rect x="70" y="186" width="230" height="60" class="chip2"/>
-  <text x="185" y="212" text-anchor="middle" class="label">工具定义</text>
-  <text x="185" y="230" text-anchor="middle" class="sub">有哪些 Tool 可用</text>
-  <rect x="320" y="186" width="230" height="60" class="chip3"/>
-  <text x="435" y="212" text-anchor="middle" class="label">检索片段（RAG）</text>
-  <text x="435" y="230" text-anchor="middle" class="sub">外部补充信息</text>
-  <rect x="570" y="186" width="240" height="60" class="chip1"/>
-  <text x="690" y="212" text-anchor="middle" class="label">生成中的输出</text>
-  <text x="690" y="230" text-anchor="middle" class="sub">已生成的回答前缀</text>
+
+  <rect width="880" height="320" fill="#020617"/>
+  <rect width="880" height="320" fill="url(#grid)"/>
+
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">Context 与 Context Window</text>
+
+  <!-- Outer boundary -->
+  <rect x="40" y="52" width="800" height="220" rx="12" fill="rgba(8, 51, 68, 0.1)" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="8,4"/>
+  <text x="440" y="74" text-anchor="middle" fill="#22d3ee" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600">Context Window：一次请求最多能装下的 Token 总量</text>
+
+  <!-- Row 1 -->
+  <!-- System Prompt -->
+  <rect x="70" y="90" width="230" height="60" rx="6" fill="#0f172a"/>
+  <rect x="70" y="90" width="230" height="60" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+  <text x="185" y="116" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">System Prompt</text>
+  <text x="185" y="134" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">角色、规则、边界</text>
+
+  <!-- 历史对话 -->
+  <rect x="320" y="90" width="230" height="60" rx="6" fill="#0f172a"/>
+  <rect x="320" y="90" width="230" height="60" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="435" y="116" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">历史对话</text>
+  <text x="435" y="134" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">之前聊过的内容</text>
+
+  <!-- 当前问题 -->
+  <rect x="570" y="90" width="240" height="60" rx="6" fill="#0f172a"/>
+  <rect x="570" y="90" width="240" height="60" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="690" y="116" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">当前问题</text>
+  <text x="690" y="134" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">这一次想让模型做什么</text>
+
+  <!-- Row 2 -->
+  <!-- 工具定义 -->
+  <rect x="70" y="168" width="230" height="60" rx="6" fill="#0f172a"/>
+  <rect x="70" y="168" width="230" height="60" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="185" y="194" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">工具定义</text>
+  <text x="185" y="212" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">有哪些 Tool 可用</text>
+
+  <!-- 检索片段 -->
+  <rect x="320" y="168" width="230" height="60" rx="6" fill="#0f172a"/>
+  <rect x="320" y="168" width="230" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="435" y="194" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">检索片段（RAG）</text>
+  <text x="435" y="212" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">外部补充信息</text>
+
+  <!-- 生成中的输出 -->
+  <rect x="570" y="168" width="240" height="60" rx="6" fill="#0f172a"/>
+  <rect x="570" y="168" width="240" height="60" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="690" y="194" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">生成中的输出</text>
+  <text x="690" y="212" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">已生成的回答前缀</text>
+
   <!-- 底部说明 -->
-  <text x="440" y="318" text-anchor="middle" class="note">这些内容加在一起，构成模型本次真正看到的完整输入。</text>
+  <rect x="140" y="286" width="600" height="28" rx="4" fill="rgba(15, 23, 42, 0.5)" stroke="#1e293b" stroke-width="1"/>
+  <text x="440" y="304" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">这些内容加在一起，构成模型本次真正看到的完整输入</text>
 </svg>

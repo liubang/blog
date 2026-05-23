@@ -1,78 +1,73 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="400" viewBox="0 0 880 400">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 700 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 400 11.5px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #5a7a94; }
-      .note { font: 500 11px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #8a9fb3; }
-      .center-label { font: 700 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #ffffff; }
-      .center-sub { font: 400 10.5px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #c8ddf5; }
-      .loop-arrow { fill: none; stroke: #8aafc8; stroke-width: 2.2; marker-end: url(#loop-tip); }
-      .in-arrow { fill: none; stroke: #5a9e6f; stroke-width: 2; marker-end: url(#in-tip); }
-      .out-arrow { fill: none; stroke: #d4805a; stroke-width: 2; marker-end: url(#out-tip); }
-    </style>
-    <marker id="loop-tip" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
-      <path d="M0,0.5 L6,3 L0,5.5 Z" fill="#8aafc8"/>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="loop-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
     </marker>
-    <marker id="in-tip" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
-      <path d="M0,0.5 L6,3 L0,5.5 Z" fill="#5a9e6f"/>
+    <marker id="in-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
     </marker>
-    <marker id="out-tip" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
-      <path d="M0,0.5 L6,3 L0,5.5 Z" fill="#d4805a"/>
+    <marker id="out-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c"/>
     </marker>
-    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1a3a5c" flood-opacity="0.08"/>
-    </filter>
   </defs>
-  <rect width="880" height="400" fill="#ffffff" rx="8"/>
-  <text x="40" y="36" class="title">Agent 的典型执行回路</text>
 
-  <!-- 中心 LLM -->
-  <circle cx="440" cy="215" r="50" fill="#3a6fa5" filter="url(#shadow)"/>
-  <circle cx="440" cy="215" r="46" fill="none" stroke="#5a9fd5" stroke-width="0.8" stroke-opacity="0.4"/>
-  <text x="440" y="211" text-anchor="middle" class="center-label">LLM</text>
-  <text x="440" y="228" text-anchor="middle" class="center-sub">思考 &amp; 决策</text>
+  <rect width="880" height="400" fill="#020617"/>
+  <rect width="880" height="400" fill="url(#grid)"/>
 
-  <!-- 虚线轨道 -->
-  <circle cx="440" cy="215" r="135" fill="none" stroke="#e8eff5" stroke-width="1.2" stroke-dasharray="3 5"/>
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">Agent 的典型执行回路</text>
 
-  <!-- Plan - 正上方 -->
-  <rect x="373" y="48" width="134" height="50" rx="10" fill="#eefaf3" stroke="#8ecaa5" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="440" y="71" text-anchor="middle" class="label">规划 Plan</text>
-  <text x="440" y="87" text-anchor="middle" class="sub">拆解任务，选择下一步</text>
+  <!-- Orbit ring -->
+  <circle cx="440" cy="215" r="130" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-dasharray="4,6"/>
 
-  <!-- Act - 右下 -->
-  <rect x="570" y="300" width="134" height="50" rx="10" fill="#fff8e8" stroke="#dcc06a" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="637" y="323" text-anchor="middle" class="label">行动 Act</text>
-  <text x="637" y="339" text-anchor="middle" class="sub">调用工具，执行操作</text>
+  <!-- Center LLM -->
+  <circle cx="440" cy="215" r="52" fill="#0f172a"/>
+  <circle cx="440" cy="215" r="52" fill="rgba(8, 51, 68, 0.6)" stroke="#22d3ee" stroke-width="2"/>
+  <text x="440" y="210" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700">LLM</text>
+  <text x="440" y="228" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">思考 &amp; 决策</text>
 
-  <!-- Observe - 左下 -->
-  <rect x="176" y="300" width="134" height="50" rx="10" fill="#f3eeff" stroke="#a594d6" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="243" y="323" text-anchor="middle" class="label">观察 Observe</text>
-  <text x="243" y="339" text-anchor="middle" class="sub">获取结果，更新上下文</text>
+  <!-- Plan node (top) -->
+  <rect x="373" y="48" width="134" height="50" rx="6" fill="#0f172a"/>
+  <rect x="373" y="48" width="134" height="50" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="440" y="70" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">规划 Plan</text>
+  <text x="440" y="86" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="8">拆解任务，选择下一步</text>
 
-  <!-- 循环弧线：Plan → Act -->
-  <path d="M507 75 C600 75, 670 170, 660 298" class="loop-arrow"/>
+  <!-- Act node (bottom-right) -->
+  <rect x="580" y="295" width="134" height="50" rx="6" fill="#0f172a"/>
+  <rect x="580" y="295" width="134" height="50" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="647" y="317" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">行动 Act</text>
+  <text x="647" y="333" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="8">调用工具，执行操作</text>
 
-  <!-- 循环弧线：Act → Observe -->
-  <path d="M570 330 C480 380, 390 380, 310 330" class="loop-arrow"/>
+  <!-- Observe node (bottom-left) -->
+  <rect x="166" y="295" width="134" height="50" rx="6" fill="#0f172a"/>
+  <rect x="166" y="295" width="134" height="50" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="233" y="317" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">观察 Observe</text>
+  <text x="233" y="333" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="8">获取结果，更新上下文</text>
 
-  <!-- 循环弧线：Observe → Plan -->
-  <path d="M220 300 C200 190, 280 100, 373 75" class="loop-arrow"/>
+  <!-- Loop arcs: Plan → Act -->
+  <path d="M507 73 C610 80, 680 170, 670 293" fill="none" stroke="#22d3ee" stroke-width="1.8" marker-end="url(#loop-arrow)"/>
+  <text x="630" y="175" text-anchor="middle" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="8">执行决策</text>
 
-  <!-- 弧线标注 -->
-  <text x="610" y="178" text-anchor="middle" class="note">执行决策</text>
-  <text x="440" y="378" text-anchor="middle" class="note">返回结果</text>
-  <text x="262" y="178" text-anchor="middle" class="note">更新上下文</text>
+  <!-- Loop arcs: Act → Observe -->
+  <path d="M580 325 C490 375, 380 375, 300 325" fill="none" stroke="#22d3ee" stroke-width="1.8" marker-end="url(#loop-arrow)"/>
+  <text x="440" y="372" text-anchor="middle" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="8">返回结果</text>
 
-  <!-- 用户输入 -->
-  <rect x="30" y="196" width="96" height="38" rx="19" fill="#f0f7ff" stroke="#7eaed0" stroke-width="1.2" filter="url(#shadow)"/>
-  <text x="78" y="220" text-anchor="middle" class="label">用户输入</text>
-  <path d="M126 215 H383" class="in-arrow"/>
+  <!-- Loop arcs: Observe → Plan -->
+  <path d="M210 295 C190 190, 280 100, 373 73" fill="none" stroke="#22d3ee" stroke-width="1.8" marker-end="url(#loop-arrow)"/>
+  <text x="252" y="175" text-anchor="middle" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="8">更新上下文</text>
 
-  <!-- 最终回答 -->
-  <rect x="754" y="196" width="96" height="38" rx="19" fill="#fef5f0" stroke="#d4805a" stroke-width="1.2" filter="url(#shadow)"/>
-  <text x="802" y="220" text-anchor="middle" class="label">最终回答</text>
-  <path d="M497 215 H747" class="out-arrow"/>
-  <text x="622" y="206" text-anchor="middle" class="note">任务完成</text>
+  <!-- User input -->
+  <rect x="30" y="196" width="96" height="38" rx="19" fill="#0f172a"/>
+  <rect x="30" y="196" width="96" height="38" rx="19" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="78" y="220" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">用户输入</text>
+  <line x1="126" y1="215" x2="386" y2="215" stroke="#34d399" stroke-width="1.5" marker-end="url(#in-arrow)"/>
+
+  <!-- Final output -->
+  <rect x="754" y="196" width="96" height="38" rx="19" fill="#0f172a"/>
+  <rect x="754" y="196" width="96" height="38" rx="19" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="802" y="220" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">最终回答</text>
+  <line x1="494" y1="215" x2="752" y2="215" stroke="#fb923c" stroke-width="1.5" marker-end="url(#out-arrow)"/>
+  <text x="623" y="207" text-anchor="middle" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="8">任务完成</text>
 </svg>

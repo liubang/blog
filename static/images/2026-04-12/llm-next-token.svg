@@ -1,45 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="240" viewBox="0 0 880 240">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 13px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .note { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #6b8299; }
-      .card { fill: #f8fbff; stroke: #8cb3d9; stroke-width: 1.5; rx: 12; }
-      .accent { fill: #eaf4ff; stroke: #4e8ecf; stroke-width: 1.5; rx: 12; }
-      .arrow { stroke: #4e8ecf; stroke-width: 2.5; fill: none; marker-end: url(#arr); }
-    </style>
-    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#4e8ecf"/>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
     </marker>
   </defs>
-  <rect width="880" height="240" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">LLM 逐 Token 生成过程</text>
+
+  <rect width="880" height="240" fill="#020617"/>
+  <rect width="880" height="240" fill="url(#grid)"/>
+
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">LLM 逐 Token 生成过程</text>
+
+  <!-- Arrows (behind nodes) -->
+  <line x1="178" y1="105" x2="206" y2="105" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="338" y1="105" x2="366" y2="105" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="498" y1="105" x2="526" y2="105" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="658" y1="105" x2="686" y2="105" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
   <!-- 用户输入 -->
-  <rect x="40" y="65" width="140" height="80" class="card"/>
-  <text x="110" y="96" text-anchor="middle" class="label">用户输入</text>
-  <text x="110" y="118" text-anchor="middle" class="sub">今天天气怎么样</text>
+  <rect x="40" y="68" width="140" height="74" rx="6" fill="#0f172a"/>
+  <rect x="40" y="68" width="140" height="74" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="110" y="98" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">用户输入</text>
+  <text x="110" y="118" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">今天天气怎么样</text>
+
   <!-- 第1次预测 -->
-  <rect x="210" y="65" width="130" height="80" class="accent"/>
-  <text x="275" y="96" text-anchor="middle" class="label">第 1 次预测</text>
-  <text x="275" y="118" text-anchor="middle" class="sub">输出 Token：今</text>
+  <rect x="208" y="68" width="132" height="74" rx="6" fill="#0f172a"/>
+  <rect x="208" y="68" width="132" height="74" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="274" y="98" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">第 1 次预测</text>
+  <text x="274" y="118" text-anchor="middle" fill="#22d3ee" font-family="'JetBrains Mono', monospace" font-size="9">→ 今</text>
+
   <!-- 第2次预测 -->
-  <rect x="370" y="65" width="130" height="80" class="accent"/>
-  <text x="435" y="96" text-anchor="middle" class="label">第 2 次预测</text>
-  <text x="435" y="118" text-anchor="middle" class="sub">输出 Token：天</text>
+  <rect x="368" y="68" width="132" height="74" rx="6" fill="#0f172a"/>
+  <rect x="368" y="68" width="132" height="74" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="434" y="98" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">第 2 次预测</text>
+  <text x="434" y="118" text-anchor="middle" fill="#22d3ee" font-family="'JetBrains Mono', monospace" font-size="9">→ 天</text>
+
   <!-- 继续生成 -->
-  <rect x="530" y="65" width="130" height="80" class="accent"/>
-  <text x="595" y="96" text-anchor="middle" class="label">继续生成</text>
-  <text x="595" y="118" text-anchor="middle" class="sub">输出 Token：…</text>
+  <rect x="528" y="68" width="132" height="74" rx="6" fill="#0f172a"/>
+  <rect x="528" y="68" width="132" height="74" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="594" y="98" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">继续生成</text>
+  <text x="594" y="118" text-anchor="middle" fill="#22d3ee" font-family="'JetBrains Mono', monospace" font-size="9">→ …</text>
+
   <!-- 最终结果 -->
-  <rect x="690" y="65" width="150" height="80" class="card"/>
-  <text x="765" y="96" text-anchor="middle" class="label">最终结果</text>
-  <text x="765" y="118" text-anchor="middle" class="sub">今天天气晴朗</text>
-  <!-- 箭头 -->
-  <path d="M180 105 H208" class="arrow"/>
-  <path d="M340 105 H368" class="arrow"/>
-  <path d="M500 105 H528" class="arrow"/>
-  <path d="M660 105 H688" class="arrow"/>
+  <rect x="688" y="68" width="152" height="74" rx="6" fill="#0f172a"/>
+  <rect x="688" y="68" width="152" height="74" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="764" y="98" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">最终结果</text>
+  <text x="764" y="118" text-anchor="middle" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="9">今天天气晴朗</text>
+
   <!-- 底部说明 -->
-  <text x="440" y="195" text-anchor="middle" class="note">核心机制：模型每次只预测"下一个最可能出现的 Token"，不断循环直到结束。</text>
+  <rect x="120" y="172" width="640" height="28" rx="4" fill="rgba(15, 23, 42, 0.5)" stroke="#1e293b" stroke-width="1"/>
+  <text x="440" y="190" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">核心机制：模型每次只预测"下一个最可能出现的 Token"，不断循环直到结束</text>
 </svg>

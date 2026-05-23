@@ -1,46 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="220" viewBox="0 0 880 220">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .note { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #6b8299; }
-      .box1 { fill: #f7fbff; stroke: #7fa8d8; stroke-width: 1.5; rx: 12; }
-      .box2 { fill: #eefaf3; stroke: #73b78f; stroke-width: 1.5; rx: 12; }
-      .box3 { fill: #fff8e8; stroke: #d8b35f; stroke-width: 1.5; rx: 12; }
-      .arrow { stroke: #5f8ec0; stroke-width: 2.5; fill: none; marker-end: url(#arr); }
-    </style>
-    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#5f8ec0"/>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
     </marker>
   </defs>
-  <rect width="880" height="220" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">RAG：只把"最相关的内容"送进模型</text>
+
+  <rect width="880" height="220" fill="#020617"/>
+  <rect width="880" height="220" fill="url(#grid)"/>
+
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">RAG：只把"最相关的内容"送进模型</text>
+
+  <!-- Arrows -->
+  <line x1="178" y1="100" x2="196" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="348" y1="100" x2="366" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="518" y1="100" x2="536" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="688" y1="100" x2="706" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
   <!-- 文档库 -->
-  <rect x="30" y="65" width="150" height="80" class="box1"/>
-  <text x="105" y="96" text-anchor="middle" class="label">原始文档库</text>
-  <text x="105" y="116" text-anchor="middle" class="sub">手册、知识库、FAQ</text>
+  <rect x="30" y="64" width="150" height="72" rx="6" fill="#0f172a"/>
+  <rect x="30" y="64" width="150" height="72" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="105" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">原始文档库</text>
+  <text x="105" y="112" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">手册、知识库、FAQ</text>
+
   <!-- 切分建索引 -->
-  <rect x="210" y="65" width="150" height="80" class="box2"/>
-  <text x="285" y="96" text-anchor="middle" class="label">切分与建索引</text>
-  <text x="285" y="116" text-anchor="middle" class="sub">Chunk + Embedding</text>
+  <rect x="198" y="64" width="152" height="72" rx="6" fill="#0f172a"/>
+  <rect x="198" y="64" width="152" height="72" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="274" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">切分与建索引</text>
+  <text x="274" y="112" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">Chunk + Embedding</text>
+
   <!-- 检索 -->
-  <rect x="390" y="65" width="150" height="80" class="box3"/>
-  <text x="465" y="96" text-anchor="middle" class="label">检索相关片段</text>
-  <text x="465" y="116" text-anchor="middle" class="sub">语义匹配 Top-K</text>
+  <rect x="368" y="64" width="152" height="72" rx="6" fill="#0f172a"/>
+  <rect x="368" y="64" width="152" height="72" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="444" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">检索相关片段</text>
+  <text x="444" y="112" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">语义匹配 Top-K</text>
+
   <!-- 组装 -->
-  <rect x="570" y="65" width="150" height="80" class="box2"/>
-  <text x="645" y="96" text-anchor="middle" class="label">组装 Context</text>
-  <text x="645" y="116" text-anchor="middle" class="sub">问题 + 相关片段</text>
+  <rect x="538" y="64" width="152" height="72" rx="6" fill="#0f172a"/>
+  <rect x="538" y="64" width="152" height="72" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="614" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">组装 Context</text>
+  <text x="614" y="112" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">问题 + 相关片段</text>
+
   <!-- LLM -->
-  <rect x="750" y="65" width="100" height="80" class="box1"/>
-  <text x="800" y="96" text-anchor="middle" class="label">LLM</text>
-  <text x="800" y="116" text-anchor="middle" class="sub">生成答案</text>
-  <!-- 箭头 -->
-  <path d="M180 105 H208" class="arrow"/>
-  <path d="M360 105 H388" class="arrow"/>
-  <path d="M540 105 H568" class="arrow"/>
-  <path d="M720 105 H748" class="arrow"/>
+  <rect x="708" y="64" width="132" height="72" rx="6" fill="#0f172a"/>
+  <rect x="708" y="64" width="132" height="72" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="774" y="94" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">LLM</text>
+  <text x="774" y="112" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">生成答案</text>
+
   <!-- 底部说明 -->
-  <text x="440" y="190" text-anchor="middle" class="note">关键收益：避免把整本资料塞进上下文，降低成本，同时绕开上下文长度限制。</text>
+  <rect x="100" y="164" width="680" height="28" rx="4" fill="rgba(15, 23, 42, 0.5)" stroke="#1e293b" stroke-width="1"/>
+  <text x="440" y="182" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">关键收益：避免把整本资料塞进上下文，降低成本，同时绕开上下文长度限制</text>
 </svg>

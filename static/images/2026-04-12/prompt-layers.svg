@@ -1,40 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="260" viewBox="0 0 880 260">
   <defs>
-    <style>
-      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .note { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #6b8299; }
-      .shell { fill: #f8fbff; stroke: #7da7d8; stroke-width: 2; rx: 16; }
-      .sys { fill: #eaf3ff; stroke: #5f94d1; stroke-width: 1.5; rx: 12; }
-      .usr { fill: #eefaf3; stroke: #6db78f; stroke-width: 1.5; rx: 12; }
-      .llm { fill: #fff8e8; stroke: #d6b15a; stroke-width: 1.5; rx: 12; }
-      .arrow { stroke: #5f8ec0; stroke-width: 2.5; fill: none; marker-end: url(#arr); }
-    </style>
-    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#5f8ec0"/>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
     </marker>
   </defs>
-  <rect width="880" height="260" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">Prompt 分层：角色设定与任务指令分开传递</text>
-  <!-- 外框：请求整体 -->
-  <rect x="40" y="60" width="560" height="150" class="shell"/>
-  <text x="320" y="86" text-anchor="middle" class="note">AI 应用发给模型的一次完整请求</text>
+
+  <rect width="880" height="260" fill="#020617"/>
+  <rect width="880" height="260" fill="url(#grid)"/>
+
+  <text x="40" y="32" fill="white" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">Prompt 分层：角色设定与任务指令分开传递</text>
+
+  <!-- Outer boundary: 请求整体 -->
+  <rect x="40" y="52" width="540" height="150" rx="12" fill="rgba(30, 41, 59, 0.3)" stroke="#94a3b8" stroke-width="1" stroke-dasharray="8,4"/>
+  <text x="310" y="72" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">AI 应用发给模型的一次完整请求</text>
+
+  <!-- Arrows -->
+  <line x1="290" y1="132" x2="318" y2="132" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="580" y1="132" x2="638" y2="132" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
   <!-- System Prompt -->
-  <rect x="70" y="100" width="230" height="80" class="sys"/>
-  <text x="185" y="132" text-anchor="middle" class="label">System Prompt</text>
-  <text x="185" y="154" text-anchor="middle" class="sub">定义角色、规则、边界</text>
+  <rect x="60" y="88" width="232" height="88" rx="6" fill="#0f172a"/>
+  <rect x="60" y="88" width="232" height="88" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+  <text x="176" y="120" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">System Prompt</text>
+  <text x="176" y="142" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">定义角色、规则、边界</text>
+  <text x="176" y="160" text-anchor="middle" fill="#fb7185" font-family="'JetBrains Mono', monospace" font-size="8">开发者预设 · 用户不可见</text>
+
   <!-- User Prompt -->
-  <rect x="340" y="100" width="230" height="80" class="usr"/>
-  <text x="455" y="132" text-anchor="middle" class="label">User Prompt</text>
-  <text x="455" y="154" text-anchor="middle" class="sub">描述当前问题和具体任务</text>
+  <rect x="320" y="88" width="232" height="88" rx="6" fill="#0f172a"/>
+  <rect x="320" y="88" width="232" height="88" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="436" y="120" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">User Prompt</text>
+  <text x="436" y="142" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">描述当前问题和具体任务</text>
+  <text x="436" y="160" text-anchor="middle" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="8">用户实时输入</text>
+
   <!-- LLM -->
-  <rect x="660" y="100" width="180" height="80" class="llm"/>
-  <text x="750" y="132" text-anchor="middle" class="label">LLM</text>
-  <text x="750" y="154" text-anchor="middle" class="sub">综合两层 Prompt 后生成回复</text>
-  <!-- 箭头 -->
-  <path d="M300 140 H338" class="arrow"/>
-  <path d="M600 140 H658" class="arrow"/>
+  <rect x="640" y="88" width="200" height="88" rx="6" fill="#0f172a"/>
+  <rect x="640" y="88" width="200" height="88" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="740" y="120" text-anchor="middle" fill="white" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600">LLM</text>
+  <text x="740" y="142" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">综合两层 Prompt</text>
+  <text x="740" y="160" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">生成回复</text>
+
   <!-- 底部说明 -->
-  <text x="440" y="240" text-anchor="middle" class="note">System Prompt 由开发者预设（用户不可见），User Prompt 由用户实时输入。</text>
+  <rect x="140" y="224" width="600" height="28" rx="4" fill="rgba(15, 23, 42, 0.5)" stroke="#1e293b" stroke-width="1"/>
+  <text x="440" y="242" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="9">System Prompt 由开发者预设（用户不可见），User Prompt 由用户实时输入</text>
 </svg>
