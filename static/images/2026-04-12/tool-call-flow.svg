@@ -1,53 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="340" viewBox="0 0 880 340">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="420" viewBox="0 0 880 420">
   <defs>
     <style>
       .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
       .head { font: 700 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
       .sub { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .lane { fill: #f7fbff; stroke: #d7e4f0; stroke-width: 1.5; rx: 8; }
-      .msg { fill: #ffffff; stroke: #7ea8d8; stroke-width: 1.5; rx: 10; }
+      .step { font: 700 11px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #5f8ec0; }
+      .note { font: 500 11px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #7a9ab5; }
+      .lifeline { stroke: #c8d8e8; stroke-width: 1.5; stroke-dasharray: 5 4; }
+      .headbox { fill: #eef4fb; stroke: #7ea8d8; stroke-width: 1.5; rx: 6; }
       .arrow { stroke: #5f8ec0; stroke-width: 2; fill: none; marker-end: url(#arr); }
-      .dash { stroke: #7ea8d8; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arr); }
+      .dash { stroke: #7ea8d8; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#darr); }
     </style>
     <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
       <path d="M0,0 L7,3 L0,6 Z" fill="#5f8ec0"/>
     </marker>
+    <marker id="darr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#7ea8d8"/>
+    </marker>
   </defs>
-  <rect width="880" height="340" fill="#ffffff" rx="8"/>
-  <text x="40" y="38" class="title">Tool 调用完整流程</text>
-  <!-- 泳道 -->
-  <rect x="50" y="60" width="160" height="250" class="lane"/>
-  <rect x="240" y="60" width="200" height="250" class="lane"/>
-  <rect x="470" y="60" width="180" height="250" class="lane"/>
-  <rect x="680" y="60" width="160" height="250" class="lane"/>
-  <!-- 泳道标题 -->
-  <text x="130" y="84" text-anchor="middle" class="head">用户</text>
-  <text x="340" y="84" text-anchor="middle" class="head">平台</text>
-  <text x="560" y="84" text-anchor="middle" class="head">大模型</text>
-  <text x="760" y="84" text-anchor="middle" class="head">工具</text>
-  <!-- Step 1: 用户提问 -->
-  <rect x="75" y="100" width="110" height="36" class="msg"/>
-  <text x="130" y="123" text-anchor="middle" class="sub">今天上海天气？</text>
-  <!-- Step 2: 平台转发 -->
-  <path d="M185 118 H260" class="arrow"/>
-  <rect x="260" y="100" width="160" height="36" class="msg"/>
-  <text x="340" y="123" text-anchor="middle" class="sub">转发问题 + 工具列表</text>
-  <!-- Step 3: 发给模型 -->
-  <path d="M420 118 H490" class="arrow"/>
-  <!-- Step 4: 模型输出工具调用 -->
-  <rect x="490" y="155" width="140" height="42" class="msg"/>
-  <text x="560" y="173" text-anchor="middle" class="sub">输出工具调用指令</text>
-  <text x="560" y="189" text-anchor="middle" class="sub">weather_query</text>
-  <!-- Step 5: 平台调用工具 -->
-  <path d="M630 176 H700" class="arrow"/>
-  <!-- Step 6: 工具返回结果 -->
-  <rect x="700" y="210" width="120" height="36" class="msg"/>
-  <text x="760" y="233" text-anchor="middle" class="sub">返回天气结果</text>
-  <!-- Step 7: 结果回传平台 -->
-  <path d="M700 228 H420" class="dash"/>
-  <!-- Step 8: 平台把结果给模型整理 -->
-  <rect x="260" y="260" width="160" height="36" class="msg"/>
-  <text x="340" y="283" text-anchor="middle" class="sub">整理结果返回用户</text>
-  <!-- Step 9: 返回用户 -->
-  <path d="M260 278 H185" class="arrow"/>
+  <rect width="880" height="420" fill="#ffffff" rx="8"/>
+  <text x="40" y="36" class="title">Tool 调用完整流程</text>
+
+  <!-- 四个参与者头部 -->
+  <rect x="80" y="55" width="100" height="34" class="headbox"/>
+  <text x="130" y="77" text-anchor="middle" class="head">用户</text>
+
+  <rect x="290" y="55" width="100" height="34" class="headbox"/>
+  <text x="340" y="77" text-anchor="middle" class="head">平台</text>
+
+  <rect x="520" y="55" width="100" height="34" class="headbox"/>
+  <text x="570" y="77" text-anchor="middle" class="head">大模型</text>
+
+  <rect x="730" y="55" width="100" height="34" class="headbox"/>
+  <text x="780" y="77" text-anchor="middle" class="head">工具</text>
+
+  <!-- 生命线 -->
+  <line x1="130" y1="89" x2="130" y2="400" class="lifeline"/>
+  <line x1="340" y1="89" x2="340" y2="400" class="lifeline"/>
+  <line x1="570" y1="89" x2="570" y2="400" class="lifeline"/>
+  <line x1="780" y1="89" x2="780" y2="400" class="lifeline"/>
+
+  <!-- Step 1: 用户 -> 平台 -->
+  <path d="M130 125 H332" class="arrow"/>
+  <text x="231" y="118" text-anchor="middle" class="step">① 今天上海天气？</text>
+
+  <!-- Step 2: 平台 -> 大模型 -->
+  <path d="M340 170 H562" class="arrow"/>
+  <text x="451" y="163" text-anchor="middle" class="step">② 转发问题 + 工具列表</text>
+
+  <!-- Step 3: 大模型返回工具调用指令 -->
+  <path d="M570 220 H348" class="dash"/>
+  <text x="459" y="213" text-anchor="middle" class="step">③ 输出工具调用指令</text>
+  <text x="459" y="228" text-anchor="middle" class="note">weather_query("上海")</text>
+
+  <!-- Step 4: 平台 -> 工具 -->
+  <path d="M340 275 H772" class="arrow"/>
+  <text x="560" y="268" text-anchor="middle" class="step">④ 解析指令，调用工具</text>
+
+  <!-- Step 5: 工具返回结果 -->
+  <path d="M780 320 H348" class="dash"/>
+  <text x="560" y="313" text-anchor="middle" class="step">⑤ 返回天气数据</text>
+
+  <!-- Step 6: 平台 -> 大模型 -->
+  <path d="M340 360 H562" class="arrow"/>
+  <text x="451" y="353" text-anchor="middle" class="step">⑥ 结果交给模型整理</text>
+
+  <!-- Step 7: 大模型 -> 平台 -> 用户 -->
+  <path d="M570 395 H138" class="dash"/>
+  <text x="350" y="388" text-anchor="middle" class="step">⑦ 返回自然语言回答</text>
 </svg>

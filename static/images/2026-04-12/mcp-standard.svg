@@ -31,21 +31,21 @@
   <path d="M200 145 L230 170 H258" class="arrow"/>
   <path d="M200 155 L230 220 H258" class="arrow"/>
   <!-- 右侧面板：有了 MCP -->
-  <rect x="460" y="60" width="380" height="210" class="panel"/>
-  <text x="650" y="88" text-anchor="middle" class="label">有了 MCP</text>
-  <rect x="500" y="130" width="120" height="50" class="box1"/>
-  <text x="560" y="160" text-anchor="middle" class="sub">同一个工具</text>
-  <rect x="670" y="130" width="120" height="50" class="box2"/>
-  <text x="730" y="160" text-anchor="middle" class="sub">MCP 标准</text>
-  <path d="M620 155 H668" class="arrow"/>
+  <rect x="460" y="60" width="390" height="210" class="panel"/>
+  <text x="655" y="88" text-anchor="middle" class="label">有了 MCP</text>
+  <rect x="500" y="130" width="110" height="50" class="box1"/>
+  <text x="555" y="160" text-anchor="middle" class="sub">同一个工具</text>
+  <rect x="660" y="130" width="110" height="50" class="box2"/>
+  <text x="715" y="160" text-anchor="middle" class="sub">MCP 标准</text>
+  <path d="M610 155 H658" class="arrow"/>
   <!-- 下方平台 -->
-  <rect x="630" y="210" width="80" height="36" class="box3"/>
-  <text x="670" y="233" text-anchor="middle" class="sub">平台 A</text>
-  <rect x="720" y="210" width="80" height="36" class="box3"/>
-  <text x="760" y="233" text-anchor="middle" class="sub">平台 B</text>
-  <rect x="810" y="210" width="40" height="36" class="box3"/>
-  <text x="830" y="233" text-anchor="middle" class="sub">…</text>
-  <path d="M730 180 V208" class="arrow"/>
-  <path d="M730 180 L670 208" class="arrow"/>
-  <path d="M730 180 L830 208" class="arrow"/>
+  <rect x="600" y="215" width="80" height="36" class="box3"/>
+  <text x="640" y="238" text-anchor="middle" class="sub">平台 A</text>
+  <rect x="690" y="215" width="80" height="36" class="box3"/>
+  <text x="730" y="238" text-anchor="middle" class="sub">平台 B</text>
+  <rect x="780" y="215" width="50" height="36" class="box3"/>
+  <text x="805" y="238" text-anchor="middle" class="sub">…</text>
+  <path d="M715 180 V213" class="arrow"/>
+  <path d="M715 180 L640 213" class="arrow"/>
+  <path d="M715 180 L805 213" class="arrow"/>
 </svg>
