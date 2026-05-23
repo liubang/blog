@@ -1,20 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="240" viewBox="0 0 880 240">
   <defs>
     <style>
-      .title { font: 700 26px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .label { font: 600 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
-      .sub { font: 500 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
-      .panel1 { fill: #eaf3ff; stroke: #5f95d1; stroke-width: 2; rx: 20; }
-      .panel2 { fill: #eefaf3; stroke: #71b78d; stroke-width: 2; rx: 20; }
+      .title { font: 700 22px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .label { font: 600 15px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #16324f; }
+      .sub { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4b647a; }
+      .note { font: 500 12px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #6b8299; }
+      .panel1 { fill: #eaf3ff; stroke: #5f95d1; stroke-width: 1.5; rx: 12; }
+      .panel2 { fill: #eefaf3; stroke: #71b78d; stroke-width: 1.5; rx: 12; }
     </style>
   </defs>
-  <rect width="900" height="360" fill="#ffffff"/>
-  <text x="40" y="46" class="title">Agent Skill 的文档结构</text>
-  <rect x="100" y="90" width="700" height="90" class="panel1"/>
-  <text x="450" y="126" text-anchor="middle" class="label">元数据层 Metadata</text>
-  <text x="450" y="152" text-anchor="middle" class="sub">name / description / 用途简介</text>
-  <rect x="100" y="205" width="700" height="110" class="panel2"/>
-  <text x="450" y="242" text-anchor="middle" class="label">指令层 Instructions</text>
-  <text x="450" y="270" text-anchor="middle" class="sub">目标、执行步骤、判断规则、输出格式、示例</text>
-  <text x="450" y="338" text-anchor="middle" class="sub">Agent 通常先读元数据做匹配，命中后再加载详细指令。</text>
+  <rect width="880" height="240" fill="#ffffff" rx="8"/>
+  <text x="40" y="38" class="title">Agent Skill 的文档结构</text>
+  <!-- 元数据层 -->
+  <rect x="100" y="60" width="680" height="60" class="panel1"/>
+  <text x="440" y="86" text-anchor="middle" class="label">元数据层 Metadata</text>
+  <text x="440" y="106" text-anchor="middle" class="sub">name / description — 用于 Agent 快速识别和匹配</text>
+  <!-- 指令层 -->
+  <rect x="100" y="135" width="680" height="60" class="panel2"/>
+  <text x="440" y="161" text-anchor="middle" class="label">指令层 Instructions</text>
+  <text x="440" y="181" text-anchor="middle" class="sub">目标、执行步骤、判断规则、输出格式、示例</text>
+  <!-- 底部说明 -->
+  <text x="440" y="224" text-anchor="middle" class="note">Agent 先读元数据做匹配，命中后再按需加载详细指令（节省 Token）。</text>
 </svg>
