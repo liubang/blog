@@ -172,7 +172,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 下图是`VersionSet::PickLevelForMemTableOutput`的流程图
 
-![](/images/2021-01-12/PickLevelForMemTableOutput.jpg#center "PickLevelForMemTableOutput")
+![](/images/2021-01-12/PickLevelForMemTableOutput.jpg#center "PickLevelForMemTableOutput 流程图")
 
 ## 4. Sstable Compaction
 
