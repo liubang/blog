@@ -14,12 +14,15 @@
 
 # Authors: liubang (it.liubang@gmail.com)
 
-.PHONY: run build clean update
+.PHONY: run build clean update init
 
-run:
+init:
+	git submodule update --init --recursive
+
+run: init
 	hugo serve --buildDrafts --buildFuture --disableFastRender --navigateToChanged
 
-build:
+build: init
 	hugo build --gc --minify
 
 clean:
