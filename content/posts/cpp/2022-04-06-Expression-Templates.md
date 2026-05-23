@@ -5,6 +5,7 @@ categories: [C++工程]
 tags: [cpp, template]
 date: 2022-04-06
 authors: ['liubang']
+lightgallery: true
 ---
 
 ## 什么是 Expression Templates
@@ -91,11 +92,11 @@ int main(int argc, char* argv[])
 
 这个实现平淡无奇，相信每个人都能随手写出来。在[godbolt](https://godbolt.org/z/zTenMfe6G)上编译成汇编来分析：
 
-![my_vector1](/images/2022-04-07/my_vector1.png#center)
+![my_vector1](/images/2022-04-07/my_vector1.png#center "my_vector1")
 
 我们能发现，对于`x + x + y * y`这行代码，执行的过程为:
 
-![my_vector1.1](/images/2022-04-07/my_vector1.1.png#center)
+![my_vector1.1](/images/2022-04-07/my_vector1.1.png#center "my_vector1.1")
 
 1. `temp1 = x + x`
 2. `temp2 = y * y`
@@ -105,7 +106,7 @@ int main(int argc, char* argv[])
 
 在上面的版本中，虽然实现起来很简单，但是会造成一些额外的临时变量。是的，这是我们不能容忍的。于是我们需要探索出一个如下图所示的更好的实现：
 
-![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center)
+![my_vector2.1](/images/2022-04-07/my_vector2.1.png#center "my_vector2.1")
 
 在这个优化的版本中，不需要为表达式`result[i] = x[i] + x[i] + y[i] * y[i]`创建临时变量，赋值操作会直接触发运算的执行。
 
@@ -210,11 +211,11 @@ int main(int argc, char* argv[])
 
 对于这个实现，同样在[godbold](https://godbolt.org/z/qfc3rjxMb)中进行分析：
 
-![my_vector2.2](/images/2022-04-07/my_vector2.2.png#center)
+![my_vector2.2](/images/2022-04-07/my_vector2.2.png#center "my_vector2.2")
 
 汇编代码片段中表达式虽然很长，但是仔细看还是能看清它的结构。下面是一个简化版的代码生成图，用来说明模板的生成过程：
 
-![Exression](/images/2022-04-07/Exression.png#center)
+![Exression](/images/2022-04-07/Exression.png#center "Exression")
 
 ## 参考文档
 

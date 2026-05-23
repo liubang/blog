@@ -8,6 +8,7 @@ authors: ["liubang"]
 weight: 8
 series: ["Flux"]
 series_weight: 8
+lightgallery: true
 ---
 
 当项目只有 eager interpreter 时，执行路径很直接：AST 调 builtin，builtin 操作 `TableValue`。但 connector、pushdown、多 split 和 streaming execution 加进来后，需要一个更清晰的查询引擎骨架。`cpp/pl/flux` 当前的方向是把执行拆成 logical plan、optimizer、physical plan、scheduler 和 operator pipeline。
@@ -16,7 +17,7 @@ series_weight: 8
 
 目标结构可以概括为：
 
-![Logical → Physical Plan 目标结构](/images/flux/logical-to-physical.svg)
+![Logical → Physical Plan 目标结构](/images/flux/logical-to-physical.svg "Logical → Physical Plan 目标结构")
 
 当前 analyzer/binder 还不是完整类型化语义层，但 connector、logical plan skeleton、RBO/CBO framework、physical plan 和 Page-based execution 主干已经落地。
 
@@ -73,7 +74,7 @@ Physical plan 描述执行形态，不直接执行。它会被 scheduler 转成 
 
 当前主干已经进入：
 
-![Physical Plan Pipeline 执行路径](/images/flux/physical-pipeline.svg)
+![Physical Plan Pipeline 执行路径](/images/flux/physical-pipeline.svg "Physical Plan Pipeline 执行路径")
 
 operator 之间的主通道是 `Page` / `PageChunk` / `ColumnVector`。row-by-row 可以作为某个 operator 内部实现细节，但不再作为长期跨层接口。
 

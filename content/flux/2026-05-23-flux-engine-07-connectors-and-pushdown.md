@@ -8,6 +8,7 @@ authors: ["liubang"]
 weight: 7
 series: ["Flux"]
 series_weight: 7
+lightgallery: true
 ---
 
 当查询只跑内存数组和 CSV 时，eager interpreter 足够简单。但一旦数据源变成 SQLite 或 MySQL，全量读入再过滤就不再合理。`cpp/pl/flux` 现在的 connector 架构目标，是让 Flux 仍然作为统一查询入口，同时把能安全下推的算子推到数据源附近执行。
@@ -57,7 +58,7 @@ mysql.from(dsn: "mysql://flux:flux@127.0.0.1:3306/flux_test", table: "cpu")
 
 当前 SQLite、MySQL 和 memory runtime 都走类似边界：
 
-![connector runtime 分层](/images/flux/connector-runtime.svg)
+![connector runtime 分层](/images/flux/connector-runtime.svg "connector runtime 分层")
 
 这比早期直接 scan factory 更接近真实查询引擎。metadata 负责表结构和统计信息；split manager 负责把扫描拆成多个 split；page source provider 负责把 split 读成 Page 流。
 

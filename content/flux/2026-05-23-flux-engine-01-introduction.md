@@ -8,6 +8,7 @@ authors: ["liubang"]
 weight: 1
 series: ["Flux"]
 series_weight: 1
+lightgallery: true
 ---
 
 这几年我一直在写一个 C++20 实现的 Flux 查询语言实验项目：`cpp/pl/flux`。它不是为了完整复刻 InfluxData 官方 Flux，也不是为了立刻做成生产级数据库，而是为了回答一个更工程化的问题：如果从零实现一个可运行、可调试、可测试的 Flux 子集，需要哪些模块，它们之间应该如何分层？
@@ -50,7 +51,7 @@ array.from(rows: [
 
 从源码到输出，大致路径如下：
 
-![Flux 查询执行路径](/images/flux/query-flow.svg)
+![Flux 查询执行路径](/images/flux/query-flow.svg "Flux 查询执行路径")
 
 早期路径更接近 eager interpreter：builtin 直接操作 `TableValue`。现在 SQL provider 入口已经能携带 lazy logical plan，由 optimizer 和 physical executor 决定哪些前缀可以下推，哪些后缀需要 materialize 后回到内存执行。
 

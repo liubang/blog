@@ -5,6 +5,7 @@ tags: [leveldb, storage]
 categories: [存储与分布式]
 date: 2021-01-12
 authors: ['liubang']
+lightgallery: true
 ---
 
 ## 1. 概览
@@ -171,7 +172,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 下图是`VersionSet::PickLevelForMemTableOutput`的流程图
 
-![](/images/2021-01-12/PickLevelForMemTableOutput.jpg#center)
+![](/images/2021-01-12/PickLevelForMemTableOutput.jpg#center "PickLevelForMemTableOutput")
 
 ## 4. Sstable Compaction
 
