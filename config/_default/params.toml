@@ -109,17 +109,9 @@ RSS = true
 
 # Page config
 [page]
-hiddenFromHomePage = false
-hiddenFromSearch = false
-twemoji = false
-lightgallery = false
 ruby = true
 fraction = true
 linkToMarkdown = false
-linkToSource = false
-linkToEdit = false
-linkToReport = false
-rssFullText = false
 seriesNavigation = true
 enableLastMod = true
 enableWordCount = true
@@ -155,15 +147,6 @@ inlineRightDelimiter = ""
 blockLeftDelimiter = ""
 blockRightDelimiter = ""
 
-# Mapbox
-[page.mapbox]
-accessToken = ""
-lightStyle = "mapbox://styles/mapbox/light-v10?optimize=true"
-darkStyle = "mapbox://styles/mapbox/dark-v10?optimize=true"
-navigation = true
-geolocate = false
-scale = false
-fullscreen = false
 
 # Social share
 [page.share]
