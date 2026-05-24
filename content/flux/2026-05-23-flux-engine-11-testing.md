@@ -5,9 +5,9 @@ date: 2026-05-23
 categories: [语言与编译]
 tags: [flux, testing, bazel, cpp]
 authors: ["liubang"]
-weight: 10
+weight: 11
 series: ["Flux"]
-series_weight: 10
+series_weight: 11
 ---
 
 语言和查询引擎项目最容易出现一种慢性问题：功能越加越多，旧语义悄悄坏掉。今天修 parser，明天改 runtime，后天补 connector pushdown，再过几天优化 LSP；如果没有清晰的测试分层，每次改动都会变成“看起来没问题”的冒险。
@@ -327,6 +327,10 @@ bazel test //cpp/pl/flux/... --test_output=errors
 6. benchmark 观察是否真的减少 rows/pages/materialization。
 
 这个顺序的好处是，每一层都只负责自己的边界。后续失败时，测试名字基本能告诉我们问题在哪。
+
+## 下一篇
+
+下一篇会讨论性能优化：如何用 profile 找瓶颈，如何从 `TableValue` 走向 Page streaming、connector pushdown 和 two-stage accumulator。
 
 ## 小结
 

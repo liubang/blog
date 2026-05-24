@@ -5,9 +5,9 @@ date: 2026-05-23
 categories: [语言与编译]
 tags: [flux, lsp, language-server, cpp]
 authors: ["liubang"]
-weight: 9
+weight: 10
 series: ["Flux"]
-series_weight: 9
+series_weight: 10
 ---
 
 一个自研语言只提供 CLI 是不够的。CLI 证明语言能跑，LSP 才决定它能不能舒服地写。对 Flux 这种表达式、pipe、lambda 和 package builtin 很多的语言来说，编辑器体验不是锦上添花，而是降低使用成本的一部分。
@@ -316,6 +316,10 @@ LSP 不应该成为第二套语言实现。
 - formatter、semantic tokens、selection range 都复用 AST visitor 基础设施。
 
 这样用户在编辑器里看到的错误、补全和签名，才会和实际执行保持一致。语言项目最容易积累的债之一，就是 CLI、LSP、文档各说各话；这条边界需要一开始就守住。
+
+## 下一篇
+
+下一篇会回到工程保障，讲 parser/runtime/connector/LSP/conformance/benchmark 如何分层测试，避免语言实现持续退化。
 
 ## 小结
 

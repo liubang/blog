@@ -5,9 +5,9 @@ date: 2026-05-23
 categories: [语言与编译]
 tags: [flux, sqlite, mysql, query-optimizer, cpp]
 authors: ["liubang"]
-weight: 7
+weight: 8
 series: ["Flux"]
-series_weight: 7
+series_weight: 8
 lightgallery: true
 ---
 
@@ -309,6 +309,10 @@ connector 和 pushdown 的测试不能只测 SQL 字符串。SQL 看起来对，
 - benchmark：观察 pushdown 和 page streaming 是否真的减少 rows/pages/materialization。
 
 尤其是 split 相关测试，要同时覆盖 multi-split 与 single-split fallback。很多 bug 只会在数据跨 split 分布时出现，比如每个 split 局部 top-n 正确，但全局 top-n 错误。
+
+## 下一篇
+
+下一篇会继续往执行引擎内部走，看 logical plan 如何经过 optimizer 变成 physical plan、pipeline、driver 和 Page operator。
 
 ## 小结
 

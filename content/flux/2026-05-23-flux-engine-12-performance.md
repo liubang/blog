@@ -5,9 +5,9 @@ date: 2026-05-23
 categories: [语言与编译]
 tags: [flux, performance, query-engine, benchmark, cpp]
 authors: ["liubang"]
-weight: 11
+weight: 12
 series: ["Flux"]
-series_weight: 11
+series_weight: 12
 ---
 
 性能优化不能脱离架构。`cpp/pl/flux` 早期是 eager interpreter，所有数据尽量变成 `TableValue`，再由 builtin 一步步处理。这条路径简单、可测、适合小数据，也非常适合把语言语义先跑通。
@@ -365,6 +365,10 @@ python3 cpp/pl/flux/benchmark/run_connector_benchmarks.py \
 - benchmark baseline 纳入回归门禁。
 
 这里面最有价值的不是某一个单点，而是形成持续闭环：profile 发现问题，设计选择正确层级，测试锁住语义，benchmark 复验趋势，文档记录原因。
+
+## 下一篇
+
+下一篇是系列收束，会把当前能力、技术边界和后续路线图放在一张更完整的工程蓝图里。
 
 ## 小结
 

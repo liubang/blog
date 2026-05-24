@@ -5,12 +5,14 @@ date: 2026-05-23
 categories: [语言与编译]
 tags: [flux, udf, functional-programming, cpp]
 authors: ["liubang"]
-weight: 4
+weight: 5
 series: ["Flux"]
-series_weight: 4
+series_weight: 5
 ---
 
 Flux 查询的一个重要特点是函数无处不在。`filter(fn:)`、`map(fn:)`、`reduce(fn:)` 都要求用户把函数作为参数传进去。对这个项目来说，UDF 和高阶函数不是锦上添花，而是让查询语言真正可组合的核心能力。
+
+前一篇讲 runtime evaluator 时，我们已经看到函数调用不只是“执行一个 C++ callback”。用户函数需要参数绑定、默认值、闭包环境、pipe 参数和 block return；高阶函数还要把用户函数安全地嵌入数组和表操作里。这一篇专门把这些函数能力拎出来讲，因为它们决定了 Flux 查询能不能写得像查询，而不是像一串硬编码 builtin。
 
 ## 当前支持的函数形态
 
@@ -67,6 +69,10 @@ only_hot = (<-tables, threshold=80) =>
 
 这个流程看起来和普通脚本语言类似，但在 Flux 查询里尤其重要，因为很多 builtin 都把函数当参数。`filter(fn:)` 的 `fn` 不是 callback 语法糖，而是真正的一等函数值。
 
+从实现角度看，函数值有两种 kind：用户函数和 builtin。用户函数保存 `FunctionExpr` 和 closure；builtin 保存 C++ callback 和名字。Call evaluator 会先求 callee，再根据 kind 走不同路径。这个分支不能省，因为用户函数需要绑定参数和执行 AST，builtin 则需要把参数组织成运行时约定的 `Value` 结构。
+
+这也解释了为什么函数错误经常看起来“跨层”。比如 `array.map(arr:, fn:)` 调用失败，可能是 array 参数错，也可能是 `fn` 不是函数，也可能是用户函数体里访问了不存在字段。好的错误信息应该尽量指出失败发生在哪一层。
+
 ## 默认参数的求值时机
 
 默认参数容易被写错。一个常见问题是：默认值应该在函数定义时求值，还是调用时求值？
@@ -81,6 +87,18 @@ add = (x, step=base) => x + step
 ```
 
 `step` 的默认值不是简单字面量，而是一个表达式。runtime 必须在正确环境中求值，否则闭包和默认参数会出现不一致。
+
+默认参数还要处理命名参数覆盖：
+
+```flux
+base = 10
+add = (x, step=base) => x + step
+
+add(x: 1)          // 使用默认 step
+add(x: 1, step: 3) // 覆盖默认 step
+```
+
+如果调用方显式传入 `step`，默认表达式不应该被求值。这个细节很重要，因为默认表达式本身可能引用未定义变量或包含会失败的表达式。和 `and/or` 短路类似，“未被使用的表达式不应产生错误”也是语言体验的一部分。
 
 ## 闭包捕获
 
@@ -119,6 +137,17 @@ data |> filter(fn: is_target)
 
 如果没有闭包，用户只能把所有配置硬塞进每个 lambda，查询很快会变得不可维护。对于一个查询语言来说，闭包的价值不在于展示“语言很强”，而在于让真实查询可以结构化。
 
+闭包也让查询配置可以组合：
+
+```flux
+make_filter = (threshold) => (r) => r.usage > threshold
+
+hot = make_filter(threshold: 80)
+critical = make_filter(threshold: 95)
+```
+
+这里 `make_filter` 返回的是函数，返回的函数捕获了对应的 `threshold`。后续把 `hot` 或 `critical` 传给 `filter(fn:)`，就能复用同一套策略模板。
+
 ## 高阶函数
 
 array package 已经支持一批高阶函数：
@@ -135,6 +164,10 @@ array package 已经支持一批高阶函数：
 - `array.unfold(seed:, fn:, limit:)`
 
 这些函数覆盖了过滤、映射、折叠、搜索、状态展开和中间状态保留。
+
+表算子里也有高阶函数心智模型。`filter(fn:)`、`map(fn:)`、`reduce(fn:)` 接收的是 row function；`aggregateWindow(fn:)` 接收的是 aggregate 或 selector 函数。数组高阶函数主要处理 `array`，表高阶函数主要处理 table row，但它们共享同一个用户函数表示和 call evaluator。
+
+这个共享很重要。`fn: (x) => x == 3` 在 `array.filter` 中暴露出的 numeric equality bug，也会影响其他任何调用用户函数的地方。如果每个 builtin 都自己解释 lambda，语言语义很快会分裂。
 
 ## 高阶函数的参数约定
 
@@ -155,6 +188,8 @@ array.reduce(arr: [1, 2, 3], identity: 0, fn: (x, acc) => acc + x)
 `array.unfold` 则反过来：用户函数接收当前 state，返回下一步的 `{value, state, done}`。这类协议必须在 builtin 中严格校验，否则错误会变成很难理解的 member access 失败。
 
 高阶函数实现时还有一个隐含要求：用户函数返回值必须符合当前函数语义。`filter` 要 bool，`flatMap` 要 array，`unfold` 要 object。对这些返回值的错误信息越具体，用户越容易定位查询问题。
+
+这类错误应该在 builtin 边界报清楚，而不是让后续 member access 或 array access 产生间接错误。比如 `array.unfold` 的 `fn` 如果返回了数字，错误应该说“unfold function must return object with value/state/done”，而不是在尝试读取 `.done` 时才说“member access root must be object”。
 
 ## 没有 for/while 时如何写循环
 
@@ -190,6 +225,8 @@ prefix = array.scan(
 
 结果是每一步的累加值。
 
+这种写法的关键差异是：状态从隐式可变变量，变成了显式 accumulator。它不一定比 imperative loop 短，但更容易被测试和组合。对查询语言来说，这通常是更好的取舍，因为查询本身更强调数据变换，而不是任意副作用。
+
 ## 用 unfold 表达状态机
 
 `array.unfold` 用一个 seed 和一个状态转移函数生成序列。函数返回 `{value, state, done}`，当 `done` 为 true 时停止。
@@ -209,6 +246,8 @@ fib = array.unfold(
 
 这类写法可以表达 Fibonacci、分页游标、有限状态机、重试计划等场景。它和 `while` 的区别是：循环状态显式变成 record，停止条件也显式成为返回值的一部分。
 
+`unfold` 需要资源安全阀。当前实现支持 `limit`，用于避免用户函数永远不返回 `done: true` 时无限展开。标准库设计里，这种上限不是可选项：只要提供能表达循环的能力，就必须同时提供停止条件、迭代上限或内存边界。
+
 ## 用 scan 表达动态规划的前缀状态
 
 `scan` 和 `reduce` 的区别是，`reduce` 只返回最终 accumulator，`scan` 返回每一步 accumulator。很多算法如果需要观察中间状态，`scan` 更合适。
@@ -227,6 +266,18 @@ prefix = array.scan(
 
 这也是 functional style 和 imperative style 的核心差异：状态不是隐藏在循环体里的可变局部变量中，而是作为函数输入输出被显式传递。
 
+`scan` 特别适合写“需要每一步结果”的逻辑。比如连续失败次数：
+
+```flux
+failures = array.scan(
+    arr: [true, false, false, true, false],
+    identity: {count: 0},
+    fn: (ok, acc) => ({count: if ok then 0 else acc.count + 1}),
+)
+```
+
+如果只需要最终失败次数，用 `reduce` 更合适；如果需要每一步的 count，用 `scan` 更合适。标准库同时提供两者，是为了让用户表达结果形状，而不是为了凑函数数量。
+
 ## 能力边界
 
 当前函数能力仍有边界。
@@ -236,6 +287,29 @@ prefix = array.scan(
 其次，不支持传统 `for` / `while`。大多数有限循环可以用 `array.range + reduce/scan/map` 表达，但不是所有 imperative loop 都适合这样改写。特别是提前 break、多层嵌套循环和复杂副作用，目前不是项目目标。
 
 再次，递归不是当前重点路径。即使能在某些场景下表达，也没有尾递归优化或递归深度控制，不适合作为推荐写法。
+
+还有一个边界是副作用模型。当前函数更适合纯计算和查询变换，不适合在函数体中做外部 IO、网络请求或状态写入。后续如果引入 `http`、`kafka` 这类外部集成包，也应该先定义清楚副作用、重试、超时和执行时机，而不是把它们当作普通函数调用塞进 evaluator。
+
+最后，UDF 暂时也不是 optimizer 的主要目标。复杂用户函数不会被翻译成 SQL predicate，也不会盲目下推到 connector。它们通常会成为 fallback/materialize 的边界。这个限制看似保守，但能保证结果正确。
+
+## 测试函数语义
+
+函数相关测试应该覆盖几类风险：
+
+- 默认参数缺省和显式覆盖。
+- 命名参数顺序变化。
+- pipe 参数注入。
+- 闭包捕获外层变量。
+- shadowing 下的参数绑定。
+- block body 的 `return`。
+- 高阶函数调用用户函数。
+- 用户函数返回类型不符合 builtin 约定。
+
+这类测试最好放在 runtime eval 和 stdlib conformance 两层：eval 测核心语义，conformance 测公开标准库行为。比如 `array.scan`、`array.unfold` 不只是 array helper，也是在测试函数值、对象返回、状态传递和错误边界。
+
+## 下一篇
+
+下一篇会从函数走向标准库，借 array package 看 builtin registry、参数校验、conformance 和文档/LSP 如何一起维护。
 
 ## 小结
 
