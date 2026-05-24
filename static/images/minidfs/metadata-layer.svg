@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 740" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
+    </marker>
+    <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c"/>
+    </marker>
+    <marker id="arrow-rose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185"/>
+    </marker>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+
+  <!-- ================================================================== -->
+  <!-- LEFT COLUMN: Main data flow (x: 30–670)                           -->
+  <!-- ================================================================== -->
+
+  <!-- ==================== LAYER 1: NAMENODE MANAGERS ==================== -->
+  <rect x="30" y="20" width="640" height="90" rx="10" fill="rgba(6, 78, 59, 0.12)" stroke="#34d399" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="50" y="38" fill="#34d399" font-size="10" font-weight="600">NameNode Managers</text>
+
+  <rect x="48" y="50" width="112" height="46" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="104" y="72" fill="white" font-size="9" font-weight="600" text-anchor="middle">Namespace</text>
+  <text x="104" y="86" fill="#94a3b8" font-size="8" text-anchor="middle">Manager</text>
+
+  <rect x="170" y="50" width="112" height="46" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="226" y="72" fill="white" font-size="9" font-weight="600" text-anchor="middle">Block</text>
+  <text x="226" y="86" fill="#94a3b8" font-size="8" text-anchor="middle">Manager</text>
+
+  <rect x="292" y="50" width="112" height="46" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="348" y="72" fill="white" font-size="9" font-weight="600" text-anchor="middle">Lease</text>
+  <text x="348" y="86" fill="#94a3b8" font-size="8" text-anchor="middle">Manager</text>
+
+  <rect x="414" y="50" width="112" height="46" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="470" y="72" fill="white" font-size="9" font-weight="600" text-anchor="middle">DataNode</text>
+  <text x="470" y="86" fill="#94a3b8" font-size="8" text-anchor="middle">Manager</text>
+
+  <rect x="536" y="50" width="120" height="46" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="596" y="72" fill="white" font-size="9" font-weight="600" text-anchor="middle">Replication</text>
+  <text x="596" y="86" fill="#94a3b8" font-size="8" text-anchor="middle">Manager</text>
+
+  <!-- ==================== Arrow: Managers → Interface ==================== -->
+  <line x1="350" y1="110" x2="350" y2="145" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-emerald)"/>
+
+  <!-- ==================== LAYER 2: MetadataStore INTERFACE ==================== -->
+  <rect x="60" y="148" width="580" height="65" rx="8" fill="#0f172a"/>
+  <rect x="60" y="148" width="580" height="65" rx="8" fill="rgba(251, 146, 60, 0.12)" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="350" y="172" fill="#fb923c" font-size="13" font-weight="700" text-anchor="middle">MetadataStore</text>
+  <text x="350" y="192" fill="#94a3b8" font-size="9" text-anchor="middle">Inode · Block · Replica · DataNode · Lease · alloc_id() · Transaction</text>
+  <text x="350" y="207" fill="#64748b" font-size="8" text-anchor="middle">pure virtual — all methods return pl::Result&lt;T&gt;</text>
+
+  <!-- ==================== Arrow: Interface → Impl ==================== -->
+  <line x1="350" y1="213" x2="350" y2="253" stroke="#64748b" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+  <text x="362" y="237" fill="#64748b" font-size="8">implements</text>
+
+  <!-- ==================== LAYER 3: MySQLMetadataStore ==================== -->
+  <rect x="60" y="256" width="580" height="75" rx="8" fill="#0f172a"/>
+  <rect x="60" y="256" width="580" height="75" rx="8" fill="rgba(76, 29, 149, 0.2)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="350" y="282" fill="white" font-size="13" font-weight="700" text-anchor="middle">MySQLMetadataStore</text>
+  <text x="350" y="302" fill="#94a3b8" font-size="9" text-anchor="middle">thread_local bound_conn_ · get_active_conn() · bind/unbind_connection()</text>
+  <text x="350" y="320" fill="#a78bfa" font-size="8" text-anchor="middle">fmt::format SQL · row_to_* mappers · escape_sql() · CAS version check</text>
+
+  <!-- ==================== Arrow: Store → Pool ==================== -->
+  <line x1="250" y1="331" x2="250" y2="388" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+  <text x="260" y="364" fill="#22d3ee" font-size="8">acquire()</text>
+
+  <!-- ==================== LAYER 4: CONNECTION POOL ==================== -->
+  <rect x="60" y="390" width="310" height="95" rx="8" fill="#0f172a"/>
+  <rect x="60" y="390" width="310" height="95" rx="8" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="215" y="416" fill="white" font-size="11" font-weight="700" text-anchor="middle">MySQLConnectionPool</text>
+  <text x="215" y="436" fill="#94a3b8" font-size="9" text-anchor="middle">std::queue&lt;PoolEntry&gt; idle_</text>
+  <text x="215" y="454" fill="#94a3b8" font-size="9" text-anchor="middle">std::mutex + condition_variable</text>
+  <text x="215" y="472" fill="#22d3ee" font-size="8" text-anchor="middle">pool_size=16 · blocking wait · notify_one</text>
+
+  <!-- PooledConnection box -->
+  <rect x="410" y="390" width="230" height="95" rx="8" fill="#0f172a"/>
+  <rect x="410" y="390" width="230" height="95" rx="8" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="525" y="416" fill="white" font-size="11" font-weight="700" text-anchor="middle">PooledConnection</text>
+  <text x="525" y="436" fill="#94a3b8" font-size="9" text-anchor="middle">RAII: ~dtor → pool_-&gt;release()</text>
+  <text x="525" y="454" fill="#94a3b8" font-size="9" text-anchor="middle">move-only · non-copyable</text>
+  <text x="525" y="472" fill="#22d3ee" font-size="8" text-anchor="middle">execute(sql) → Result&lt;results&gt;</text>
+
+  <!-- Arrow: Pool → PooledConnection -->
+  <line x1="370" y1="438" x2="408" y2="438" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+  <text x="378" y="428" fill="#64748b" font-size="8">returns</text>
+
+  <!-- ==================== Arrow: Pool → MySQL ==================== -->
+  <line x1="215" y1="485" x2="215" y2="540" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
+  <text x="227" y="517" fill="#a78bfa" font-size="8">TCP conn</text>
+
+  <!-- ==================== LAYER 5: MYSQL ==================== -->
+  <rect x="60" y="543" width="580" height="90" rx="10" fill="#0f172a"/>
+  <rect x="60" y="543" width="580" height="90" rx="10" fill="rgba(76, 29, 149, 0.3)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="350" y="572" fill="white" font-size="14" font-weight="700" text-anchor="middle">MySQL 8.0 (InnoDB)</text>
+  <text x="350" y="594" fill="#94a3b8" font-size="9" text-anchor="middle">inodes · blocks · block_replicas · datanodes · leases · id_allocators · op_log</text>
+  <text x="350" y="614" fill="#a78bfa" font-size="9" text-anchor="middle">ACID transactions · (parent_id, name) UNIQUE · CAS version · LAST_INSERT_ID()</text>
+
+  <!-- ================================================================== -->
+  <!-- RIGHT COLUMN: Transaction + Tests + Legend (x: 700–1040)           -->
+  <!-- ================================================================== -->
+
+  <!-- ==================== Unit Tests ==================== -->
+  <rect x="720" y="30" width="140" height="50" rx="5" fill="rgba(136, 19, 55, 0.25)" stroke="#fb7185" stroke-width="1"/>
+  <text x="790" y="54" fill="white" font-size="10" font-weight="600" text-anchor="middle">Unit Tests</text>
+  <text x="790" y="70" fill="#fb7185" font-size="8" text-anchor="middle">(MockMetadataStore)</text>
+
+  <!-- Arrow: Tests → Transaction (short vertical connection) -->
+  <line x1="790" y1="80" x2="790" y2="146" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrow-rose)"/>
+  <text x="810" y="118" fill="#fb7185" font-size="7">injects mock impl</text>
+
+  <!-- ==================== TRANSACTION BOX ==================== -->
+  <rect x="720" y="148" width="310" height="175" rx="8" fill="#0f172a"/>
+  <rect x="720" y="148" width="310" height="175" rx="8" fill="rgba(251, 146, 60, 0.08)" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="875" y="174" fill="#fb923c" font-size="12" font-weight="700" text-anchor="middle">MySQLTransaction (RAII)</text>
+  <line x1="735" y1="184" x2="1015" y2="184" stroke="#fb923c" stroke-width="0.5" opacity="0.3"/>
+  <text x="745" y="208" fill="white" font-size="9">1. pool_→acquire()</text>
+  <text x="745" y="228" fill="white" font-size="9">2. conn_.execute("BEGIN")</text>
+  <text x="745" y="248" fill="white" font-size="9">3. bind_connection(&amp;conn_)</text>
+  <text x="745" y="274" fill="#94a3b8" font-size="9">commit() → COMMIT SQL</text>
+  <text x="745" y="294" fill="#94a3b8" font-size="9">~dtor → ROLLBACK if !committed</text>
+  <text x="745" y="314" fill="#94a3b8" font-size="9">~dtor → unbind_connection()</text>
+
+  <!-- Arrow: Store → Transaction (horizontal at y=290) -->
+  <line x1="640" y1="290" x2="718" y2="290" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+  <text x="665" y="280" fill="#fb923c" font-size="8">begin_txn()</text>
+
+  <!-- ==================== LEGEND (bottom aligned with MySQL: y=543+90=633) ==================== -->
+  <rect x="720" y="448" width="175" height="185" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="#1e293b" stroke-width="1"/>
+  <text x="807" y="472" fill="white" font-size="10" font-weight="600" text-anchor="middle">Legend</text>
+
+  <rect x="737" y="488" width="14" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="758" y="497" fill="#94a3b8" font-size="8">NameNode Manager</text>
+
+  <rect x="737" y="510" width="14" height="10" rx="2" fill="rgba(251, 146, 60, 0.12)" stroke="#fb923c" stroke-width="1"/>
+  <text x="758" y="519" fill="#94a3b8" font-size="8">Interface / Transaction</text>
+
+  <rect x="737" y="532" width="14" height="10" rx="2" fill="rgba(76, 29, 149, 0.2)" stroke="#a78bfa" stroke-width="1"/>
+  <text x="758" y="541" fill="#94a3b8" font-size="8">MySQL Implementation</text>
+
+  <rect x="737" y="554" width="14" height="10" rx="2" fill="rgba(8, 51, 68, 0.3)" stroke="#22d3ee" stroke-width="1"/>
+  <text x="758" y="563" fill="#94a3b8" font-size="8">Connection Pool / RAII</text>
+
+  <line x1="737" y1="582" x2="751" y2="582" stroke="#34d399" stroke-width="1.5"/>
+  <text x="758" y="586" fill="#94a3b8" font-size="8">Dependency</text>
+
+  <line x1="737" y1="602" x2="751" y2="602" stroke="#64748b" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="758" y="606" fill="#94a3b8" font-size="8">Implements</text>
+
+  <line x1="737" y1="622" x2="751" y2="622" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="758" y="626" fill="#94a3b8" font-size="8">Transaction Flow</text>
+
+  <!-- ==================== TECH STACK FOOTER ==================== -->
+  <rect x="30" y="660" width="1000" height="35" rx="6" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+  <text x="530" y="682" fill="#64748b" font-size="9" text-anchor="middle">C++20 · boost::mysql · fmt · folly::Expected · std::condition_variable · thread_local · InnoDB ACID</text>
+</svg>

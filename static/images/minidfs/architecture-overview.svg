@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
+    </marker>
+    <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrow-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+
+  <!-- ==================== CLIENT ==================== -->
+  <rect x="30" y="220" width="140" height="100" rx="8" fill="#0f172a"/>
+  <rect x="30" y="220" width="140" height="100" rx="8" fill="rgba(8, 51, 68, 0.5)" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="100" y="248" fill="white" font-size="13" font-weight="700" text-anchor="middle">DFS Client</text>
+  <text x="100" y="268" fill="#94a3b8" font-size="9" text-anchor="middle">CLI / API</text>
+  <text x="100" y="290" fill="#22d3ee" font-size="8" text-anchor="middle">mkdir · put · get</text>
+  <text x="100" y="304" fill="#22d3ee" font-size="8" text-anchor="middle">ls · stat · rm</text>
+
+  <!-- ==================== NAMENODE (large box) ==================== -->
+  <rect x="260" y="30" width="480" height="260" rx="10" fill="#0f172a"/>
+  <rect x="260" y="30" width="480" height="260" rx="10" fill="rgba(6, 78, 59, 0.25)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="500" y="56" fill="#34d399" font-size="14" font-weight="700" text-anchor="middle">NameNode</text>
+  <text x="500" y="74" fill="#94a3b8" font-size="9" text-anchor="middle">Metadata Management · Coordination</text>
+
+  <!-- Sub-managers inside NameNode -->
+  <!-- Row 1 -->
+  <rect x="280" y="90" width="140" height="44" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="350" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">NamespaceManager</text>
+  <text x="350" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">inode tree · path ops</text>
+
+  <rect x="430" y="90" width="140" height="44" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="500" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">BlockManager</text>
+  <text x="500" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">alloc · commit · state</text>
+
+  <rect x="580" y="90" width="140" height="44" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="650" y="112" fill="white" font-size="10" font-weight="600" text-anchor="middle">LeaseManager</text>
+  <text x="650" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">write mutex · expiry</text>
+
+  <!-- Row 2 -->
+  <rect x="280" y="148" width="140" height="44" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="350" y="170" fill="white" font-size="10" font-weight="600" text-anchor="middle">DataNodeManager</text>
+  <text x="350" y="184" fill="#94a3b8" font-size="8" text-anchor="middle">heartbeat · state</text>
+
+  <rect x="430" y="148" width="140" height="44" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="500" y="170" fill="white" font-size="10" font-weight="600" text-anchor="middle">PlacementManager</text>
+  <text x="500" y="184" fill="#94a3b8" font-size="8" text-anchor="middle">rack-aware · capacity</text>
+
+  <rect x="580" y="148" width="140" height="44" rx="5" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="650" y="170" fill="white" font-size="10" font-weight="600" text-anchor="middle">ReplicationManager</text>
+  <text x="650" y="184" fill="#94a3b8" font-size="8" text-anchor="middle">under/over replica</text>
+
+  <!-- RPC Services label -->
+  <rect x="280" y="210" width="440" height="60" rx="5" fill="rgba(30, 41, 59, 0.4)" stroke="#475569" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="500" y="232" fill="#94a3b8" font-size="9" font-weight="600" text-anchor="middle">4 brpc Services</text>
+  <text x="500" y="250" fill="#64748b" font-size="8" text-anchor="middle">NameNodeService · DataNodeProtocolService · AdminService · DataTransferService</text>
+  <text x="500" y="264" fill="#64748b" font-size="8" text-anchor="middle">protobuf serialization · 28 RPCs total</text>
+
+  <!-- ==================== MYSQL ==================== -->
+  <rect x="820" y="100" width="150" height="80" rx="8" fill="#0f172a"/>
+  <rect x="820" y="100" width="150" height="80" rx="8" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="895" y="128" fill="white" font-size="13" font-weight="700" text-anchor="middle">MySQL</text>
+  <text x="895" y="148" fill="#94a3b8" font-size="9" text-anchor="middle">MetadataStore</text>
+  <text x="895" y="166" fill="#a78bfa" font-size="8" text-anchor="middle">inodes · blocks · replicas</text>
+
+  <!-- ==================== DATANODES ==================== -->
+  <!-- DN-1 -->
+  <rect x="260" y="400" width="150" height="90" rx="8" fill="#0f172a"/>
+  <rect x="260" y="400" width="150" height="90" rx="8" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="335" y="425" fill="white" font-size="12" font-weight="600" text-anchor="middle">DataNode-1</text>
+  <text x="335" y="444" fill="#94a3b8" font-size="9" text-anchor="middle">LocalBlockStore</text>
+  <text x="335" y="462" fill="#64748b" font-size="8" text-anchor="middle">tmp/ · current/ · trash/</text>
+  <text x="335" y="478" fill="#64748b" font-size="8" text-anchor="middle">CRC32C checksum</text>
+
+  <!-- DN-2 -->
+  <rect x="430" y="400" width="150" height="90" rx="8" fill="#0f172a"/>
+  <rect x="430" y="400" width="150" height="90" rx="8" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="505" y="425" fill="white" font-size="12" font-weight="600" text-anchor="middle">DataNode-2</text>
+  <text x="505" y="444" fill="#94a3b8" font-size="9" text-anchor="middle">LocalBlockStore</text>
+  <text x="505" y="462" fill="#64748b" font-size="8" text-anchor="middle">tmp/ · current/ · trash/</text>
+  <text x="505" y="478" fill="#64748b" font-size="8" text-anchor="middle">CRC32C checksum</text>
+
+  <!-- DN-3 -->
+  <rect x="600" y="400" width="150" height="90" rx="8" fill="#0f172a"/>
+  <rect x="600" y="400" width="150" height="90" rx="8" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="675" y="425" fill="white" font-size="12" font-weight="600" text-anchor="middle">DataNode-3</text>
+  <text x="675" y="444" fill="#94a3b8" font-size="9" text-anchor="middle">LocalBlockStore</text>
+  <text x="675" y="462" fill="#64748b" font-size="8" text-anchor="middle">tmp/ · current/ · trash/</text>
+  <text x="675" y="478" fill="#64748b" font-size="8" text-anchor="middle">CRC32C checksum</text>
+
+  <!-- ==================== ARROWS ==================== -->
+
+  <!-- Client → NameNode: NameNodeService -->
+  <line x1="170" y1="245" x2="258" y2="180" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+  <text x="195" y="200" fill="#22d3ee" font-size="8" transform="rotate(-20, 195, 200)">NameNodeService</text>
+
+  <!-- Client → DN-1: DataTransferService -->
+  <line x1="140" y1="320" x2="260" y2="420" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+  <text x="170" y="385" fill="#22d3ee" font-size="8" transform="rotate(28, 170, 385)">DataTransferService</text>
+
+  <!-- DN → NameNode: DataNodeProtocol (dashed) -->
+  <line x1="335" y1="400" x2="380" y2="292" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrow-slate)"/>
+  <line x1="505" y1="400" x2="500" y2="292" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrow-slate)"/>
+  <line x1="675" y1="400" x2="620" y2="292" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrow-slate)"/>
+  <text x="570" y="355" fill="#94a3b8" font-size="8">Heartbeat · BlockReport</text>
+
+  <!-- NameNode → MySQL -->
+  <line x1="740" y1="140" x2="818" y2="140" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
+  <text x="778" y="132" fill="#a78bfa" font-size="8" text-anchor="middle">RAII Pool</text>
+
+  <!-- Pipeline: DN-1 → DN-2 → DN-3 -->
+  <line x1="410" y1="445" x2="428" y2="445" stroke="#fb923c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="580" y1="445" x2="598" y2="445" stroke="#fb923c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="505" y="530" fill="#fb923c" font-size="9" font-weight="600" text-anchor="middle">Pipeline Replication (chunk-by-chunk)</text>
+
+  <!-- ==================== LEGEND ==================== -->
+  <rect x="820" y="250" width="155" height="160" rx="6" fill="rgba(15, 23, 42, 0.8)" stroke="#1e293b" stroke-width="1"/>
+  <text x="897" y="272" fill="white" font-size="10" font-weight="600" text-anchor="middle">Legend</text>
+
+  <rect x="835" y="284" width="14" height="10" rx="2" fill="rgba(8, 51, 68, 0.5)" stroke="#22d3ee" stroke-width="1"/>
+  <text x="856" y="293" fill="#94a3b8" font-size="8">Client</text>
+
+  <rect x="835" y="302" width="14" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+  <text x="856" y="311" fill="#94a3b8" font-size="8">NameNode</text>
+
+  <rect x="835" y="320" width="14" height="10" rx="2" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
+  <text x="856" y="329" fill="#94a3b8" font-size="8">DataNode</text>
+
+  <rect x="835" y="338" width="14" height="10" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+  <text x="856" y="347" fill="#94a3b8" font-size="8">MySQL</text>
+
+  <line x1="835" y1="362" x2="849" y2="362" stroke="#fb923c" stroke-width="2"/>
+  <text x="856" y="365" fill="#94a3b8" font-size="8">Pipeline</text>
+
+  <line x1="835" y1="380" x2="849" y2="380" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="856" y="383" fill="#94a3b8" font-size="8">Heartbeat</text>
+
+  <line x1="835" y1="398" x2="849" y2="398" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="856" y="401" fill="#94a3b8" font-size="8">RPC Call</text>
+
+  <!-- ==================== TECH STACK FOOTER ==================== -->
+  <rect x="30" y="560" width="940" height="40" rx="6" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+  <text x="500" y="584" fill="#64748b" font-size="9" text-anchor="middle">C++20 · Bazel · brpc · protobuf · MySQL 8.0 · CRC32C (ISA-L / google-crc32c) · Docker</text>
+</svg>
