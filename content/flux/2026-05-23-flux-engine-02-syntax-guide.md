@@ -1,5 +1,5 @@
 ---
-title: Flux 子集语法导览：从变量、函数到 Pipe 查询
+title: "Flux 02: 语法导览"
 description: "面向使用者介绍当前 Flux 实现支持的文件结构、字面量、变量、option、函数定义、参数形式、运算符、对象/数组、条件表达式和 pipe 查询写法。"
 date: 2026-05-23
 categories: [语言与编译]

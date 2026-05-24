@@ -1,5 +1,5 @@
 ---
-title: UDF 与高阶函数：Flux 中函数能力的边界
+title: "Flux 05: UDF 与高阶函数"
 description: "系统说明当前 Flux 实现支持的用户自定义函数、闭包、默认参数、pipe 参数、高阶函数，以及如何用 array 函数表达循环。"
 date: 2026-05-23
 categories: [语言与编译]

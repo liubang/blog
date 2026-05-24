@@ -1,5 +1,5 @@
 ---
-title: 测试体系：如何保证一个语言实现不退化
+title: "Flux 11: 测试体系"
 description: "介绍 Flux 项目的 parser/runtime/CLI/LSP/conformance/benchmark 测试分层，以及为什么示例必须可执行。"
 date: 2026-05-23
 categories: [语言与编译]

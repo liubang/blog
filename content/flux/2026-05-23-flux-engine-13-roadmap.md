@@ -1,5 +1,5 @@
 ---
-title: 项目路线图：从可用到好用
+title: "Flux 13: 项目路线图"
 description: "总结 Flux 查询引擎当前能力，并从语言、标准库、执行引擎、LSP、测试和文档几个方向规划后续演进。"
 date: 2026-05-23
 categories: [语言与编译]

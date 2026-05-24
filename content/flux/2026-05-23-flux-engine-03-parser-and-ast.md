@@ -1,5 +1,5 @@
 ---
-title: 从源码到 AST：Flux Parser 的实现
+title: "Flux 03: Parser 与 AST"
 description: "拆解 Flux 查询引擎的语言前端：scanner、token、parser、AST、表达式优先级和源码位置。"
 date: 2026-05-23
 categories: [语言与编译]

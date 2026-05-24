@@ -1,5 +1,5 @@
 ---
-title: Table Pipeline：Flux 查询模型如何落到内存执行
+title: "Flux 07: Table Pipeline"
 description: "介绍 Flux table stream、TableValue、logical tables、group key，以及 filter/map/group/window/join 等表算子的内存执行语义。"
 date: 2026-05-23
 categories: [语言与编译]

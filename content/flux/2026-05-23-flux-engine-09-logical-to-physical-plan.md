@@ -1,5 +1,5 @@
 ---
-title: 从 Logical Plan 到 Physical Plan：执行引擎的骨架
+title: "Flux 09: Logical 到 Physical Plan"
 description: "介绍 Flux 查询引擎从 logical plan、RBO/CBO framework 到 physical plan、pipeline、driver、operator 和 Page 流的执行架构。"
 date: 2026-05-23
 categories: [语言与编译]
