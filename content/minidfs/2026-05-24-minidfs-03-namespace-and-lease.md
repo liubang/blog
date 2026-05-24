@@ -1,5 +1,5 @@
 ---
-title: "Namespace 管理与 Lease 机制"
+title: "MiniDFS 03: Namespace 与 Lease"
 description: "MiniDFS 的 inode 树设计、路径解析实现、递归创建与删除，以及 Lease 写互斥机制的完整实现。"
 date: 2026-05-24
 categories: [存储与分布式]

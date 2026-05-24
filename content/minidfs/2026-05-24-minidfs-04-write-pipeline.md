@@ -1,5 +1,5 @@
 ---
-title: "写入 Pipeline — Block 分配、链式复制与校验"
+title: "MiniDFS 04: 写入 Pipeline"
 description: "深入 MiniDFS 的写入链路：Block 分配与 Generation Stamp、PlacementManager 的容量感知 + 机架感知策略、Pipeline 链式复制的 pop-head 转发模型、CRC32C 两层校验体系，以及 chunk 写入幂等性设计。"
 date: 2026-05-24
 categories: [存储与分布式]

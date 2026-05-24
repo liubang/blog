@@ -1,5 +1,5 @@
 ---
-title: "元数据层 — 从 EditLog 到 MySQL"
+title: "MiniDFS 02: 元数据持久化"
 description: "深入 MiniDFS 的元数据持久化设计：为什么用 MySQL 替代 HDFS 的 EditLog+FsImage 方案，连接池 RAII 封装，事务绑定机制，以及 ID 原子分配的 MySQL 技巧。"
 date: 2026-05-24
 categories: [存储与分布式]

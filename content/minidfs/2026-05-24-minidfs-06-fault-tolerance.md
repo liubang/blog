@@ -1,5 +1,5 @@
 ---
-title: "容错与自愈 — Lease、副本修复与故障恢复"
+title: "MiniDFS 06: 容错与自愈"
 description: "MiniDFS 容错体系的完整闭环：Lease 写互斥防止并发冲突、ReplicationManager 扫描与修复欠副本、Heartbeat 通道下发命令、ReplicationWorker 执行数据拷贝，以及幂等性与事务原子性保障。"
 date: 2026-05-24
 categories: [存储与分布式]

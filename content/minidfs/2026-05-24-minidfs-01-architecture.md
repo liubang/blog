@@ -1,5 +1,5 @@
 ---
-title: "整体架构与协议设计"
+title: "MiniDFS 01: 架构与协议设计"
 description: "介绍 MiniDFS 的项目定位、与 HDFS 的取舍、三大角色的职责边界、RPC 协议设计，以及一次写入请求的完整链路。"
 date: 2026-05-24
 categories: [存储与分布式]

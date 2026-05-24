@@ -1,5 +1,5 @@
 ---
-title: "DataNode 内部机制 — 本地存储、心跳与块报告"
+title: "MiniDFS 05: DataNode 存储与心跳"
 description: "深入 MiniDFS DataNode 的内部世界：LocalBlockStore 的目录布局与 BlockHeader 二进制格式、HeartbeatSender 的后台线程与命令分发、BlockReporter 的全量报告与增量追踪，以及 NameNode 侧 DataNodeManager 的状态机设计。"
 date: 2026-05-24
 categories: [存储与分布式]
