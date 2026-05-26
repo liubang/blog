@@ -27,23 +27,32 @@ img[src$="#right"] {
 
 .about-hero {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1fr);
+  grid-template-columns: 150px minmax(0, 1fr);
   gap: 2rem;
-  align-items: center;
-  padding: 2rem 0 1.5rem;
+  align-items: start;
+  padding: 1.7rem 0 1.25rem;
   border-bottom: 1px solid var(--global-border-color);
 }
 
 .about-avatar {
-  width: 128px;
-  height: 128px;
+  width: 150px;
+  height: 150px;
   border-radius: 8px;
   object-fit: cover;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
+.about-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
 .about-kicker {
-  margin: 0 0 0.6rem;
+  margin: 0;
   color: var(--global-font-secondary-color);
   font-size: 0.98rem;
   font-weight: 600;
@@ -65,8 +74,8 @@ img[src$="#right"] {
 .about-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-top: 1.1rem;
+  gap: 0.5rem;
+  margin: 0;
 }
 
 .about-actions a,
@@ -77,14 +86,29 @@ img[src$="#right"] {
 }
 
 .about-actions a {
-  padding: 0.45rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
   border: 1px solid var(--global-border-color);
   border-radius: 6px;
   background: var(--code-background-color);
+  color: var(--global-link-color);
   line-height: 1;
 }
 
-.about-actions a:hover,
+.about-action-icon {
+  width: 0.9em;
+  height: 0.9em;
+  fill: currentColor;
+  flex: 0 0 auto;
+}
+
+.about-actions a:hover {
+  border-color: var(--global-link-color);
+  color: var(--global-link-hover-color);
+}
+
 .about-project:hover,
 .about-focus-item:hover {
   border-color: var(--global-link-color);
