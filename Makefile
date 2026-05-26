@@ -23,7 +23,7 @@ run: init
 	hugo serve --buildDrafts --buildFuture --disableFastRender --navigateToChanged
 
 build: init
-	hugo build --gc --minify
+	hugo build --gc --minify --cleanDestinationDir
 
 clean:
 	rm -rf public resources/_gen

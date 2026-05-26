@@ -2,7 +2,7 @@
 
 ![Build Status](https://github.com/liubang/blog/actions/workflows/gh-pages.yml/badge.svg?branch=main)
 
-This blog built on top of Hugo and the HBS theme.
+This blog is built with Hugo and the DoIt theme.
 
 ### Local development
 
@@ -15,19 +15,20 @@ Requirements:
 Common setup:
 
 ```bash
-hugo mod tidy
-hugo mod npm pack
-npm install
-hugo server
+make init
+make run
+```
+
+Production build:
+
+```bash
+make build
 ```
 
 ### Upgrade theme
 
 ```bash
-hugo mod get -u ./...
-hugo mod tidy
-hugo mod npm pack
-npm install
-git add go.mod go.sum package.hugo.json package.json package-lock.json
+make update
+git add themes/DoIt
 git commit -m 'Bump theme to [version]'
 ```
