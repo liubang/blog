@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 720" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 620" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace" role="img" aria-labelledby="write-title write-desc">
+  <title id="write-title">MiniDFS write pipeline overview</title>
+  <desc id="write-desc">A MiniDFS write goes through five phases: create file, allocate block, stream chunks through the DataNode pipeline, commit the block, and complete the file.</desc>
+
   <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    <marker id="arrow-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
     </marker>
     <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
@@ -12,9 +15,6 @@
     <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
     </marker>
-    <marker id="arrow-rose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185"/>
-    </marker>
     <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c"/>
     </marker>
@@ -23,178 +23,115 @@
     </pattern>
   </defs>
 
-  <!-- Background -->
   <rect width="100%" height="100%" fill="#0f172a"/>
   <rect width="100%" height="100%" fill="url(#grid)"/>
 
-  <!-- ================================================================== -->
-  <!-- TOP: Write sequence (Client ↔ NameNode)                            -->
-  <!-- ================================================================== -->
+  <text x="40" y="48" fill="white" font-size="22" font-weight="700">Write Pipeline Overview</text>
+  <text x="40" y="74" fill="#94a3b8" font-size="12">One file write: metadata coordination first, data transfer through the DataNode chain, final metadata commit last.</text>
 
-  <!-- Client box -->
-  <rect x="50" y="30" width="160" height="55" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
-  <text x="130" y="55" fill="white" font-size="11" font-weight="600" text-anchor="middle">Client</text>
-  <text x="130" y="72" fill="#94a3b8" font-size="8" text-anchor="middle">DfsClient::put()</text>
+  <!-- Five phases -->
+  <g>
+    <rect x="40" y="105" width="180" height="95" rx="9" fill="rgba(6, 78, 59, 0.28)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="66" cy="132" r="15" fill="rgba(6, 78, 59, 0.55)" stroke="#34d399" stroke-width="1"/>
+    <text x="66" y="137" fill="white" font-size="14" font-weight="700" text-anchor="middle">1</text>
+    <text x="90" y="132" fill="white" font-size="15" font-weight="700">CreateFile</text>
+    <text x="60" y="162" fill="#94a3b8" font-size="12">create inode</text>
+    <text x="60" y="181" fill="#94a3b8" font-size="12">acquire lease</text>
 
-  <!-- NameNode box -->
-  <rect x="50" y="150" width="160" height="55" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-  <text x="130" y="175" fill="white" font-size="11" font-weight="600" text-anchor="middle">NameNode</text>
-  <text x="130" y="192" fill="#94a3b8" font-size="8" text-anchor="middle">BlockManager</text>
+    <line x1="220" y1="152" x2="238" y2="152" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arrow-slate)"/>
 
-  <!-- Single arrow Client → NameNode -->
-  <line x1="130" y1="85" x2="130" y2="148" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-emerald)"/>
-  <text x="145" y="120" fill="#34d399" font-size="8">CreateFile / AllocateBlock / CommitBlock</text>
+    <rect x="250" y="105" width="180" height="95" rx="9" fill="rgba(6, 78, 59, 0.28)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="276" cy="132" r="15" fill="rgba(6, 78, 59, 0.55)" stroke="#34d399" stroke-width="1"/>
+    <text x="276" y="137" fill="white" font-size="14" font-weight="700" text-anchor="middle">2</text>
+    <text x="300" y="132" fill="white" font-size="15" font-weight="700">AllocateBlock</text>
+    <text x="270" y="162" fill="#94a3b8" font-size="12">choose replicas</text>
+    <text x="270" y="181" fill="#94a3b8" font-size="12">return locations</text>
 
-  <!-- Write Flow box (moved further right to avoid overlap) -->
-  <rect x="420" y="30" width="310" height="100" rx="4" fill="rgba(30, 41, 59, 0.6)" stroke="#94a3b8" stroke-width="0.8"/>
-  <text x="435" y="50" fill="#22d3ee" font-size="9" font-weight="600">Write Flow:</text>
-  <text x="435" y="66" fill="#94a3b8" font-size="8">1. CreateFile → inode + lease</text>
-  <text x="435" y="80" fill="#94a3b8" font-size="8">2. AllocateBlock → LocatedBlock (block_id, gs, [DNs])</text>
-  <text x="435" y="94" fill="#94a3b8" font-size="8">3. WriteBlock × N chunks (via Pipeline)</text>
-  <text x="435" y="108" fill="#94a3b8" font-size="8">4. CommitBlock → kAllocating → kCommitted</text>
-  <text x="435" y="122" fill="#94a3b8" font-size="8">5. CompleteFile → release lease, file visible</text>
+    <line x1="430" y1="152" x2="448" y2="152" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arrow-slate)"/>
 
-  <!-- ================================================================== -->
-  <!-- MIDDLE: Pipeline Chain (DN1 → DN2 → DN3)                           -->
-  <!-- ================================================================== -->
+    <rect x="460" y="105" width="180" height="95" rx="9" fill="rgba(8, 51, 68, 0.42)" stroke="#22d3ee" stroke-width="1.4"/>
+    <circle cx="486" cy="132" r="15" fill="rgba(8, 51, 68, 0.7)" stroke="#22d3ee" stroke-width="1"/>
+    <text x="486" y="137" fill="white" font-size="14" font-weight="700" text-anchor="middle">3</text>
+    <text x="510" y="132" fill="white" font-size="15" font-weight="700">Pipeline Write</text>
+    <text x="480" y="162" fill="#94a3b8" font-size="12">send chunks</text>
+    <text x="480" y="181" fill="#94a3b8" font-size="12">wait reverse ACK</text>
 
-  <!-- Pipeline boundary -->
-  <rect x="30" y="230" width="1000" height="190" rx="10" fill="rgba(8, 51, 68, 0.08)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="6,4"/>
-  <text x="50" y="252" fill="#22d3ee" font-size="10" font-weight="600">Pipeline Replication (step 3: WriteBlock chunks)</text>
+    <line x1="640" y1="152" x2="658" y2="152" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arrow-slate)"/>
 
-  <!-- Client (send side) -->
-  <rect x="50" y="280" width="120" height="65" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
-  <text x="110" y="305" fill="white" font-size="10" font-weight="600" text-anchor="middle">Client</text>
-  <text x="110" y="320" fill="#94a3b8" font-size="8" text-anchor="middle">chunk + CRC</text>
-  <text x="110" y="335" fill="#64748b" font-size="7" text-anchor="middle">pipeline=[DN2,DN3]</text>
+    <rect x="670" y="105" width="165" height="95" rx="9" fill="rgba(6, 78, 59, 0.28)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="696" cy="132" r="15" fill="rgba(6, 78, 59, 0.55)" stroke="#34d399" stroke-width="1"/>
+    <text x="696" y="137" fill="white" font-size="14" font-weight="700" text-anchor="middle">4</text>
+    <text x="720" y="132" fill="white" font-size="15" font-weight="700">CommitBlock</text>
+    <text x="690" y="162" fill="#94a3b8" font-size="12">mark block</text>
+    <text x="690" y="181" fill="#94a3b8" font-size="12">finalized</text>
 
-  <!-- DN1 -->
-  <rect x="280" y="270" width="160" height="85" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-  <text x="360" y="295" fill="white" font-size="10" font-weight="600" text-anchor="middle">DataNode 1</text>
-  <text x="360" y="313" fill="#94a3b8" font-size="8" text-anchor="middle">verify CRC → append</text>
-  <text x="360" y="328" fill="#94a3b8" font-size="8" text-anchor="middle">→ forward</text>
-  <text x="360" y="345" fill="#64748b" font-size="7" text-anchor="middle">pop pipeline[0], pass rest</text>
+    <line x1="835" y1="152" x2="853" y2="152" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arrow-slate)"/>
 
-  <!-- DN2 -->
-  <rect x="540" y="270" width="160" height="85" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-  <text x="620" y="295" fill="white" font-size="10" font-weight="600" text-anchor="middle">DataNode 2</text>
-  <text x="620" y="313" fill="#94a3b8" font-size="8" text-anchor="middle">verify CRC → append</text>
-  <text x="620" y="328" fill="#94a3b8" font-size="8" text-anchor="middle">→ forward</text>
-  <text x="620" y="345" fill="#64748b" font-size="7" text-anchor="middle">pipeline=[DN3]</text>
+    <rect x="865" y="105" width="155" height="95" rx="9" fill="rgba(6, 78, 59, 0.28)" stroke="#34d399" stroke-width="1.4"/>
+    <circle cx="891" cy="132" r="15" fill="rgba(6, 78, 59, 0.55)" stroke="#34d399" stroke-width="1"/>
+    <text x="891" y="137" fill="white" font-size="14" font-weight="700" text-anchor="middle">5</text>
+    <text x="915" y="132" fill="white" font-size="15" font-weight="700">CompleteFile</text>
+    <text x="885" y="162" fill="#94a3b8" font-size="12">release lease</text>
+    <text x="885" y="181" fill="#94a3b8" font-size="12">file visible</text>
+  </g>
 
-  <!-- DN3 -->
-  <rect x="800" y="270" width="160" height="85" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-  <text x="880" y="295" fill="white" font-size="10" font-weight="600" text-anchor="middle">DataNode 3</text>
-  <text x="880" y="313" fill="#94a3b8" font-size="8" text-anchor="middle">verify CRC → append</text>
-  <text x="880" y="328" fill="#94a3b8" font-size="8" text-anchor="middle">→ finalize</text>
-  <text x="880" y="345" fill="#64748b" font-size="7" text-anchor="middle">pipeline=[] (tail)</text>
+  <!-- Metadata coordination -->
+  <rect x="50" y="240" width="960" height="105" rx="12" fill="rgba(6, 78, 59, 0.12)" stroke="#34d399" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="70" y="266" fill="#34d399" font-size="14" font-weight="700">Metadata coordination</text>
 
-  <!-- Pipeline forward arrows -->
-  <line x1="170" y1="310" x2="278" y2="310" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
-  <text x="200" y="302" fill="#22d3ee" font-size="8">WriteBlock</text>
+  <rect x="105" y="286" width="150" height="40" rx="7" fill="rgba(8, 51, 68, 0.45)" stroke="#22d3ee" stroke-width="1.4"/>
+  <text x="180" y="311" fill="white" font-size="13" font-weight="600" text-anchor="middle">Client</text>
 
-  <line x1="440" y1="310" x2="538" y2="310" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
-  <text x="475" y="302" fill="#22d3ee" font-size="8">forward</text>
+  <rect x="455" y="286" width="150" height="40" rx="7" fill="rgba(6, 78, 59, 0.45)" stroke="#34d399" stroke-width="1.4"/>
+  <text x="530" y="311" fill="white" font-size="13" font-weight="600" text-anchor="middle">NameNode</text>
 
-  <line x1="700" y1="310" x2="798" y2="310" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
-  <text x="735" y="302" fill="#22d3ee" font-size="8">forward</text>
+  <rect x="805" y="286" width="150" height="40" rx="7" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.4"/>
+  <text x="880" y="311" fill="white" font-size="13" font-weight="600" text-anchor="middle">MySQL</text>
 
-  <!-- ACK arrows (reverse, dashed) — tight below forward arrows -->
-  <line x1="800" y1="325" x2="702" y2="325" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-orange)"/>
-  <line x1="540" y1="325" x2="442" y2="325" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-orange)"/>
-  <line x1="280" y1="325" x2="172" y2="325" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-orange)"/>
-  <text x="200" y="340" fill="#fb923c" font-size="8">ACK (reverse)</text>
+  <line x1="255" y1="306" x2="453" y2="306" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-emerald)"/>
+  <text x="354" y="295" fill="#34d399" font-size="12" text-anchor="middle">metadata RPCs</text>
 
-  <!-- ACK annotation -->
-  <rect x="50" y="388" width="220" height="24" rx="4" fill="rgba(251, 146, 60, 0.15)" stroke="#fb923c" stroke-width="0.8"/>
-  <text x="62" y="404" fill="#fb923c" font-size="8">ACK: DN3 → DN2 → DN1 → Client</text>
+  <line x1="605" y1="306" x2="803" y2="306" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow-violet)"/>
+  <text x="704" y="295" fill="#a78bfa" font-size="12" text-anchor="middle">inode + block metadata tx</text>
 
-  <!-- ================================================================== -->
-  <!-- BOTTOM LEFT: Block file format                                     -->
-  <!-- ================================================================== -->
+  <!-- Data pipeline -->
+  <rect x="50" y="375" width="960" height="150" rx="12" fill="rgba(8, 51, 68, 0.08)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="70" y="401" fill="#22d3ee" font-size="14" font-weight="700">Data pipeline</text>
 
-  <rect x="30" y="450" width="460" height="240" rx="10" fill="rgba(76, 29, 149, 0.08)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="6,4"/>
-  <text x="50" y="472" fill="#a78bfa" font-size="10" font-weight="600">Block File Format (on disk)</text>
+  <rect x="85" y="432" width="125" height="48" rx="7" fill="rgba(8, 51, 68, 0.45)" stroke="#22d3ee" stroke-width="1.4"/>
+  <text x="148" y="453" fill="white" font-size="13" font-weight="600" text-anchor="middle">Client</text>
+  <text x="148" y="470" fill="#94a3b8" font-size="11" text-anchor="middle">chunk + CRC</text>
 
-  <!-- Header section -->
-  <rect x="50" y="490" width="420" height="36" rx="4" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="260" y="513" fill="white" font-size="9" font-weight="600" text-anchor="middle">BlockHeader (fixed size, packed struct)</text>
+  <rect x="300" y="425" width="140" height="62" rx="7" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="370" y="450" fill="white" font-size="13" font-weight="600" text-anchor="middle">DataNode-1</text>
+  <text x="370" y="469" fill="#94a3b8" font-size="11" text-anchor="middle">append + forward</text>
 
-  <!-- Header fields annotation -->
-  <rect x="50" y="536" width="420" height="44" rx="4" fill="rgba(30, 41, 59, 0.6)" stroke="#94a3b8" stroke-width="0.8"/>
-  <text x="60" y="552" fill="#a78bfa" font-size="8">magic | version | block_id | generation_stamp | data_length</text>
-  <text x="60" y="566" fill="#94a3b8" font-size="8">chunk_count | chunk_offsets[256] | chunk_checksums[256] | block_checksum</text>
-  <text x="60" y="576" fill="#64748b" font-size="7">                                                            ↑ incremental CRC32C</text>
+  <rect x="530" y="425" width="140" height="62" rx="7" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="600" y="450" fill="white" font-size="13" font-weight="600" text-anchor="middle">DataNode-2</text>
+  <text x="600" y="469" fill="#94a3b8" font-size="11" text-anchor="middle">append + forward</text>
 
-  <!-- Data region -->
-  <rect x="50" y="590" width="140" height="36" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
-  <text x="120" y="613" fill="white" font-size="9" font-weight="600" text-anchor="middle">Chunk 0</text>
+  <rect x="760" y="425" width="140" height="62" rx="7" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="830" y="450" fill="white" font-size="13" font-weight="600" text-anchor="middle">DataNode-3</text>
+  <text x="830" y="469" fill="#94a3b8" font-size="11" text-anchor="middle">tail finalize</text>
 
-  <rect x="200" y="590" width="140" height="36" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
-  <text x="270" y="613" fill="white" font-size="9" font-weight="600" text-anchor="middle">Chunk 1</text>
+  <line x1="210" y1="452" x2="298" y2="452" stroke="#22d3ee" stroke-width="1.6" marker-end="url(#arrow-cyan)"/>
+  <text x="254" y="440" fill="#22d3ee" font-size="12" text-anchor="middle">WriteBlock</text>
 
-  <rect x="350" y="590" width="30" height="36" rx="4" fill="rgba(30, 41, 59, 0.4)" stroke="#64748b" stroke-width="1"/>
-  <text x="365" y="613" fill="#64748b" font-size="9" text-anchor="middle">...</text>
+  <line x1="440" y1="452" x2="528" y2="452" stroke="#22d3ee" stroke-width="1.6" marker-end="url(#arrow-cyan)"/>
+  <text x="484" y="440" fill="#22d3ee" font-size="12" text-anchor="middle">forward</text>
 
-  <rect x="390" y="590" width="80" height="36" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
-  <text x="430" y="613" fill="white" font-size="9" font-weight="600" text-anchor="middle">Chunk N</text>
+  <line x1="670" y1="452" x2="758" y2="452" stroke="#22d3ee" stroke-width="1.6" marker-end="url(#arrow-cyan)"/>
+  <text x="714" y="440" fill="#22d3ee" font-size="12" text-anchor="middle">forward</text>
 
-  <!-- Lifecycle: tmp → current → trash -->
-  <rect x="50" y="644" width="80" height="26" rx="4" fill="rgba(136, 19, 55, 0.3)" stroke="#fb7185" stroke-width="1"/>
-  <text x="90" y="661" fill="#fb7185" font-size="8" text-anchor="middle">tmp/</text>
+  <path d="M 760 478 C 670 510, 300 510, 210 478" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-orange)"/>
+  <text x="485" y="510" fill="#fb923c" font-size="12" font-weight="600" text-anchor="middle">ACK returns: DN3 → DN2 → DN1 → Client</text>
 
-  <line x1="135" y1="657" x2="185" y2="657" stroke="#fb7185" stroke-width="1.2" marker-end="url(#arrow-rose)"/>
-  <text x="145" y="649" fill="#fb7185" font-size="7">rename</text>
-
-  <rect x="190" y="644" width="100" height="26" rx="4" fill="rgba(6, 78, 59, 0.3)" stroke="#34d399" stroke-width="1"/>
-  <text x="240" y="661" fill="#34d399" font-size="8" text-anchor="middle">current/</text>
-
-  <line x1="295" y1="657" x2="345" y2="657" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
-  <text x="300" y="649" fill="#64748b" font-size="7">soft-del</text>
-
-  <rect x="350" y="644" width="80" height="26" rx="4" fill="rgba(30, 41, 59, 0.4)" stroke="#64748b" stroke-width="1"/>
-  <text x="390" y="661" fill="#64748b" font-size="8" text-anchor="middle">trash/</text>
-
-  <!-- ================================================================== -->
-  <!-- BOTTOM RIGHT: CRC32C + Idempotency                                 -->
-  <!-- ================================================================== -->
-
-  <rect x="520" y="450" width="510" height="110" rx="10" fill="rgba(136, 19, 55, 0.08)" stroke="#fb7185" stroke-width="1" stroke-dasharray="6,4"/>
-  <text x="540" y="472" fill="#fb7185" font-size="10" font-weight="600">CRC32C Two-Layer Checksum</text>
-
-  <rect x="540" y="486" width="200" height="60" rx="4" fill="rgba(30, 41, 59, 0.6)" stroke="#94a3b8" stroke-width="0.8"/>
-  <text x="550" y="502" fill="#22d3ee" font-size="8" font-weight="600">Chunk-level:</text>
-  <text x="550" y="516" fill="#94a3b8" font-size="8">Each chunk → independent CRC</text>
-  <text x="550" y="530" fill="#94a3b8" font-size="8">Stored: chunk_checksums[i]</text>
-  <text x="550" y="542" fill="#64748b" font-size="7">Verify on receive + on read</text>
-
-  <rect x="760" y="486" width="250" height="60" rx="4" fill="rgba(30, 41, 59, 0.6)" stroke="#94a3b8" stroke-width="0.8"/>
-  <text x="770" y="502" fill="#a78bfa" font-size="8" font-weight="600">Block-level (incremental):</text>
-  <text x="770" y="516" fill="#94a3b8" font-size="8">chunk0: block_crc = compute(data0)</text>
-  <text x="770" y="530" fill="#94a3b8" font-size="8">chunkN: block_crc = extend(prev, dataN)</text>
-  <text x="770" y="542" fill="#64748b" font-size="7">No full-block re-scan needed!</text>
-
-  <!-- Idempotency box -->
-  <rect x="520" y="580" width="510" height="100" rx="10" fill="rgba(120, 53, 15, 0.08)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="6,4"/>
-  <text x="540" y="602" fill="#fbbf24" font-size="10" font-weight="600">Chunk Idempotency (at-least-once safe retry)</text>
-
-  <rect x="540" y="616" width="470" height="50" rx="4" fill="rgba(30, 41, 59, 0.6)" stroke="#94a3b8" stroke-width="0.8"/>
-  <text x="550" y="632" fill="#94a3b8" font-size="8">if chunk_index == last_written &amp;&amp; CRC matches → no-op (already written)</text>
-  <text x="550" y="646" fill="#94a3b8" font-size="8">if chunk_index == chunk_count → normal append</text>
-  <text x="550" y="660" fill="#64748b" font-size="7">Pipeline writes are sequential → only last chunk can be retried</text>
-
-  <!-- Legend -->
-  <rect x="30" y="695" width="1000" height="22" rx="4" fill="rgba(30, 41, 59, 0.3)" stroke="#475569" stroke-width="0.5"/>
-  <circle cx="55" cy="706" r="4" fill="#22d3ee"/>
-  <text x="65" y="710" fill="#94a3b8" font-size="8">Client / Data</text>
-  <circle cx="165" cy="706" r="4" fill="#34d399"/>
-  <text x="175" y="710" fill="#94a3b8" font-size="8">NameNode / DN</text>
-  <circle cx="285" cy="706" r="4" fill="#a78bfa"/>
-  <text x="295" y="710" fill="#94a3b8" font-size="8">Storage Format</text>
-  <circle cx="395" cy="706" r="4" fill="#fb923c"/>
-  <text x="405" y="710" fill="#94a3b8" font-size="8">ACK / Reverse</text>
-  <circle cx="505" cy="706" r="4" fill="#fb7185"/>
-  <text x="515" y="710" fill="#94a3b8" font-size="8">Checksum</text>
-  <circle cx="595" cy="706" r="4" fill="#fbbf24"/>
-  <text x="605" y="710" fill="#94a3b8" font-size="8">Idempotency</text>
+  <!-- Reading guide -->
+  <rect x="50" y="555" width="960" height="42" rx="8" fill="rgba(15, 23, 42, 0.6)" stroke="#1e293b" stroke-width="1"/>
+  <circle cx="76" cy="576" r="5" fill="#34d399"/>
+  <text x="92" y="581" fill="#94a3b8" font-size="12">NameNode controls metadata</text>
+  <circle cx="332" cy="576" r="5" fill="#22d3ee"/>
+  <text x="348" y="581" fill="#94a3b8" font-size="12">Data bytes bypass NameNode</text>
+  <circle cx="605" cy="576" r="5" fill="#fb923c"/>
+  <text x="621" y="581" fill="#94a3b8" font-size="12">Client advances after pipeline ACK</text>
 </svg>
