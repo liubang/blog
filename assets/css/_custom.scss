@@ -19,3 +19,149 @@ img[src$="#right"] {
   margin-left: 1rem;
   margin-bottom: 0.5rem;
 }
+
+.about-page {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.about-hero {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 0 1.5rem;
+  border-bottom: 1px solid var(--global-border-color);
+}
+
+.about-avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.about-kicker {
+  margin: 0 0 0.6rem;
+  color: var(--global-font-secondary-color);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.about-hero h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.25;
+}
+
+.about-lead {
+  margin: 0.9rem 0 0;
+  color: var(--global-font-secondary-color);
+  line-height: 1.75;
+}
+
+.about-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.1rem;
+}
+
+.about-actions a,
+.about-project,
+.about-focus-item {
+  color: inherit;
+  text-decoration: none;
+}
+
+.about-actions a {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--global-border-color);
+  border-radius: 6px;
+  background: var(--code-background-color);
+  line-height: 1;
+}
+
+.about-actions a:hover,
+.about-project:hover,
+.about-focus-item:hover {
+  border-color: var(--global-link-color);
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.about-stats div,
+.about-project,
+.about-focus-item {
+  display: block;
+  border: 1px solid var(--global-border-color);
+  border-radius: 8px;
+  background: var(--code-background-color);
+}
+
+.about-stats div {
+  padding: 1rem;
+}
+
+.about-stats strong,
+.about-project strong,
+.about-focus-item span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+}
+
+.about-stats span,
+.about-project span,
+.about-focus-item p {
+  color: var(--global-font-secondary-color);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.about-section-title {
+  margin: 2rem 0 0.9rem;
+  font-size: 1.25rem;
+}
+
+.about-focus,
+.about-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.about-focus-item,
+.about-project {
+  padding: 1rem;
+}
+
+.about-focus-item p {
+  margin: 0;
+}
+
+@media (max-width: 680px) {
+  .about-hero,
+  .about-stats,
+  .about-focus,
+  .about-projects {
+    grid-template-columns: 1fr;
+  }
+
+  .about-hero {
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+
+  .about-avatar {
+    width: 96px;
+    height: 96px;
+  }
+}

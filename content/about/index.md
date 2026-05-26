@@ -7,28 +7,65 @@ toc: false
 
 <!--more-->
 
-<img class="img-fluid" align="center" loading="lazy" decoding="async" alt="GitHub stats" src ="https://github-readme-stats.vercel.app/api?username=liubang&show_icons=true&count_private=true&hide_title=true&hide=issues&line_height=24" />
+<section class="about-page">
+  <div class="about-hero">
+    <img class="about-avatar" src="/images/profile.png" alt="liubang" loading="eager" decoding="async" />
+    <div>
+      <p class="about-kicker">liubang</p>
+      <h2>写代码，也写一点代码之外的思考。</h2>
+      <p class="about-lead">长期关注 C++、存储系统、编译器、分布式系统和工程实践。这个博客主要记录读源码、做项目和整理知识时留下的路线图。</p>
+      <div class="about-actions">
+        <a href="https://github.com/liubang" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:it.liubang@gmail.com">Email</a>
+        <a href="/index.xml">RSS</a>
+      </div>
+    </div>
+  </div>
 
-<img class="img-fluid" align="center" style="margin-top:10px;" loading="lazy" decoding="async" alt="Top languages" src="https://github-readme-stats.vercel.app/api/top-langs/?username=liubang&layout=compact&hide_title=true&langs_count=6&hide=scss,html,javascript,shell,Emacs%20Lisp,Vim%20script" />
+  <div class="about-stats" aria-label="写作方向">
+    <div>
+      <strong>C++</strong>
+      <span>语言、模板、运行时与工程实践</span>
+    </div>
+    <div>
+      <strong>Storage</strong>
+      <span>LSM、分布式协议、文件系统设计</span>
+    </div>
+    <div>
+      <strong>Compiler</strong>
+      <span>解析器、解释器、查询引擎与 LSP</span>
+    </div>
+  </div>
 
-<p style="margin-top:10px"><img class="img-fluid" align="center" loading="lazy" decoding="async" alt="GitHub trophies" src="https://github-profile-trophy.vercel.app/?username=liubang&column=8" style="margin: auto;" width="100%" /></p>
+  <h2 class="about-section-title">近期关注</h2>
+  <div class="about-focus">
+    <a href="/minidfs/" class="about-focus-item">
+      <span>MiniDFS</span>
+      <p>一个用来拆解 HDFS 核心机制的分布式文件系统练习：NameNode、DataNode、写入 Pipeline、Lease、心跳和副本自愈。</p>
+    </a>
+    <a href="/flux/" class="about-focus-item">
+      <span>Flux Query Engine</span>
+      <p>从语法、AST、Runtime 到 Connector、Optimizer、LSP 的查询语言实现笔记。</p>
+    </a>
+  </div>
 
-## 项目
-
-<a href="https://github.com/algo-data-platform/LaserDB">
-    <img class="img-fluid" align="center" loading="lazy" decoding="async" alt="LaserDB repository card" src="https://github-readme-stats.vercel.app/api/pin/?username=algo-data-platform&repo=LaserDB&show_owner=true" />
-</a>
-
-<a href="https://github.com/liubang/nvimrc" style="margin-left: 10px;">
-    <img class="img-fluid" align="center" loading="lazy" decoding="async" alt="nvimrc repository card" src="https://github-readme-stats.vercel.app/api/pin/?username=liubang&repo=vimrc&show_owner=true" />
-</a>
-
-<p></p>
-
-<a href="https://github.com/liubang/linger_framework">
-    <img class="img-fluid" align="center" loading="lazy" decoding="async" alt="linger framework repository card" src="https://github-readme-stats.vercel.app/api/pin/?username=liubang&repo=linger_framework&show_owner=true" />
-</a>
-
-<a href="https://github.com/liubang/php_double_array_trie_tree" style="margin-left: 10px;">
-    <img class="img-fluid" align="center" loading="lazy" decoding="async" alt="php double array trie tree repository card" src="https://github-readme-stats.vercel.app/api/pin/?username=liubang&repo=php_double_array_trie_tree&show_owner=true" />
-</a>
+  <h2 class="about-section-title">项目</h2>
+  <div class="about-projects">
+    <a class="about-project" href="https://github.com/algo-data-platform/LaserDB" target="_blank" rel="noopener noreferrer">
+      <strong>LaserDB</strong>
+      <span>面向学习和实验的存储系统项目。</span>
+    </a>
+    <a class="about-project" href="https://github.com/liubang/nvimrc" target="_blank" rel="noopener noreferrer">
+      <strong>nvimrc</strong>
+      <span>日常使用的 Neovim 配置。</span>
+    </a>
+    <a class="about-project" href="https://github.com/liubang/linger_framework" target="_blank" rel="noopener noreferrer">
+      <strong>linger_framework</strong>
+      <span>C++ 网络与服务框架实验。</span>
+    </a>
+    <a class="about-project" href="https://github.com/liubang/php_double_array_trie_tree" target="_blank" rel="noopener noreferrer">
+      <strong>php_double_array_trie_tree</strong>
+      <span>PHP double-array trie tree 扩展。</span>
+    </a>
+  </div>
+</section>
