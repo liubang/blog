@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1e293b" stroke-width=".5"/></pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker>
+    <marker id="accent" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#fb923c"/></marker>
+  </defs>
+  <rect width="920" height="560" fill="#020617"/><rect width="920" height="560" fill="url(#grid)"/>
+  <text x="40" y="38" fill="#fff" font-family="monospace" font-size="17" font-weight="700">数据仓库分层架构</text>
+  <text x="40" y="58" fill="#94a3b8" font-family="monospace" font-size="9">From operational data to reusable analytical datasets</text>
+  <g fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)">
+    <path d="M162 162H222"/><path d="M350 162H410"/><path d="M538 162H598"/><path d="M726 162H786"/>
+    <path d="M474 302V216"/><path d="M662 216V280"/>
+  </g>
+  <path d="M162 302H410" fill="none" stroke="#fb923c" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#accent)"/>
+  <g font-family="monospace" text-anchor="middle">
+    <g><rect x="36" y="116" width="126" height="92" rx="7" fill="#0f172a" stroke="#22d3ee"/><text x="99" y="145" fill="#fff" font-size="12" font-weight="700">业务系统</text><text x="99" y="166" fill="#94a3b8" font-size="9">MySQL · Log</text><text x="99" y="183" fill="#94a3b8" font-size="9">Kafka · SaaS</text></g>
+    <g><rect x="224" y="116" width="126" height="92" rx="7" fill="#0f172a" stroke="#fb923c"/><text x="287" y="145" fill="#fff" font-size="12" font-weight="700">ODS</text><text x="287" y="166" fill="#94a3b8" font-size="9">原始数据层</text><text x="287" y="183" fill="#94a3b8" font-size="9">保留源系统语义</text></g>
+    <g><rect x="412" y="116" width="126" height="92" rx="7" fill="#0f172a" stroke="#34d399"/><text x="475" y="145" fill="#fff" font-size="12" font-weight="700">DWD</text><text x="475" y="166" fill="#94a3b8" font-size="9">明细数据层</text><text x="475" y="183" fill="#94a3b8" font-size="9">形成原子事实</text></g>
+    <g><rect x="600" y="116" width="126" height="92" rx="7" fill="#0f172a" stroke="#a78bfa"/><text x="663" y="145" fill="#fff" font-size="12" font-weight="700">DWS</text><text x="663" y="166" fill="#94a3b8" font-size="9">汇总数据层</text><text x="663" y="183" fill="#94a3b8" font-size="9">沉淀公共指标</text></g>
+    <g><rect x="788" y="116" width="96" height="92" rx="7" fill="#0f172a" stroke="#fb7185"/><text x="836" y="145" fill="#fff" font-size="12" font-weight="700">ADS</text><text x="836" y="166" fill="#94a3b8" font-size="9">应用层</text><text x="836" y="183" fill="#94a3b8" font-size="9">报表 · API</text></g>
+    <g><rect x="412" y="282" width="126" height="72" rx="7" fill="#0f172a" stroke="#fbbf24"/><text x="475" y="311" fill="#fff" font-size="12" font-weight="700">DIM</text><text x="475" y="332" fill="#94a3b8" font-size="9">用户 · 商品 · 地区</text></g>
+    <g><rect x="600" y="282" width="126" height="72" rx="7" fill="#0f172a" stroke="#64748b" stroke-dasharray="5 4"/><text x="663" y="311" fill="#fff" font-size="12" font-weight="700">OLAP 查询</text><text x="663" y="332" fill="#94a3b8" font-size="9">Dashboard · Ad Hoc</text></g>
+  </g>
+  <g font-family="monospace" font-size="8" fill="#94a3b8" text-anchor="middle">
+    <text x="192" y="151">CDC / ETL</text><text x="380" y="151">清洗</text><text x="568" y="151">聚合</text><text x="756" y="151">加工</text>
+    <text x="286" y="294" fill="#fb923c">维度也可直接从源数据加工</text>
+  </g>
+  <line x1="40" y1="404" x2="880" y2="404" stroke="#1e293b"/>
+  <text x="40" y="434" fill="#94a3b8" font-family="monospace" font-size="9">核心原则</text>
+  <text x="40" y="462" fill="#fff" font-family="monospace" font-size="12">数据每向下一层流动一次，就减少一部分重复解释成本。</text>
+  <text x="40" y="486" fill="#64748b" font-family="monospace" font-size="10">ODS 保留事实 · DWD 统一口径 · DWS 复用汇总 · ADS 服务应用 · DIM 提供分析视角</text>
+</svg>
