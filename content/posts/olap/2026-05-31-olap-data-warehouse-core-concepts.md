@@ -1,49 +1,88 @@
 ---
-title: "从 ODS 到 Materialized View：一文讲透 OLAP 与数据仓库中的核心概念"
-description: "从业务数据进入数仓开始，系统梳理 ODS、DWD、DWS、ADS、维度建模、OLAP 多维分析、预聚合、Rollup 与 Materialized View，并结合 Doris、StarRocks、ClickHouse 分析现代 OLAP 系统的演进路径。"
+title: "一文讲透数据仓库与 OLAP 核心概念"
+description: "从业务数据进入数仓开始，沿着维度建模、OLAP 多维分析、预聚合、Materialized View、Query Rewrite 与 CBO 的演进路径，建立完整的数据仓库与分析型数据库知识体系。"
 date: 2026-05-31
 categories: [OLAP 与数据仓库]
-tags: [olap, data-warehouse, materialized-view, query-optimizer]
+tags: [olap, data-warehouse]
 authors: ["liubang"]
+lightgallery: true
 ---
 
-如果让一个业务数据库回答“某个用户的订单是否已经支付”，它通常只需要通过主键索引读取几行数据。如果让同一个数据库回答“过去一年每个地区、每个品类、每个月的销售额和去重用户数是多少”，问题就完全不同了：它需要扫描大量订单明细，关联商品和地区信息，再执行聚合、排序甚至窗口计算。
+> 从 ODS、维度建模到 Cube、Materialized View 与 Query Rewrite
 
-前者是典型的 **OLTP**（Online Transaction Processing，联机事务处理），后者是典型的 **OLAP**（Online Analytical Processing，联机分析处理）。
+数据库领域有一类概念特别容易被讲乱：ODS、DWD、事实表、维度表、Cube、Rollup、Projection、Materialized View、Query Rewrite。它们经常一起出现在数据平台架构图里，却不属于同一个层次。
 
-很多数仓术语都诞生于同一个矛盾：**业务系统擅长记录事实，但不擅长反复解释事实。** ODS、DWD、DWS、ADS 是为了逐步整理事实；维度建模是为了组织分析视角；Cube、Rollup 和 Materialized View 则是在回答另一个问题：能不能不要每次查询都从最细粒度的数据重新算起？
+ODS 和 DWD 是数仓工程中的数据分层；事实表和维度表来自维度建模；Cube、Slice 和 Dice 描述多维分析语义；数据库语境下的 Rollup、Projection 和 Materialized View 是用于加速查询的物理机制；Query Rewrite 和 CBO 则属于优化器。
 
-本文从一张订单表开始，把这些概念串成一个完整体系。
+它们之所以经常同时出现，是因为都与一个问题有关：
 
-## 目录
+> 当业务数据越来越多，分析需求越来越复杂时，如何避免每一次查询都从最原始的数据重新计算？
 
-- [1. 从业务数据库开始](#1-从业务数据库开始)
-- [2. Data Warehouse：将分析负载从业务库剥离](#2-data-warehouse将分析负载从业务库剥离)
-- [3. 数仓分层：ODS、DWD、DWS、ADS 与 DIM](#3-数仓分层odsdwddwsads-与-dim)
-- [4. 维度建模：事实表与维度表](#4-维度建模事实表与维度表)
-- [5. OLAP：在多个维度上观察事实](#5-olap在多个维度上观察事实)
-- [6. 为什么需要预聚合](#6-为什么需要预聚合)
-- [7. Rollup：一个词，两层含义](#7-rollup一个词两层含义)
-- [8. Materialized View：从固定汇总表到自动查询改写](#8-materialized-view从固定汇总表到自动查询改写)
-- [9. Doris、StarRocks 与 ClickHouse 的实现差异](#9-dorisstarrocks-与-clickhouse-的实现差异)
-- [10. Presto 与 Trino：计算存储分离之后](#10-presto-与-trino计算存储分离之后)
-- [11. 从 Cube 到 Cost Based Rewrite](#11-从-cube-到-cost-based-rewrite)
-- [12. 工程实践：什么时候应该创建 MV](#12-工程实践什么时候应该创建-mv)
-- [13. 术语表](#13-术语表)
-- [14. 总结](#14-总结)
+本文从一张订单表开始，按照问题出现的顺序梳理这套体系。
 
-## 1. 从业务数据库开始
+## 概念层次总览
 
-### 1.1 业务系统首先需要正确地记录状态
+在进入细节之前，先把概念放回它们所属的层次。
 
-假设我们正在开发一个电商系统。最开始，MySQL 中可能有如下几张表：
+```text
+业务系统
+   |
+   v
++----------------------------------------------------------+
+| 数仓工程层                                                |
+| ODS -> DWD -> DWS -> ADS                                 |
+| 回答：数据如何清洗、沉淀、复用，并最终服务应用？           |
++----------------------------------------------------------+
+   |
+   v
++----------------------------------------------------------+
+| 维度建模层                                                |
+| Grain -> Fact Table -> Dimension Table -> Star Schema    |
+| 回答：一行数据代表什么？从哪些角度观察业务过程？            |
++----------------------------------------------------------+
+   |
+   v
++----------------------------------------------------------+
+| OLAP 语义层                                               |
+| Cube -> Slice / Dice -> Drill Down / Roll Up -> Pivot    |
+| 回答：分析人员如何在多个维度和层级之间观察事实？            |
++----------------------------------------------------------+
+   |
+   v
++----------------------------------------------------------+
+| 数据库实现层                                              |
+| Aggregate Table -> Rollup -> Projection -> MV            |
+| 回答：哪些结果值得提前计算，如何保存额外物理布局？          |
++----------------------------------------------------------+
+   |
+   v
++----------------------------------------------------------+
+| 优化器层                                                  |
+| Statistics -> Query Rewrite -> CBO -> Join Reorder       |
+| 回答：如何自动选择代价最低且语义等价的执行计划？            |
++----------------------------------------------------------+
+```
+
+理解这张图，后面的术语就不容易混淆。例如：
+
+- DWS 中的日销售汇总表和数据库中的 MV 都可能保存聚合结果，但前者是数仓工程资产，后者是数据库对象。
+- OLAP 语义中的 Roll Up 是从日上卷到月的分析动作，Doris 或 StarRocks 中的 Rollup 则是一种物化索引。
+- Cube 是观察事实的逻辑空间，不等于数据库必须完整物化一个立方体。
+
+下面从最初的问题开始。
+
+## 第一章 为什么需要数据仓库
+
+### 1.1 业务数据库首先服务交易
+
+假设我们正在开发一个电商系统。MySQL 中有三张表：
 
 ```sql
 CREATE TABLE orders (
     order_id      BIGINT PRIMARY KEY,
     user_id       BIGINT NOT NULL,
     region_id     INT NOT NULL,
-    order_status  VARCHAR(32) NOT NULL,
+    status        VARCHAR(32) NOT NULL,
     order_time    DATETIME NOT NULL,
     update_time   DATETIME NOT NULL,
     KEY idx_user_time (user_id, order_time)
@@ -60,22 +99,23 @@ CREATE TABLE order_items (
 CREATE TABLE products (
     product_id    BIGINT PRIMARY KEY,
     category_id   INT NOT NULL,
+    brand_id      INT NOT NULL,
     product_name  VARCHAR(255) NOT NULL
 );
 ```
 
-这套模型首先服务于交易流程：
+这套模型首先要保证交易正确：
 
 - 创建订单时，写入必须快速完成。
-- 修改支付状态时，必须通过主键准确更新。
-- 查询订单详情时，只需要读取少量记录。
-- 库存扣减、支付和退款可能需要事务保证。
+- 支付回调到达时，必须准确更新订单状态。
+- 用户查看订单详情时，只读取少量记录。
+- 库存扣减、退款和支付需要事务保证。
 
-OLTP 数据库会围绕这些目标优化：B+ Tree 索引、行存储、短事务、点查、范围查、并发控制和高频小批量写入。表结构通常经过规范化，尽量减少冗余，避免修改一份数据时还要同步维护多份副本。
+这类工作负载称为 **OLTP**（Online Transaction Processing，联机事务处理）。OLTP 系统通常围绕短事务、点查、小范围更新和高并发写入优化。B+ Tree 索引、行存储、Buffer Pool、锁和 MVCC 都服务于这个目标。
 
-### 1.2 一个分析查询会发生什么
+### 1.2 分析查询是另一种工作负载
 
-运营同学希望查看过去一年每个地区和商品品类的月销售额：
+运营同学希望查询过去一年每个省份、每个品类、每个月的销售额和购买人数：
 
 ```sql
 SELECT
@@ -87,7 +127,7 @@ SELECT
 FROM orders o
 JOIN order_items i ON o.order_id = i.order_id
 JOIN products p ON i.product_id = p.product_id
-WHERE o.order_status = 'PAID'
+WHERE o.status = 'PAID'
   AND o.order_time >= '2025-01-01'
   AND o.order_time <  '2026-01-01'
 GROUP BY
@@ -96,123 +136,82 @@ GROUP BY
     p.category_id;
 ```
 
-这条 SQL 对 MySQL 并不是“不合法”，但它与交易请求争抢的是同一组资源：
+SQL 本身没有问题，但访问模式已经变了：
 
 ```text
-                       MySQL
-                         |
-       +-----------------+-----------------+
-       |                                   |
-  在线交易请求                         分析查询
-  点查 / 小范围更新                    大范围扫描
-  毫秒级事务                           多表 Join
-  少量数据页                           GROUP BY
-  延迟敏感                             COUNT DISTINCT
-       |                                   |
-       +----------- 争抢 CPU / IO / Buffer Pool
+OLTP 请求                          OLAP 查询
+---------                          ---------
+按订单号查几行                      扫描一年订单
+更新一条支付状态                    Join 多张表
+毫秒级短事务                        Group By / Distinct
+延迟敏感                            吞吐敏感
+大量并发小请求                      少量但昂贵的大查询
 ```
 
-复杂分析不适合直接压在 OLTP 数据库上，通常有五个原因：
+**OLAP**（Online Analytical Processing，联机分析处理）关注的是聚合、趋势、对比、下钻和即席分析。它与 OLTP 的主要矛盾不是 SQL 语法，而是资源模型：
 
-1. **扫描范围太大。** 订单详情查询只读取几行，年度报表可能读取数亿行。
-2. **访问模式不同。** 行存储适合拿到一条记录的全部字段；分析查询往往只读取少数列，但会读取这些列的大量行。
-3. **计算链路更长。** Join、Hash Aggregate、Sort、Window Function 都需要额外 CPU 和内存。
-4. **历史数据持续累积。** 业务库通常只关心当前状态，分析系统还要保留历史变化。
-5. **资源隔离困难。** 一次低效报表查询可能污染 Buffer Pool，拖慢支付、下单等核心链路。
+1. **扫描范围不同。** 点查读取几行，年度报表可能读取数十亿行。
+2. **存储偏好不同。** 行存储适合取出整条记录，分析查询通常只读取少量列的大量行。
+3. **算子成本不同。** Join、Hash Aggregate、Sort、Window Function 都需要更多 CPU 和内存。
+4. **历史要求不同。** 业务库关心当前状态，分析系统还要保留历史变化。
+5. **资源隔离困难。** 报表查询会争抢 CPU、IO 和 Buffer Pool，最终影响支付和下单链路。
 
-OLTP 与 OLAP 并不是两套互斥的 SQL 语法，而是两类不同的工作负载。
+### 1.3 数仓为什么出现
 
-| 维度 | OLTP | OLAP |
-| --- | --- | --- |
-| 典型请求 | 下单、支付、查询详情 | 报表、趋势、归因分析 |
-| 数据范围 | 少量记录 | 大量历史数据 |
-| 写入方式 | 高频小事务 | 批量导入、流式写入 |
-| 常用操作 | INSERT、UPDATE、点查 | Scan、Join、Aggregate |
-| 存储偏好 | 行存储、索引查找 | 列存储、压缩、向量化执行 |
-| 优化目标 | 低延迟事务与并发写入 | 扫描吞吐与复杂查询吞吐 |
-
-## 2. Data Warehouse：将分析负载从业务库剥离
-
-### 2.1 数仓不是一块更大的磁盘
-
-**Data Warehouse**（数据仓库）的基本思路，是把分析需要的数据从业务系统抽取出来，经过清洗、建模和汇总，交给独立的分析系统处理。
+最直接的解决方案是把分析负载从交易库剥离出来：
 
 ```text
- MySQL / PostgreSQL       App Log        Kafka         SaaS API
-        |                    |             |              |
-        +--------------------+------+------+--------------+
-                                  |
-                       CDC / Batch ETL / Streaming
-                                  |
-                                  v
-                         Data Warehouse / Lake
-                                  |
-                   +--------------+---------------+
-                   |                              |
-             Hive / Spark SQL             Doris / StarRocks
-             离线加工与回溯                 实时 OLAP 查询
-                   |                              |
-                   +--------------+---------------+
-                                  |
-                         BI / Dashboard / API
+MySQL / PostgreSQL        App Log        Kafka
+        |                    |             |
+        +--------------------+-------------+
+                             |
+                      CDC / Batch ETL
+                             |
+                             v
+                      Data Warehouse
+                             |
+              +--------------+--------------+
+              |                             |
+        Hive / Spark SQL           Doris / StarRocks
+        离线加工与回溯                交互式 OLAP 查询
+              |                             |
+              +--------------+--------------+
+                             |
+                       BI / API / Ad Hoc
 ```
 
-数据进入数仓的常见方式包括：
+数据仓库不是一块更大的磁盘，而是一套围绕分析建立的数据组织方式：
 
-- 通过 CDC 捕获 MySQL Binlog，将订单变更同步到 Kafka。
-- 通过 Flink 或 Spark Streaming 做实时清洗和聚合。
-- 通过 Hive、Spark SQL 做小时级或天级离线加工。
-- 通过调度系统周期性执行批处理任务。
-- 将结果写入对象存储上的 Parquet、ORC、Iceberg 表，或者写入 Doris、StarRocks、ClickHouse 等 OLAP 数据库。
+- 它从多个业务系统接住原始数据。
+- 它清洗脏数据，统一字段和指标口径。
+- 它保留历史，让报表能够回到过去。
+- 它将交易模型转换成适合分析的模型。
+- 它提前计算高频结果，让查询成本可控。
 
-数仓的价值不只是“把数据复制一遍”。它还要解决业务库不会主动解决的问题：
+从这里开始，数据不再只是业务系统中的状态，而是分析资产。
 
-- 统一不同业务系统的字段口径。
-- 保留历史快照和变更轨迹。
-- 处理脏数据、迟到数据和重复数据。
-- 将交易模型转换成适合分析的模型。
-- 将高频查询提前汇总，控制查询成本。
+## 第二章 数据仓库分层
 
-### 2.2 湖、仓与 OLAP 数据库是什么关系
+### 2.1 分层是工程约定，不是数据库语法
 
-Hive 和 Spark SQL 更接近离线加工引擎：数据通常存储在 HDFS 或对象存储中，查询延迟可以是分钟级。Presto 和 Trino 擅长在多个数据源之上提供交互式联邦查询。Doris、StarRocks、ClickHouse 则更强调面向用户请求的低延迟分析。
+常见的 ODS、DWD、DWS、ADS 是数仓工程中的分层约定。不同团队的命名和边界并不完全一致。本文沿用这套常见划分，因为它足以说明数据如何从原始记录逐步变成应用可直接消费的数据集。
 
-这些系统并不总是互相替代。常见架构是：
+这些分层不是数据库内核概念，也不是 SQL 标准中的对象类型。
 
-```text
-              Object Storage / HDFS
-         Parquet / ORC / Iceberg / Hudi
-                       |
-          +------------+------------+
-          |                         |
-   Hive / Spark SQL             Presto / Trino
-   离线 ETL、回溯重算            联邦查询、即席分析
-          |
-          v
-  Doris / StarRocks / ClickHouse
-  Dashboard、API、实时分析服务
-```
-
-现代数据平台的边界正在变得模糊：OLAP 数据库可以查询外部湖表，Trino 的 Connector 可以管理某些存储格式上的物化视图，Spark 也能执行复杂分析。但理解数仓时，仍然应该先从“数据如何逐层变得更适合消费”开始。
-
-## 3. 数仓分层：ODS、DWD、DWS、ADS 与 DIM
-
-不同公司的命名规范会有差异，但最常见的一套分层是：
+你可以在 Hive、Iceberg、Doris、StarRocks 或 ClickHouse 中建设这些层；也可以用 Spark SQL、Flink 或调度系统完成层与层之间的加工。数据库只负责存储和执行，分层表达的是团队如何管理数据资产。
 
 ![数据仓库分层架构](/images/olap/data-warehouse-layers.svg "数据仓库分层架构")
 
-### 3.1 ODS：忠实接住源数据
+### 2.2 ODS：忠实接住源数据
 
-**ODS**（Operational Data Store）是原始数据进入数仓后的第一站。它的目标不是设计漂亮的数据模型，而是尽量保留源系统语义，保证数据可追溯。
-
-例如，MySQL `orders` 表经过 CDC 后，可以进入：
+在常见的数仓分层约定中，**ODS**（Operational Data Store）是原始数据进入数仓后的第一站。ODS 首先追求可追溯，而不是模型漂亮。
 
 ```sql
 CREATE TABLE ods_orders (
     order_id       BIGINT,
     user_id        BIGINT,
     region_id      INT,
-    order_status   STRING,
+    status         STRING,
     order_time     TIMESTAMP,
     update_time    TIMESTAMP,
     op_type        STRING,
@@ -220,19 +219,11 @@ CREATE TABLE ods_orders (
 );
 ```
 
-ODS 中通常会保留操作类型、摄取时间、源系统标识等元数据。后续发现统计口径错误时，可以从 ODS 回溯，而不是重新压业务库。
+CDC 数据通常会保留操作类型、摄取时间和源系统信息。后续发现口径错误时，可以从 ODS 重放，而不必重新压业务库。
 
-### 3.2 DWD：形成原子事实
+### 2.3 DWD：沉淀原子事实
 
-**DWD**（Data Warehouse Detail）负责将原始数据清洗为可复用的明细事实。典型动作包括：
-
-- 去重和过滤无效记录。
-- 将字符串时间转换成标准时间类型。
-- 统一金额单位和枚举值。
-- 处理订单状态变化。
-- 将订单头和订单明细整理成稳定粒度。
-
-例如，以“一个订单中的一个商品”为粒度：
+**DWD**（Data Warehouse Detail）负责清洗、去重、类型统一和口径统一，并形成可复用的明细数据。
 
 ```sql
 CREATE TABLE dwd_order_items (
@@ -246,28 +237,11 @@ CREATE TABLE dwd_order_items (
 );
 ```
 
-粒度非常重要。建事实表之前，应该先用一句话回答：**一行数据究竟代表什么？**
+这张表的一行表示“某个订单中的某个商品”。这个粒度一旦确定，销售额和销量才有稳定含义；订单数则需要按 `order_id` 去重计算。
 
-### 3.3 DIM：保存分析视角
+### 2.4 DWS：沉淀公共汇总
 
-**DIM**（Dimension）保存用户、商品、地区、组织、日期等维度信息。例如：
-
-```sql
-CREATE TABLE dim_product (
-    product_id      BIGINT,
-    product_name    STRING,
-    category_id     INT,
-    category_name   STRING,
-    brand_id        INT,
-    brand_name      STRING
-);
-```
-
-维度表不是无条件覆盖最新值。用户等级、组织归属、商品分类都可能随时间变化。如果报表需要还原历史状态，就要使用拉链表或 SCD（Slowly Changing Dimension，缓慢变化维）记录有效时间区间。
-
-### 3.4 DWS：沉淀可复用汇总
-
-**DWS**（Data Warehouse Summary）面向主题域沉淀公共汇总。例如，按天、地区和品类统计：
+**DWS**（Data Warehouse Summary）面向主题域保存可复用汇总。例如，按天、地区和品类计算销售额：
 
 ```sql
 CREATE TABLE dws_sales_day_region_category AS
@@ -276,18 +250,17 @@ SELECT
     region_id,
     category_id,
     SUM(amount) AS revenue,
-    SUM(quantity) AS sold_quantity,
-    COUNT(*) AS item_count
+    SUM(quantity) AS sold_quantity
 FROM dwd_order_items i
 JOIN dim_product p ON i.product_id = p.product_id
 GROUP BY DATE(order_time), region_id, category_id;
 ```
 
-DWS 的关键不是“所有数据都聚合一次”，而是识别跨应用复用的主题指标。销售看板、经营日报和预算系统都需要日销售额，那么这个汇总就应该稳定沉淀。
+DWS 不是“把所有字段都聚合一遍”，而是识别跨应用复用的公共指标。
 
-### 3.5 ADS：直接服务应用
+### 2.5 ADS：面向消费场景
 
-**ADS**（Application Data Service）面向具体消费场景。它可以是报表表、API 查询表、导出结果，也可以是推荐或风控需要的特征表。
+**ADS**（Application Data Service）直接服务报表、API 和具体应用：
 
 ```sql
 CREATE TABLE ads_region_monthly_sales AS
@@ -299,77 +272,375 @@ FROM dws_sales_day_region_category
 GROUP BY DATE_FORMAT(dt, 'yyyy-MM'), region_id;
 ```
 
-ADS 往往带有明确的产品语义。它可以牺牲通用性，换取查询简单、响应稳定和权限边界清晰。
+ADS 可以牺牲通用性换取查询简单、权限清晰和响应稳定。
 
-## 4. 维度建模：事实表与维度表
+```text
+业务系统
+   |
+   | CDC / Log / Batch Sync
+   v
+  ODS     原始数据，可追溯
+   |
+   | 清洗、去重、统一口径
+   v
+  DWD     原子事实，可复用
+   |
+   | 面向主题聚合
+   v
+  DWS     公共指标，可共享
+   |
+   | 面向应用加工
+   v
+  ADS     报表、接口、特征
+```
 
-### 4.1 Fact Table：业务过程留下的度量
+这条链路解决的是数据工程问题。但 DWD 中的一行究竟应该代表什么？维度和指标如何组织？这需要维度建模。
 
-**Fact Table**（事实表）描述一个可度量的业务过程，例如下单、支付、退款、曝光、点击和设备采样。
+## 第三章 维度建模
+
+维度建模的目标，是让业务问题对应到语义稳定的数据结构。
+
+交易系统通常按实体和更新路径设计：订单、订单项、用户、商品各自独立。分析系统则需要围绕业务过程设计：一次下单、一次支付、一次退款、一次曝光分别产生什么事实？分析人员希望从时间、用户、商品、地区还是渠道观察这些事实？
+
+Kimball 的经典四步法是：
+
+```text
+1. Select the business process     选择业务过程
+2. Declare the grain               声明粒度
+3. Identify the dimensions         识别维度
+4. Identify the facts              识别事实
+```
+
+### 3.1 Grain：为什么必须先声明粒度
+
+**Grain**（粒度）定义事实表中一行数据精确代表什么。
+
+对于订单系统，至少有三种可能粒度：
+
+```text
+订单粒度       一行 = 一个订单
+订单项粒度     一行 = 一个订单中的一个商品
+支付流水粒度   一行 = 一次支付或退款动作
+```
+
+如果不先声明粒度，很容易把不同层次的事实混在一起：
+
+```text
+order_id  product_id  payment_id  order_amount  item_amount
+10001     2001        P001        299.00        199.00
+10001     2002        P001        299.00        100.00
+```
+
+对 `order_amount` 求和会得到 `598.00`，因为订单金额在订单项粒度被重复了两次。
+
+因此，事实表设计的第一句话不应该是“有哪些字段”，而应该是：
+
+> `fact_order_items` 中的一行，表示一个已支付订单中的一个商品明细。
+
+粒度决定：
+
+- 哪些维度键可以放进事实表。
+- 哪些指标可以直接求和。
+- Join 是否会放大数据。
+- 下钻能够到达的最细层级。
+- 后续 Aggregate Table 和 MV 的语义是否正确。
+
+Grain 不是建模文档中的一句开场白，而是所有聚合正确性的前提。
+
+### 3.2 Fact Table：记录业务过程
+
+**Fact Table**（事实表）描述可度量的业务过程。订单明细事实表可以写成：
+
+```sql
+CREATE TABLE fact_order_items (
+    order_id         BIGINT,
+    order_date_key   INT,
+    user_key         BIGINT,
+    product_key      BIGINT,
+    region_key       INT,
+    channel_key      INT,
+    quantity         INT,
+    amount           DECIMAL(18, 2)
+);
+```
+
+事实表通常包含两类列：
+
+- **维度键**：时间、用户、商品、地区、渠道。
+- **度量值**：金额、数量、耗时、流量。
+
+度量值还需要判断可加性：
+
+| 类型 | 示例 | 是否可以跨所有维度求和 |
+| --- | --- | --- |
+| Additive | 销售额、销量 | 通常可以 |
+| Semi-additive | 账户余额、库存 | 可以跨部分维度求和，但不能简单跨时间累加 |
+| Non-additive | 比率、单价 | 通常需要重新计算 |
+
+`SUM(amount)` 很自然；`AVG(price)` 则不能先算平均值，再对多个平均值直接求平均。后续设计 MV 时，这个区别非常重要。
+
+### 3.3 Dimension Table：提供观察视角
+
+**Dimension Table**（维度表）回答“从什么角度观察事实”：
+
+```sql
+CREATE TABLE dim_product (
+    product_key      BIGINT,
+    product_id       BIGINT,
+    product_name     STRING,
+    category_id      INT,
+    category_name    STRING,
+    brand_id         INT,
+    brand_name       STRING
+);
+```
+
+商品维度通常比事实表更宽，包含大量可读属性。用户可以按品牌筛选，按品类聚合，再下钻到 SKU：
+
+```sql
+SELECT
+    p.category_name,
+    SUM(f.amount) AS revenue
+FROM fact_order_items f
+JOIN dim_product p ON f.product_key = p.product_key
+GROUP BY p.category_name;
+```
+
+事实表负责记录“发生了什么”，维度表负责解释“它发生在什么上下文中”。
+
+### 3.4 Conformed Dimension：让不同事实说同一种语言
+
+当订单、支付和退款分别建设事实表时，它们都需要时间、用户和商品维度。如果每个团队各自维护一套商品分类，跨主题分析会立即失去一致性。
+
+**Conformed Dimension**（一致性维度）是多个事实表共同使用、具有一致语义的维度。
+
+```text
+fact_order_items ----+
+                    |
+fact_payments -------+----> dim_date
+                    +----> dim_user
+fact_refunds --------+----> dim_product
+```
+
+有了一致性维度，订单和退款可以先在各自粒度上聚合，再按照同一套商品分类对齐：
+
+```sql
+WITH paid AS (
+    SELECT
+        product_key,
+        SUM(amount) AS paid_amount
+    FROM fact_order_items
+    GROUP BY product_key
+),
+refunded AS (
+    SELECT
+        product_key,
+        SUM(refund_amount) AS refund_amount
+    FROM fact_refunds
+    GROUP BY product_key
+)
+SELECT
+    p.category_name,
+    SUM(o.paid_amount) AS paid_amount,
+    SUM(COALESCE(r.refund_amount, 0)) AS refund_amount
+FROM paid o
+JOIN dim_product p ON o.product_key = p.product_key
+LEFT JOIN refunded r ON o.product_key = r.product_key
+GROUP BY p.category_name;
+```
+
+一致性维度是跨主题域复用和 Bus Architecture 的基础。
+
+### 3.5 Degenerate Dimension：只留下业务标识
+
+有些维度没有额外描述属性，但仍然有分析价值。例如订单号：
 
 ```text
 fact_order_items
-+----------+------------+---------+-----------+----------+--------+
-| order_id | product_id | user_id | region_id | quantity | amount |
-+----------+------------+---------+-----------+----------+--------+
-| 10001    | 2001       | 501     | 10        | 2        | 199.00 |
-+----------+------------+---------+-----------+----------+--------+
++----------+-------------+----------+--------+
+| order_id | product_key | quantity | amount |
++----------+-------------+----------+--------+
 ```
 
-事实表通常包含：
+`order_id` 可以用于钻取订单、计算订单数和关联退款，但没有必要创建只有 `order_id` 一列的 `dim_order`。
 
-- 外键：连接用户、商品、地区、日期等维度。
-- 度量值：金额、数量、耗时、流量等可聚合指标。
-- 退化维度：订单号、请求 ID 等直接留在事实表中的业务标识。
+这类直接保留在事实表中的业务标识称为 **Degenerate Dimension**（退化维度）。
 
-事实表首先要确定粒度。订单粒度、订单明细粒度和支付流水粒度不能混在一起，否则 `SUM(amount)` 很容易重复计算。
+### 3.6 Junk Dimension：收拢零散状态
 
-### 4.2 Dimension Table：解释事实的上下文
-
-**Dimension Table**（维度表）回答“从什么角度看事实”。例如：
+事实表中经常出现一批低基数标志位：
 
 ```text
-dim_product                           dim_region
-+------------+-------------+         +-----------+-------------+
-| product_id | category_id |         | region_id | province    |
-+------------+-------------+         +-----------+-------------+
-| 2001       | 301         |         | 10        | Zhejiang    |
-+------------+-------------+         +-----------+-------------+
+is_gift
+is_first_order
+payment_type
+coupon_type
+delivery_type
 ```
 
-事实表中的 `amount = 199.00` 本身没有太多含义。连接商品、地区和时间维度之后，我们才能分析“浙江省某品类在某个月的销售额”。
+把它们全部散落在事实表里，会让表越来越宽；为每个字段创建独立维度表，又会让模型过度碎片化。
 
-### 4.3 Star Schema 与 Snowflake Schema
+**Junk Dimension**（杂项维度）将这些零散属性组合在一起：
 
-**Star Schema**（星型模型）让多个维度表直接围绕事实表展开：
+```sql
+CREATE TABLE dim_order_flags (
+    order_flags_key  INT,
+    is_gift          BOOLEAN,
+    is_first_order   BOOLEAN,
+    payment_type     STRING,
+    coupon_type      STRING
+);
+```
 
-它的优点是查询路径短、容易理解、Join 数量较少。代价是维度表可能存在冗余，例如商品维度同时保存品类名称和品牌名称。
+事实表只保存一个 `order_flags_key`，以免模型在大量低基数属性之间变得零碎。
 
-**Snowflake Schema**（雪花模型）会继续拆分维度：
+### 3.7 Slowly Changing Dimension：业务属性会变化
+
+维度不是静止的。用户会搬家，商品会调整品类，组织会重新划分销售区域。
+
+假设用户 `501` 从浙江迁移到上海：
+
+```text
+user_id = 501
+old region = Zhejiang
+new region = Shanghai
+```
+
+问题是：去年订单应该按浙江统计，还是按上海统计？
+
+#### Type 1：覆盖旧值
+
+**SCD Type 1** 直接更新维度属性：
+
+```sql
+UPDATE dim_user
+SET region_name = 'Shanghai'
+WHERE user_id = 501;
+```
+
+适用于修正拼写错误，或者业务只关心最新状态。代价是历史被改写。
+
+#### Type 2：新增版本
+
+**SCD Type 2** 新增一行，使用代理键和有效时间保留历史：
+
+```text
+user_key  user_id  region_name  valid_from   valid_to     is_current
+--------  -------  -----------  -----------  -----------  ----------
+9001      501      Zhejiang     2024-01-01   2026-05-01   false
+9327      501      Shanghai     2026-05-01   9999-12-31   true
+```
+
+订单事实在写入时绑定当时有效的 `user_key`。这样，历史订单仍然指向浙江版本，新订单指向上海版本。
+
+```sql
+SELECT
+    u.region_name,
+    SUM(f.amount)
+FROM fact_order_items f
+JOIN dim_user u ON f.user_key = u.user_key
+GROUP BY u.region_name;
+```
+
+SCD Type 2 的价值，是让“按照当时事实统计”成为可能。
+
+## 第四章 星型模型、雪花模型与星座模型
+
+### 4.1 Star Schema：让事实处于中心
+
+**Star Schema**（星型模型）让多个维度表直接围绕事实表：
 
 ![星型模型与雪花模型](/images/olap/star-vs-snowflake-schema.svg "星型模型与雪花模型")
 
-雪花模型减少了维度冗余，但增加了 Join 数量和理解成本。在面向分析的场景中，星型模型通常更常见。现代 OLAP 系统也经常使用宽表减少运行时 Join，但宽表并不是维度建模的反义词：它往往只是将部分维度属性提前展开，以查询性能换取存储冗余和更新成本。
+```text
+                 dim_date
+                    |
+dim_user ---- fact_order_items ---- dim_product
+                    |
+               dim_region
+```
 
-## 5. OLAP：在多个维度上观察事实
+星型模型常见于分析系统，不只是因为容易画图，更因为它贴近查询方式：
 
-### 5.1 Cube 是一个逻辑模型
+```sql
+SELECT
+    d.month,
+    p.category_name,
+    r.province_name,
+    SUM(f.amount) AS revenue
+FROM fact_order_items f
+JOIN dim_date d    ON f.order_date_key = d.date_key
+JOIN dim_product p ON f.product_key = p.product_key
+JOIN dim_region r  ON f.region_key = r.region_key
+GROUP BY d.month, p.category_name, r.province_name;
+```
 
-假设销售额由三个维度组织：
+### 4.2 为什么星型模型适合分析
+
+Microsoft 的星型模型指南强调，它是一种成熟且被广泛采用的关系型数仓建模方式。它同时改善性能和易用性。
+
+从执行角度看，星型模型有几个现实优势：
+
+1. **Join 路径更短。** 事实表直接连接维度表，避免为了拿到一个品类名称继续层层 Join。
+2. **维度过滤更集中。** 优化器可以先过滤较小的维度表；如果执行引擎支持动态过滤、运行时过滤器或类似机制，还能据此减少事实表的扫描范围。
+3. **查询结构稳定。** 事实与维度职责清晰，聚合 SQL 更容易生成和维护。
+4. **维度属性可读。** BI 和 API 不必理解交易库中的复杂规范化结构。
+
+星型模型不是自动加速器。性能仍然取决于统计信息、存储布局、Join 策略和数据规模。但它给优化器和使用者都提供了更清晰的结构。
+
+### 4.3 Snowflake Schema：继续规范化维度
+
+**Snowflake Schema**（雪花模型）会拆分维度：
+
+```text
+fact_order_items
+       |
+  dim_product
+    /      \
+category  brand
+```
+
+它减少冗余，但增加 Join 数量和理解成本。对于更新频繁、层级复杂或主数据管理要求较强的维度，雪花模型仍然有价值。
+
+### 4.4 Galaxy Schema：多个事实共享维度
+
+当订单、支付、退款和库存共同使用一致性维度时，模型会形成 **Galaxy Schema**（星座模型，也称 Fact Constellation）：
+
+```text
+                         dim_date
+                            |
+          +-----------------+-----------------+
+          |                 |                 |
+ fact_order_items      fact_payments      fact_refunds
+          |                 |                 |
+          +-----------------+-----------------+
+                            |
+                       dim_product
+```
+
+Galaxy Schema 不是另一种完全独立的方法，而是多个星型模型通过 Conformed Dimension 连接起来。
+
+## 第五章 OLAP 的本质
+
+维度模型解决了数据如何组织的问题。接下来，分析人员要在这些维度上观察事实。
+
+### 5.1 多维分析不是三维图
+
+假设销售额可以从三个维度观察：
 
 - 时间：日、月、季度、年。
 - 地区：城市、省份、国家。
 - 商品：SKU、品类、品牌。
 
-那么销售额可以被想象成一个多维 **Cube**：
+**Cube** 是对这个多维分析空间的逻辑抽象：
 
 ![OLAP Cube 与多维分析操作](/images/olap/olap-cube-operations.svg "OLAP Cube 与多维分析操作")
 
-Cube 首先是一种分析抽象，不等于数据库必须提前物化每一种组合。如果时间、地区和商品层级较多，完全物化所有组合会产生巨大的存储和维护成本。
+Cube 不等于必须物化一个立方体，更不限制维度数量。它首先表达的是：同一组事实可以沿不同维度、不同层级被切分和聚合。
 
-### 5.2 Slice 与 Dice
+### 5.2 Slice：固定一个维度
 
-**Slice** 是固定一个维度，观察剩余维度。例如只看 `2026-05-01` 当天：
+只查看 `2026-05-01` 当天的销售额：
 
 ```sql
 SELECT region_id, category_id, SUM(revenue)
@@ -378,7 +649,11 @@ WHERE dt = '2026-05-01'
 GROUP BY region_id, category_id;
 ```
 
-**Dice** 是在多个维度上选取一个子空间。例如只看 5 月、浙江和江苏、家电与数码品类：
+这相当于从 Cube 中取出一个切片。
+
+### 5.3 Dice：选取一个子空间
+
+只看 5 月、浙江和江苏、家电与数码品类：
 
 ```sql
 SELECT dt, region_id, category_id, SUM(revenue)
@@ -390,67 +665,73 @@ WHERE dt >= '2026-05-01'
 GROUP BY dt, region_id, category_id;
 ```
 
-### 5.3 Drill Down 与 Roll Up
+### 5.4 Drill Down 与 Roll Up
 
-**Drill Down**（下钻）是从粗粒度走向细粒度：
+**Drill Down**（下钻）从粗粒度进入细粒度：
 
 ```text
-年销售额 -> 月销售额 -> 日销售额
-省销售额 -> 市销售额 -> 门店销售额
-品类销售额 -> SKU 销售额
+年 -> 月 -> 日
+省 -> 市 -> 门店
+品类 -> SKU
 ```
 
-**Roll Up**（上卷）则相反：从细粒度聚合到粗粒度。
+**Roll Up**（上卷）则从细粒度聚合到粗粒度：
 
 ```sql
--- 从日粒度上卷到月粒度
 SELECT
     DATE_FORMAT(dt, 'yyyy-MM') AS month,
     region_id,
-    SUM(revenue) AS revenue
+    SUM(revenue)
 FROM dws_sales_day_region_category
 GROUP BY DATE_FORMAT(dt, 'yyyy-MM'), region_id;
 ```
 
-SQL 标准中的 `ROLLUP` 还能一次生成多级小计：
+### 5.5 Pivot：旋转观察角度
+
+**Pivot**（透视）并不改变事实，而是改变结果的展示轴：
+
+```text
+原始结果：
+month     region    revenue
+2026-05   Zhejiang  100
+2026-05   Shanghai  120
+
+Pivot 后：
+month     Zhejiang  Shanghai
+2026-05   100       120
+```
+
+到这里为止，我们讨论的仍然是分析语义。接下来才进入数据库实现问题：如果用户不断执行相似的 Roll Up，为什么每次都要重新扫描明细？
+
+## 第六章 预聚合的发展路径
+
+### 6.1 为什么 OLAP 查询仍然昂贵
+
+假设 `fact_order_items` 每天写入一亿行，Dashboard 每 30 秒刷新一次：
 
 ```sql
 SELECT
-    region_id,
-    category_id,
-    SUM(revenue)
-FROM dws_sales_day_region_category
-GROUP BY ROLLUP(region_id, category_id);
+    order_date_key,
+    region_key,
+    SUM(amount)
+FROM fact_order_items
+WHERE order_date_key >= 20260501
+GROUP BY order_date_key, region_key;
 ```
 
-这里会产生 `(region_id, category_id)`、`(region_id)` 和总计三个层级。SQL 中的 `CUBE` 则会生成更多维度组合。
-
-## 6. 为什么需要预聚合
-
-### 6.1 查询时聚合的成本
-
-假设 `dwd_order_items` 每天写入 1 亿行，运营看板每 30 秒刷新一次。即使列式存储只读取 `dt`、`region_id` 和 `amount` 三列，每次从明细扫描并执行聚合仍然很浪费：
-
-```sql
-SELECT dt, region_id, SUM(amount)
-FROM dwd_order_items
-WHERE dt >= '2026-05-01'
-GROUP BY dt, region_id;
-```
-
-执行链路大致如下：
+典型 MPP 执行链路如下：
 
 ```text
 Scan 明细数据
       |
       v
-Filter 分区与谓词
+Filter
       |
       v
 Local Hash Aggregate
       |
       v
-Network Shuffle by (dt, region_id)
+Network Shuffle by Group Key
       |
       v
 Global Hash Aggregate
@@ -459,263 +740,94 @@ Global Hash Aggregate
 Result
 ```
 
-当查询模式稳定时，可以将 `(dt, region_id)` 的结果提前算好：
+列存储和向量化执行可以让每一行处理得更快，但如果每次仍然扫描几十亿行，查询成本依然很高。
+
+### 6.2 Pre-Aggregation：把重复计算搬到前面
+
+如果查询模式稳定，可以提前保存 `(date, region)` 粒度的结果：
 
 ```sql
 CREATE TABLE sales_day_region AS
-SELECT dt, region_id, SUM(amount) AS revenue
-FROM dwd_order_items
-GROUP BY dt, region_id;
+SELECT
+    order_date_key,
+    region_key,
+    SUM(amount) AS revenue
+FROM fact_order_items
+GROUP BY order_date_key, region_key;
 ```
-
-后续查询只需要扫描少量汇总行。这就是 **Pre-Aggregation**（预聚合）：将部分计算成本从查询时移动到写入、刷新或离线加工时。
 
 ![预聚合如何减少查询成本](/images/olap/pre-aggregation-query-path.svg "预聚合如何减少查询成本")
 
-### 6.2 Aggregate Table 与 Summary Table
-
-**Aggregate Table** 和 **Summary Table** 经常被混用。两者都保存聚合后的结果，但强调点略有不同：
-
-- Aggregate Table 强调数据经过聚合，通常由维度键和聚合指标构成。
-- Summary Table 强调它是面向某个主题或报表的摘要，可能包含聚合、派生指标和业务规则。
-
-例如：
-
-```sql
-CREATE TABLE dws_sales_day_region (
-    dt             DATE,
-    region_id      INT,
-    revenue        DECIMAL(18, 2),
-    sold_quantity  BIGINT
-);
-```
-
-它既可以被称为 Aggregate Table，也可以被称为 Summary Table。区别更多来自上下文，不需要把它们理解成严格互斥的数据库对象类型。
-
-### 6.3 从数据库内核看性能收益
-
-预聚合为什么有效？不是因为 `SUM` 语法消失了，而是因为进入执行引擎的数据规模变小了。
-
-假设明细表有 30 亿行，按天和地区预聚合后只剩 3000 行：
+预聚合的本质是交换：
 
 ```text
-                        直接查询明细          查询预聚合结果
-扫描行数                3,000,000,000         3,000
-读取列数据              大量数据页             少量数据页
-Hash Table 更新次数      十亿级                千级
-Shuffle 数据量           大                    小
-CPU Cache 局部性         较差                  较好
+更多写入成本 + 更多存储空间 + 一定维护复杂度
+                    |
+                    v
+更少扫描行数 + 更少聚合计算 + 更低查询延迟
 ```
 
-收益可以拆成五层：
+### 6.3 从 Cube 到 Materialized View
 
-1. **IO 减少。** 列式存储、分区裁剪和索引只能减少一部分读取；预聚合直接减少底层需要读取的行数。
-2. **扫描行数减少。** 向量化执行可以让每行处理更快，但少处理几百万倍的行通常更重要。
-3. **Hash Aggregate 减少。** 分组聚合需要更新 Hash Table，聚合状态可能占用大量内存。预聚合让 Hash Table 更小，甚至不再需要二次聚合。
-4. **Network Shuffle 减少。** MPP 系统常常需要按照 Group Key 重分布数据。提前局部聚合后，网络传输的是聚合状态，不是所有明细。
-5. **CPU 减少。** 表达式求值、哈希计算、序列化、反序列化和函数调用次数都会下降。
+预聚合机制可以沿着一条演进路径理解：
 
-预聚合的代价同样明确：写入路径更重、存储副本更多、刷新存在延迟，并且只能加速与其粒度和指标兼容的查询。
-
-## 7. Rollup：一个词，两层含义
-
-Rollup 是最容易混淆的术语之一，因为它至少有两层含义。
-
-### 7.1 OLAP 操作中的 Roll Up
-
-在多维分析中，Roll Up 是一种分析动作：沿维度层级向上聚合。
+![现代 OLAP 预计算机制的演进](/images/olap/olap-evolution.svg "现代 OLAP 预计算机制的演进")
 
 ```text
-城市 -> 省份 -> 国家
-日期 -> 月份 -> 年份
-SKU  -> 品类 -> 全部商品
-```
-
-它描述的是查询语义。无论结果来自实时扫描、DWS 汇总表还是物化视图，只要粒度从细变粗，都可以称为 Roll Up。
-
-### 7.2 数据库中的 Rollup Table
-
-在一些 OLAP 数据库中，Rollup 还指一个具体的物理结构：为基表创建更粗粒度、列更少或排序顺序不同的物化索引。
-
-```text
-明细基表：order_items
-(dt, region_id, category_id, product_id, user_id, amount)
-             |
-             | Rollup
-             v
-汇总索引：sales_day_region
-(dt, region_id, sum(amount))
-```
-
-两者的联系是：数据库中的 Rollup Table 经常用于加速 OLAP 中的 Roll Up 操作。但两者不是同一个概念。
-
-### 7.3 Rollup 与手工汇总表
-
-手工维护一张 DWS 表也能达到类似目的：
-
-```sql
-INSERT OVERWRITE dws_sales_day_region
-SELECT dt, region_id, SUM(amount)
-FROM dwd_order_items
-GROUP BY dt, region_id;
-```
-
-但手工汇总表要求业务方显式查询它，并自行维护调度、刷新、补数和一致性。数据库内建 Rollup 通常由系统维护，并由优化器透明选择。用户仍然查询基表：
-
-```sql
-SELECT dt, region_id, SUM(amount)
-FROM order_items
-GROUP BY dt, region_id;
-```
-
-如果命中 Rollup，执行计划会自动改为读取更小的物化索引。
-
-## 8. Materialized View：从固定汇总表到自动查询改写
-
-### 8.1 普通 View 为什么不够
-
-普通 **View** 只保存 SQL 定义：
-
-```sql
-CREATE VIEW v_sales_day_region AS
-SELECT dt, region_id, SUM(amount) AS revenue
-FROM dwd_order_items
-GROUP BY dt, region_id;
-```
-
-查询普通 View 时，数据库仍然要展开定义并执行底层 SQL：
-
-```text
-普通 View = 保存查询文本
-          != 保存查询结果
-```
-
-**Materialized View**（物化视图，简称 MV）则同时保存查询定义和物化结果：
-
-```text
+Cube
+  |
+  | 提前计算多维组合
+  v
+Aggregate Table
+  |
+  | 保存可复用聚合结果
+  v
+Summary Table
+  |
+  | 面向主题或报表保存摘要
+  v
+Rollup
+  |
+  | 将常见汇总变成数据库维护的物化索引
+  v
 Materialized View
-    |
-    +-- 定义：SELECT dt, region_id, SUM(amount) ...
-    |
-    +-- 数据：已经计算好的结果
+  |
+  | 用 SQL 表达更通用的预计算逻辑
+  v
+Query Rewrite + CBO
+  |
+  | 自动选择代价最低且语义等价的结果
 ```
 
-MV 将 View 的声明式表达能力与 Aggregate Table 的预计算能力结合起来。它可以用于聚合，也可以用于 Join、过滤、表达式计算、宽表构建和湖仓查询加速。
+这不是严格的产品版本历史，也不是后一种机制完全取代前一种机制。它只是一个便于理解的抽象序列：预计算结果逐渐从手工维护的表，演进为优化器可以透明复用的数据库对象。
 
-### 8.2 Query Rewrite：用户不必修改 SQL
+#### Aggregate Table
 
-MV 真正重要的能力不是“多出一张表”，而是 **Query Rewrite**（查询改写）。
-
-假设存在一个日粒度 MV：
-
-```sql
-CREATE MATERIALIZED VIEW mv_sales_day_region_category AS
-SELECT
-    dt,
-    region_id,
-    category_id,
-    SUM(amount) AS revenue
-FROM dwd_order_items
-GROUP BY dt, region_id, category_id;
-```
-
-用户查询月度地区销售额：
-
-```sql
-SELECT
-    DATE_TRUNC('month', dt) AS month,
-    region_id,
-    SUM(amount) AS revenue
-FROM dwd_order_items
-GROUP BY DATE_TRUNC('month', dt), region_id;
-```
-
-优化器发现：
-
-- MV 的数据来源与查询兼容。
-- MV 的粒度 `(dt, region_id, category_id)` 比查询需要的 `(month, region_id)` 更细。
-- `SUM` 可以继续聚合。
-
-于是将执行计划改写为：
-
-```sql
-SELECT
-    DATE_TRUNC('month', dt) AS month,
-    region_id,
-    SUM(revenue) AS revenue
-FROM mv_sales_day_region_category
-GROUP BY DATE_TRUNC('month', dt), region_id;
-```
-
-![Materialized View 查询改写](/images/olap/mv-query-rewrite.svg "Materialized View 查询改写")
-
-这意味着物化视图不需要与查询文本完全一致。只要满足语义等价和聚合可合并条件，一个较细粒度 MV 可以服务多个较粗粒度查询。
-
-### 8.3 增量刷新与全量刷新
-
-MV 必须解决数据新鲜度问题。最直接的办法是定期全量重算：
-
-```sql
-REFRESH MATERIALIZED VIEW mv_sales_day_region_category;
-```
-
-但事实表越来越大时，全量刷新会越来越昂贵。因此现代系统通常尝试只刷新受影响的数据：
+**Aggregate Table** 强调保存聚合后的结果：
 
 ```text
-基表新增 2026-05-31 分区
-             |
-             v
-只刷新 MV 的 2026-05-31 分区
-             |
-             v
-历史分区无需重新计算
+(dt, region_id, category_id) -> SUM(revenue), SUM(quantity)
 ```
 
-增量刷新可以有不同实现：
+#### Summary Table
 
-- 写入基表时同步维护 MV。
-- 识别变化分区，只刷新对应的 MV 分区。
-- 根据变更日志处理新增、删除和更新。
-- 对追加写场景，只计算新写入的数据块。
+**Summary Table** 强调面向某个主题或应用保存摘要。它可能包含聚合、派生指标和业务规则。很多 DWS 和 ADS 表本质上就是 Summary Table。
 
-“支持增量刷新”不是一个简单的布尔值。能否增量处理，取决于基表格式、变更类型、Join 关系、聚合函数是否可合并，以及系统能否可靠判断哪些数据发生了变化。
+#### Rollup
 
-### 8.4 同步 MV 与异步 MV
+在 OLAP 语义中，Roll Up 是向上聚合的动作；在部分数据库中，Rollup 还是一种额外物化索引。两者有关联，但不是同一层概念。
 
-**同步 MV** 在基表写入时同步维护。它通常具有较强的一致性，适合单表、实时、固定模式的聚合：
+#### Materialized View
 
-```text
-INSERT 基表
-    |
-    +--> 写入 Base Index
-    |
-    +--> 同一写入链路维护 Sync MV / Rollup
-```
+MV 将预计算结果变成声明式数据库对象。用户描述“想物化什么”，优化器再判断“查询是否可以复用它”。
 
-**异步 MV** 则通过调度或手工触发刷新：
+## 第七章 现代 OLAP 数据库实现
 
-```text
-基表发生变化
-    |
-    v
-等待刷新策略触发
-    |
-    v
-重新计算受影响分区或完整结果
-    |
-    v
-替换 MV 数据
-```
+不同系统都在减少扫描与重复计算，但它们选择的边界不同。
 
-异步 MV 可以支持更复杂的 SQL，例如多表 Join 和外部表查询，但要接受一定的数据延迟。系统还需要在查询改写时判断 MV 是否过期，或者允许用户配置可接受的 Staleness。
+### 7.1 Doris：Aggregate Key、Rollup 与 MV
 
-## 9. Doris、StarRocks 与 ClickHouse 的实现差异
-
-不同系统都在做预计算，但它们的术语、刷新路径和优化器能力并不完全相同。理解差异比记忆语法更重要。
-
-### 9.1 Doris：Aggregate Key、Rollup 与 MV
-
-Apache Doris 的 **Aggregate Key** 模型允许在表定义中声明聚合规则：
+Apache Doris 的 **Aggregate Key** 是一种表模型。Key 相同的行会按 Value 列声明的聚合函数合并：
 
 ```sql
 CREATE TABLE sales_day_region (
@@ -728,7 +840,7 @@ AGGREGATE KEY(dt, region_id)
 DISTRIBUTED BY HASH(region_id) BUCKETS 16;
 ```
 
-相同 Key 的记录会按照 Value 列声明的函数合并。合并不一定在写入瞬间彻底完成：数据导入、Compaction 和查询阶段都可能参与聚合，以保证最终查询结果正确。
+相同 Key 的数据会在导入和 Compaction 过程中按声明的聚合函数合并。Aggregate Key 解决的是“同 Key 指标如何合并”，它不是 Cube，也不是数仓 DWS。
 
 Doris 的 Rollup 是基表之上的额外物化索引：
 
@@ -741,60 +853,34 @@ ADD ROLLUP rollup_day_region (
 );
 ```
 
-对于新设计，Doris 官方更推荐使用同步 MV 语法表达类似能力：
+对于新设计，Doris 官方更推荐使用同步 MV 表达类似能力：
 
 ```sql
 CREATE MATERIALIZED VIEW mv_sales_day_region AS
-SELECT
-    dt,
-    region_id,
-    SUM(amount)
+SELECT dt, region_id, SUM(amount)
 FROM order_items
 GROUP BY dt, region_id;
 ```
 
-同步 MV 与基表保持实时一致，适合单表聚合和排序优化。异步 MV 则可以服务多表 Join、分区刷新和湖仓外表加速：
+同步 MV 适合单表实时聚合和排序优化。异步 MV 则能够支持更复杂的 SQL、分区刷新和湖仓加速。
 
-```sql
-CREATE MATERIALIZED VIEW mv_sales_day_category
-BUILD IMMEDIATE
-REFRESH AUTO ON SCHEDULE EVERY 1 HOUR
-AS
-SELECT
-    i.dt,
-    p.category_id,
-    SUM(i.amount) AS revenue
-FROM dwd_order_items i
-JOIN dim_product p ON i.product_id = p.product_id
-GROUP BY i.dt, p.category_id;
-```
+### 7.2 StarRocks：同步 MV 本质上是 Rollup
 
-Doris 中的演进方向不是简单删除 Rollup，而是让同步 MV 覆盖传统 Rollup 的主要使用场景，再让异步 MV 处理复杂查询和灵活刷新。
-
-### 9.2 StarRocks：同步 MV 本质上就是 Rollup
-
-StarRocks 对同步 MV 的定位非常直接：它就是 Rollup，是基表上的特殊索引，而不是一张独立物理表。
+StarRocks 的同步 MV 是基表上的特殊 Rollup 索引。数据导入基表时，同步 MV 自动更新；查询仍然面向基表编写：
 
 ```sql
 CREATE MATERIALIZED VIEW mv_sales_day_region AS
-SELECT
-    dt,
-    region_id,
-    SUM(amount)
+SELECT dt, region_id, SUM(amount)
 FROM order_items
 GROUP BY dt, region_id;
-```
 
-数据导入基表时，同步 MV 自动刷新。查询仍然针对基表编写，优化器透明选择 Rollup。可以通过 `EXPLAIN` 查看是否命中：
-
-```sql
 EXPLAIN
 SELECT dt, region_id, SUM(amount)
 FROM order_items
 GROUP BY dt, region_id;
 ```
 
-执行计划中通常可以看到类似信息：
+执行计划可能显示：
 
 ```text
 0:OlapScanNode
@@ -803,38 +889,13 @@ GROUP BY dt, region_id;
    rollup: mv_sales_day_region
 ```
 
-StarRocks 的异步 MV 是独立物理表，可以直接查询，并支持多表 Join、外部 Catalog、分区刷新和透明查询改写：
+异步 MV 是独立物理表，适合多表 Join、外部 Catalog、分区刷新和透明 Query Rewrite。
+
+### 7.3 ClickHouse：MV 与 Projection 职责不同
+
+ClickHouse 的 Incremental Materialized View 更接近写入触发器：源表插入新数据块时执行查询，并将结果写入目标表。
 
 ```sql
-CREATE MATERIALIZED VIEW mv_sales_day_category
-PARTITION BY dt
-DISTRIBUTED BY HASH(category_id)
-REFRESH ASYNC EVERY (INTERVAL 1 HOUR)
-AS
-SELECT
-    i.dt,
-    p.category_id,
-    SUM(i.amount) AS revenue
-FROM dwd_order_items i
-JOIN dim_product p ON i.product_id = p.product_id
-GROUP BY i.dt, p.category_id;
-```
-
-这说明 Rollup 没有消失，只是从最显眼的概念变成了同步 MV 的底层实现。复杂场景则逐渐交给异步 MV 和更强的 Query Rewrite。
-
-### 9.3 ClickHouse：MV 与 Projection 解决不同问题
-
-ClickHouse 的常见 MV 更像插入触发器：新数据块写入源表时，MV 对这些新增数据执行查询，再将结果写入目标表。
-
-```sql
-CREATE TABLE sales_day_region (
-    dt Date,
-    region_id UInt32,
-    revenue SimpleAggregateFunction(sum, Decimal(18, 2))
-)
-ENGINE = AggregatingMergeTree
-ORDER BY (dt, region_id);
-
 CREATE MATERIALIZED VIEW mv_sales_day_region
 TO sales_day_region
 AS
@@ -846,9 +907,11 @@ FROM order_items
 GROUP BY dt, region_id;
 ```
 
-这种增量 MV 很适合追加写入和流式聚合，但需要注意一个关键边界：它通常只处理新插入的数据块，不会因为源表 Mutation、分区删除或后台 Merge 自动重新计算历史结果。回填历史数据也需要单独执行 `INSERT INTO ... SELECT ...`。
+它适合追加写入、流式转换和实时聚合。需要注意：它通常处理新插入的数据块，不会因为源表历史 Mutation 自动重算全部结果。
 
-ClickHouse 还支持 **Projection**。Projection 是表内部的一份备用物理布局，可以改变排序顺序，也可以预聚合：
+目标表的表引擎决定了后续如何合并结果。例如，`SummingMergeTree` 可以合并求和结果，`AggregatingMergeTree` 可以保存并合并聚合状态。查询侧仍然要按照目标表引擎的语义读取结果。
+
+ClickHouse 的 **Projection** 是表内部的备用物理布局：
 
 ```sql
 ALTER TABLE order_items
@@ -862,77 +925,37 @@ ADD PROJECTION p_sales_day_region
 );
 ```
 
-Projection 的特点是：
+Projection 可以提供额外排序或预聚合布局，由优化器透明选择。
 
-- 它附属于同一张表，而不是单独维护一张目标表。
-- 查询优化器可以自动判断是否使用 Projection。
-- 它适合为同一份数据提供额外排序和聚合布局。
-- 它与表内数据生命周期结合得更紧，一致性边界更容易理解。
+对于创建 Projection 之前已经存在的数据，还需要显式执行物化操作：
 
-因此，ClickHouse 并不是“用 Projection 取代 MV”。更准确的说法是：
+```sql
+ALTER TABLE order_items
+MATERIALIZE PROJECTION p_sales_day_region;
+```
 
 ```text
-需要插入时转换、分流、写入独立结果表
-    -> Incremental Materialized View
+写入时转换，结果进入独立目标表
+    -> Incremental MV
 
-需要周期性执行复杂查询并保存快照
-    -> Refreshable Materialized View
+周期性重算复杂查询，保存结果快照
+    -> Refreshable MV
 
-需要同一张表的备用排序或聚合布局，并由优化器透明选择
+同一张表的备用排序或聚合布局
     -> Projection
 ```
 
-### 9.4 一张对照表
+### 7.4 Trino：依赖 Connector 与外部存储能力
 
-| 系统 | 结构 | 典型刷新方式 | 是否透明改写 | 适合场景 |
-| --- | --- | --- | --- | --- |
-| Doris Aggregate Key | 表模型 | 导入、Compaction、查询阶段聚合 | 不涉及 | 按 Key 合并指标 |
-| Doris Rollup / Sync MV | 基表物化索引 | 写入同步维护 | 是 | 单表实时聚合、排序优化 |
-| Doris Async MV | 独立物化结果 | 定时、手工、分区刷新 | 是 | 多表、湖仓、复杂聚合 |
-| StarRocks Sync MV | Rollup 索引 | 导入同步维护 | 是 | 单表实时聚合 |
-| StarRocks Async MV | 独立物理表 | 定时、手工、分区刷新 | 是 | 多表、外部 Catalog |
-| ClickHouse Incremental MV | 写入触发器 + 目标表 | 新增数据块触发 | 通常由查询方显式使用目标表 | 流式转换、实时汇总 |
-| ClickHouse Projection | 表内部备用布局 | 随表维护 | 是 | 备用排序、透明预聚合 |
+Trino 是分布式联邦查询引擎，不是统一持有数据的存储系统。它查询 Hive、Iceberg、关系数据库和其他数据源，优化效果依赖 Connector 能否提供：
 
-## 10. Presto 与 Trino：计算存储分离之后
+- Predicate Pushdown。
+- Projection Pushdown。
+- Aggregate Pushdown。
+- Table Statistics。
+- 存储格式上的分区和文件裁剪。
 
-### 10.1 为什么预计算更重要
-
-Presto 和 Trino 常用于查询 Hive、Iceberg、Hudi、关系数据库和其他数据源。它们的优势是计算与存储解耦、跨源查询能力强，但这也意味着查询可能面对对象存储上的大量 Parquet 文件：
-
-```text
-Trino Coordinator
-       |
-       v
-   生成分布式 Plan
-       |
-       +----------+----------+
-       |          |          |
-       v          v          v
-    Worker      Worker      Worker
-       |          |          |
-       +----------+----------+
-                  |
-                  v
-       S3 / HDFS 上的大量文件
-```
-
-一次查询的代价不只有 SQL 算子，还包括文件枚举、远程 IO、解压缩、反序列化、跨节点 Shuffle 和 Spill。即使列裁剪、谓词下推和分区裁剪全部生效，从对象存储扫描 TB 级数据仍然昂贵。
-
-因此，与其说“Presto / Trino 天然依赖 MV”，不如说：
-
-> 在计算存储分离架构中，缺少数据库内部长期维护的索引和本地物理布局时，预计算结果、合理分区、文件组织与 Connector Pushdown 对稳定查询延迟更加重要。
-
-### 10.2 MV 不一定由 Trino 自己完成
-
-在 Trino 体系中，预计算可以来自多个位置：
-
-- Hive 或 Spark SQL 周期性生成 DWS、ADS 汇总表。
-- dbt、Airflow 等调度系统维护 Summary Table。
-- 查询下推到具备 MV 能力的外部数据库。
-- Connector 在特定表格式上提供 MV 管理能力。
-
-例如，Trino Iceberg Connector 支持创建和刷新物化视图：
+Trino Iceberg Connector 还支持创建和刷新 MV：
 
 ```sql
 CREATE MATERIALIZED VIEW iceberg.analytics.mv_sales_day_region
@@ -948,166 +971,422 @@ GROUP BY dt, region_id;
 REFRESH MATERIALIZED VIEW iceberg.analytics.mv_sales_day_region;
 ```
 
-底层会保存 MV 定义和对应的 Iceberg Storage Table。刷新可能是全量，也可能在定义和源表快照历史允许时执行增量刷新。
+创建 MV 只会注册定义，不会自动填充数据，因此首次使用前必须执行 `REFRESH MATERIALIZED VIEW`。对于 Iceberg Connector，刷新可能是全量，也可能根据 MV 定义复杂度和源表快照历史执行增量更新。
 
-这里的关键是 Connector 边界：Trino 是联邦查询引擎，不是一个对所有数据源都提供统一 MV 语义的存储系统。不同 Connector 的能力并不相同。
+更准确的说法不是“Trino 天然依赖 MV”，而是：
 
-## 11. 从 Cube 到 Cost Based Rewrite
+> 在计算存储分离架构中，缺少数据库内部长期维护的本地物理布局时，合理分区、文件组织、Connector Pushdown 和外部预计算结果更加重要。
 
-OLAP 系统的发展可以用一条简化路线来理解：
+## 第八章 Materialized View
 
-![现代 OLAP 预计算机制的演进](/images/olap/olap-evolution.svg "现代 OLAP 预计算机制的演进")
+### 8.1 MV 为什么不只是预计算表
 
-这不是严格的产品版本时间线，也不是说后一种机制完全取代前一种机制。它表达的是抽象能力逐步增强：
+普通 View 只保存查询定义：
 
-- Cube 强调多维分析空间。
-- Aggregate Table 强调保存汇总结果。
-- Rollup 强调基表之上的额外物化布局。
-- MV 用 SQL 描述更一般的预计算。
-- Query Rewrite 让业务 SQL 无需感知物化结构。
-- Cost Based Rewrite 让优化器综合扫描行数、分区裁剪、数据新鲜度、Join 代价和 Roll Up 成本选择方案。
-
-### 11.1 为什么 Doris 和 StarRocks 正在弱化手工 Rollup
-
-手工 Rollup 的优势是简单、实时、一致性明确，但表达能力有限：
-
-- 通常围绕单表工作。
-- 支持的聚合函数和表达式有限。
-- 难以处理多表 Join。
-- 难以覆盖湖仓外表。
-- 难以管理复杂刷新策略。
-
-同步 MV 可以覆盖传统 Rollup 的大部分能力，异步 MV 则能表达更复杂的 SQL。优化器进一步负责透明改写。于是用户更愿意从“我要加一个 Rollup 索引”转向“我要声明一个可复用的物化结果”。
-
-Rollup 仍然存在，而且在实时单表聚合中依然有效。弱化的是它作为上层用户唯一入口的地位。
-
-### 11.2 Cost Based Rewrite 在选择什么
-
-当多个 MV 都能服务一个查询时，优化器要比较：
-
-```text
-候选 1：扫描明细基表
-候选 2：扫描日粒度 MV，再聚合到月
-候选 3：扫描月粒度 MV
-候选 4：扫描包含额外维度的 MV，再做 Roll Up
+```sql
+CREATE VIEW v_sales_day_region AS
+SELECT dt, region_id, SUM(amount) AS revenue
+FROM order_items
+GROUP BY dt, region_id;
 ```
 
-通常需要考虑：
+查询时，数据库仍然需要展开 SQL 并扫描底层数据。
 
-- 扫描行数和字节数。
-- 分区和分桶裁剪效果。
-- 是否仍然需要 Join。
-- 是否需要二次聚合。
-- MV 是否足够新鲜。
-- 使用过期 MV 是否在允许范围内。
+Materialized View 同时保存查询定义和物化结果：
+
+```text
+Materialized View
+    |
+    +-- SQL Definition
+    |
+    +-- Materialized Data
+    |
+    +-- Refresh Policy
+    |
+    +-- Freshness Metadata
+    |
+    +-- Rewrite Rules
+```
+
+手工汇总表只解决“把结果保存下来”；数据库内建 MV 还需要回答：
+
+- 什么时候刷新？
+- 哪些分区变化了？
+- MV 是否足够新鲜？
+- 当前查询是否与 MV 等价？
+- 多个候选 MV 中哪一个成本最低？
+
+### 8.2 Full Refresh 与 Incremental Refresh
+
+**Full Refresh** 全量重算：
+
+```sql
+REFRESH MATERIALIZED VIEW mv_sales_day_region;
+```
+
+优点是语义直接，缺点是基表越大，刷新越昂贵。
+
+**Incremental Refresh** 只处理变化部分：
+
+```text
+基表新增 2026-05-31 分区
+             |
+             v
+只刷新 MV 的 2026-05-31 分区
+             |
+             v
+历史分区保持不变
+```
+
+增量刷新是否可行，取决于：
+
+- 基表能否识别变化分区或变更日志。
+- 数据是追加写，还是包含更新和删除。
+- Join 关系是否会让一个维度变化影响大量事实。
 - 聚合函数是否可合并。
 
-例如 `SUM` 可以再次求和，`MIN` 和 `MAX` 也可以继续合并。`AVG` 则不能直接对多个平均值求平均，通常需要保存 `SUM` 与 `COUNT`。精确去重计数也难以直接合并，工程上常使用 Bitmap 或 HLL 等可合并状态。
+`SUM`、`MIN`、`MAX` 较容易增量维护；`COUNT(DISTINCT)` 常需要 Bitmap 或 HLL 等可合并状态；`AVG` 通常要保存 `SUM` 与 `COUNT`。
 
-## 12. 工程实践：什么时候应该创建 MV
+### 8.3 Query Rewrite：透明复用 MV
 
-MV 不是越多越好。每增加一个物化结构，都在用写入成本、存储空间和维护复杂度交换查询性能。
+假设存在日、地区、品类粒度的 MV：
 
-### 12.1 适合创建 MV 的场景
+```sql
+CREATE MATERIALIZED VIEW mv_sales_day_region_category AS
+SELECT
+    dt,
+    region_id,
+    category_id,
+    SUM(amount) AS revenue
+FROM order_items
+GROUP BY dt, region_id, category_id;
+```
 
-优先考虑以下查询：
-
-- Dashboard 高频刷新，查询结构长期稳定。
-- 明细数据量巨大，但查询只关心固定粒度汇总。
-- 多个应用反复执行相同 Join 或 Aggregate。
-- 对象存储上的湖表被重复扫描，延迟和成本不稳定。
-- `COUNT(DISTINCT)`、分位数等指标可以保存可合并聚合状态。
-
-例如，分钟级可观测性指标很适合预聚合：
+用户查询月度地区销售额：
 
 ```sql
 SELECT
-    DATE_TRUNC('minute', event_time) AS minute,
-    service_name,
-    status_code,
-    COUNT(*) AS request_count,
-    SUM(latency_ms) AS latency_sum
-FROM request_logs
-GROUP BY
-    DATE_TRUNC('minute', event_time),
-    service_name,
-    status_code;
+    DATE_TRUNC('month', dt) AS month,
+    region_id,
+    SUM(amount)
+FROM order_items
+GROUP BY DATE_TRUNC('month', dt), region_id;
 ```
 
-### 12.2 创建之前先回答四个问题
+优化器可以将它改写为：
 
-1. **查询粒度是什么？** 日、小时、分钟还是原始事件？
-2. **维度是否稳定？** 预聚合时丢掉的维度，查询时无法凭空恢复。
-3. **指标是否可继续合并？** `SUM`、`MIN`、`MAX` 较简单，`AVG`、去重数和分位数需要保存合适状态。
-4. **允许多大的延迟？** 强一致、分钟级、小时级和 T+1 对应不同实现。
+```sql
+SELECT
+    DATE_TRUNC('month', dt) AS month,
+    region_id,
+    SUM(revenue)
+FROM mv_sales_day_region_category
+GROUP BY DATE_TRUNC('month', dt), region_id;
+```
 
-### 12.3 不适合创建 MV 的场景
+![Materialized View 查询改写](/images/olap/mv-query-rewrite.svg "Materialized View 查询改写")
 
-- 查询维度组合高度随机，几乎无法复用。
-- 数据规模不大，明细查询已经足够快。
-- 写入吞吐是首要瓶颈，而 MV 会显著放大写入成本。
-- 指标频繁变动，维护物化结构的成本高于收益。
-- 业务要求绝对实时，但异步刷新窗口不可接受。
+查询和 MV 不必逐字相同。只要 MV 粒度更细、聚合可以继续 Roll Up，优化器就有机会复用它。
 
-最可靠的决策方式仍然是观察真实负载：使用 `EXPLAIN`、Profile、慢查询日志和扫描字节数识别重复成本，再创建最少数量的物化结构。
+### 8.4 Freshness 与 Staleness
 
-## 13. 术语表
-
-| 术语 | 含义 |
-| --- | --- |
-| ODS | Operational Data Store。承接源系统原始数据，强调可追溯。 |
-| DWD | Data Warehouse Detail。经过清洗、去重和口径统一的原子明细层。 |
-| DWS | Data Warehouse Summary。按主题沉淀可复用汇总指标。 |
-| ADS | Application Data Service。直接服务报表、接口和具体应用。 |
-| DIM | Dimension。用户、商品、地区、日期等分析维度。 |
-| Fact Table | 事实表。描述下单、支付、点击等业务过程及其度量。 |
-| Dimension Table | 维度表。提供解释事实所需的属性和层级。 |
-| Cube | 多维分析的逻辑空间，不等于必须完整物化。 |
-| Slice | 固定一个维度，观察剩余维度形成的切片。 |
-| Dice | 在多个维度上筛选，得到一个子空间。 |
-| Drill Down | 从粗粒度进入细粒度，例如从月查看到日。 |
-| Roll Up | OLAP 语义中指向上聚合；数据库实现中也可指额外物化索引。 |
-| Aggregate Table | 保存维度键和聚合指标的结果表。 |
-| Summary Table | 面向主题或应用保存摘要结果的表。 |
-| Pre-Aggregation | 将部分聚合成本从查询时移动到写入、刷新或离线加工时。 |
-| View | 保存 SQL 定义，不保存查询结果。 |
-| Materialized View | 同时保存查询定义和物化结果的数据库对象。 |
-| Query Rewrite | 优化器将基表查询透明改写为读取 MV 等价结果。 |
-
-## 14. 总结
-
-从 ODS 到 Materialized View，看似跨越了数据同步、数仓建模和数据库内核，实际上围绕的是同一个问题：**如何让原始事实逐步变成低成本、可复用、可解释的分析结果。**
+**Freshness** 描述 MV 与基表的同步程度。**Staleness** 描述允许结果落后基表多久。
 
 ```text
-业务系统记录状态
-        |
-        v
-ODS 忠实接住原始数据
-        |
-        v
-DWD 整理原子事实，DIM 提供分析视角
-        |
-        v
-DWS 沉淀公共汇总，ADS 服务具体应用
-        |
-        v
-OLAP 在多个维度上 Slice、Dice、Drill Down、Roll Up
-        |
-        v
-Aggregate Table / Rollup / MV 将重复计算提前完成
-        |
-        v
-Query Rewrite 与 CBO 自动选择更低成本的执行计划
+基表最新时间：10:05
+MV 最新时间： 10:00
+Staleness：   5 分钟
 ```
 
-理解这些概念之后，再看 Doris、StarRocks、ClickHouse、Presto、Trino、Hive 和 Spark SQL，就不再是一组互不相干的产品名词。它们只是在不同边界上回答同一组工程问题：数据放在哪里，何时计算，计算结果保存多久，如何保持新鲜，以及查询优化器能替用户做多少决策。
+不同场景对新鲜度要求不同：
+
+| 场景 | 可接受延迟 |
+| --- | --- |
+| 支付风控 | 接近实时 |
+| 运营 Dashboard | 分钟级 |
+| 日报 | 小时级或 T+1 |
+| 历史归档分析 | 更宽松 |
+
+异步 MV 的结果可能落后于基表。系统需要根据刷新策略和允许的 Staleness，决定是否继续使用这份物化结果。
+
+### 8.5 Cost Based Rewrite
+
+当多个 MV 都能服务查询时，优化器要比较：
+
+```text
+候选 1：扫描明细基表
+候选 2：扫描日粒度 MV，再 Roll Up 到月
+候选 3：扫描月粒度 MV
+候选 4：扫描包含额外维度的 MV，再二次聚合
+```
+
+代价模型通常考虑：
+
+- 扫描行数和字节数。
+- 分区裁剪效果。
+- 是否仍然需要 Join。
+- 是否需要二次聚合。
+- MV 是否足够新鲜。
+- 聚合函数是否支持 Roll Up。
+
+MV 相比普通汇总表多出的一层能力，是进入优化器的候选计划集合，参与等价改写和代价选择。
+
+## 第九章 为什么 OLAP 查询快
+
+预聚合只是 OLAP 性能体系的一部分。现代分析系统通常同时使用多种优化。
+
+### 9.1 一条查询如何逐步变小
+
+```sql
+SELECT
+    region_id,
+    SUM(amount)
+FROM order_items
+WHERE dt >= '2026-05-01'
+  AND dt <  '2026-06-01'
+  AND status = 'PAID'
+GROUP BY region_id;
+```
+
+理想执行链路如下：
+
+```text
+Partition Pruning
+只访问 2026-05 分区
+        |
+        v
+Projection Pruning
+只读取 dt / status / region_id / amount
+        |
+        v
+Predicate Pushdown
+在 Scan 阶段过滤 status = 'PAID'
+        |
+        v
+Columnar Storage + Vectorized Execution
+批量解码和计算
+        |
+        v
+Local Pre-Aggregation
+每个节点先局部聚合
+        |
+        v
+Network Shuffle
+仅传输较小聚合状态
+        |
+        v
+Global Aggregate
+```
+
+### 9.2 优化手段分别解决什么
+
+| 优化 | 核心作用 | 主要收益 |
+| --- | --- | --- |
+| Partition Pruning | 跳过无关分区 | 减少 IO、文件枚举和扫描任务 |
+| Projection Pruning | 只读取需要的列 | 减少 IO、解压缩和内存占用 |
+| Predicate Pushdown | 尽早过滤行 | 减少 CPU、内存和后续网络传输 |
+| Aggregate Pushdown | 将聚合推到数据源 | 减少传输行数和上层计算 |
+| Columnar Storage | 相同列连续存储 | 提高压缩率和扫描效率 |
+| Vectorized Execution | 一批数据一起执行 | 降低函数调用开销，提高 CPU 利用率 |
+| Pre-Aggregation | 提前保存可复用结果 | 大幅减少扫描、Hash Aggregate 和 Shuffle |
+
+这里的 Projection Pruning 指关系代数中的列裁剪，不是 ClickHouse 表内的 `PROJECTION`。
+
+### 9.3 从资源视角看收益
+
+#### IO
+
+分区裁剪跳过整个分区，列裁剪跳过无关列，索引和 Zone Map 跳过不可能命中的数据块，MV 则进一步让扫描对象从几十亿行明细变成几千行汇总。
+
+#### CPU
+
+列式编码减少解码工作，向量化执行改善 CPU Cache 局部性，预聚合减少哈希、表达式求值和序列化次数。
+
+#### Memory
+
+更早过滤意味着更小的 Hash Table、更少的中间结果和更低的 Spill 风险。Join 顺序错误时，内存压力可能成倍增长。
+
+#### Network
+
+MPP 查询最昂贵的阶段之一是 Shuffle。Local Aggregate 和 Aggregate Pushdown 让网络传输聚合状态，而不是所有明细行。
+
+这些优化手段的共同目标，是尽可能让更少的数据进入下一个算子。
+
+## 第十章 优化器与未来
+
+### 10.1 优化器为什么需要统计信息
+
+查询优化器必须估算每个算子会处理多少数据。最基础的统计信息包括：
+
+- Row Count：表有多少行。
+- NDV（Number of Distinct Values）：某列有多少不同值。
+- Null Fraction：空值比例。
+- Min / Max：值域范围。
+- Data Size：读取数据量。
+
+假设：
+
+```text
+fact_order_items            10,000,000,000 rows
+dim_product                         1,000,000 rows
+dim_region                                500 rows
+```
+
+`region_id = 10` 能过滤多少行？某个品类是否极度倾斜？小表是否适合 Broadcast Join？这些判断都依赖统计信息。
+
+### 10.2 Cardinality 决定计划质量
+
+**Cardinality** 是某个算子输出的估算行数。它会沿着执行计划传播：
+
+```text
+Scan
+  |
+  | estimate: 10B rows
+  v
+Filter region_id = 10
+  |
+  | estimate: 80M rows
+  v
+Join dim_product
+  |
+  | estimate: 60M rows
+  v
+Aggregate
+```
+
+如果基数估计严重错误，优化器可能：
+
+- 选择错误的 Join 顺序。
+- 将大表误判为小表并 Broadcast。
+- 低估 Hash Table 内存。
+- 忽略更合适的 MV。
+
+### 10.3 CBO、Join Reorder 与 MV Rewrite
+
+**CBO**（Cost Based Optimizer）会为候选计划估算 CPU、内存、网络和 IO 成本，再选择更低成本的执行路径。
+
+Trino 官方文档给出了典型例子：Connector 提供 Table Statistics 后，优化器可以枚举 Join 顺序，并在 Partitioned Join 和 Broadcast Join 之间做选择。
+
+```text
+SQL
+ |
+ v
+Logical Plan
+ |
+ +--> Predicate / Projection Pushdown
+ |
+ +--> Join Reorder
+ |
+ +--> Join Distribution Selection
+ |
+ +--> MV Rewrite
+ |
+ v
+Cost Estimation
+ |
+ v
+Physical Plan
+```
+
+现代 OLAP 系统的一个重要方向，是从依赖人工选择汇总表，转向：
+
+```text
+Query Rewrite
+      +
+Cost Based Optimization
+```
+
+用户继续写面向业务的 SQL。数据库负责发现可复用的 MV、Projection、Rollup 和数据源能力，并选择成本更低的计划。不同产品支持的改写范围不同，MV Rewrite 也不一定与完整的 CBO 搜索空间使用同一套实现。
+
+这条路线并不会消灭数据建模。相反，优化器越聪明，越需要正确的 Grain、稳定的维度、合理的分区和可信的统计信息。错误模型无法被 CBO 自动修复。
+
+## 术语表
+
+| 术语 | 所属层次 | 含义 |
+| --- | --- | --- |
+| ODS | 数仓工程 | 承接源系统原始数据，强调可追溯。 |
+| DWD | 数仓工程 | 清洗后的原子明细层。 |
+| DWS | 数仓工程 | 面向主题沉淀公共汇总。 |
+| ADS | 数仓工程 | 直接服务报表、接口和应用。 |
+| Grain | 维度建模 | 事实表中一行数据精确代表什么。 |
+| Fact Table | 维度建模 | 描述下单、支付、点击等业务过程及其度量。 |
+| Dimension Table | 维度建模 | 提供时间、用户、商品、地区等观察视角。 |
+| Conformed Dimension | 维度建模 | 被多个事实表共享、语义一致的维度。 |
+| Degenerate Dimension | 维度建模 | 没有独立维度表，直接保留在事实表中的业务标识。 |
+| Junk Dimension | 维度建模 | 收拢低基数零散属性的维度。 |
+| SCD | 维度建模 | 处理维度属性变化和历史保留的技术。 |
+| Star Schema | 维度建模 | 事实表处于中心，直接连接维度表。 |
+| Snowflake Schema | 维度建模 | 继续规范化拆分维度表。 |
+| Galaxy Schema | 维度建模 | 多个事实表通过一致性维度构成的星座模型。 |
+| Cube | OLAP 语义 | 多维分析空间。 |
+| Slice | OLAP 语义 | 固定一个维度，观察剩余维度。 |
+| Dice | OLAP 语义 | 从多个维度筛选一个子空间。 |
+| Drill Down | OLAP 语义 | 从粗粒度进入细粒度。 |
+| Roll Up | OLAP 语义 / 数据库实现 | 向上聚合；也可指数据库中的物化索引。 |
+| Pivot | OLAP 语义 | 旋转结果展示轴。 |
+| Aggregate Table | 预聚合 | 保存维度键和聚合指标的结果表。 |
+| Summary Table | 预聚合 | 面向主题或应用保存摘要结果。 |
+| Projection | 数据库实现 | ClickHouse 表内部的备用物理布局。 |
+| Materialized View | 数据库实现 | 同时保存查询定义、物化结果和刷新语义的数据库对象。 |
+| Query Rewrite | 优化器 | 将查询透明改写为读取等价物化结果。 |
+| NDV | 优化器 | Number of Distinct Values，列的不同值数量。 |
+| Cardinality | 优化器 | 算子输出行数的估计值。 |
+| CBO | 优化器 | 基于代价选择执行计划的优化器。 |
+
+## 总结
+
+从业务数据库到现代 OLAP 优化器，可以用一条完整链路概括：
+
+```text
+业务数据
+   |
+   v
+ODS -> DWD -> DWS -> ADS
+   |
+   v
+声明 Grain，建立 Fact 与 Dimension
+   |
+   v
+Star Schema / Galaxy Schema
+   |
+   v
+Cube 上的 Slice、Dice、Drill Down、Roll Up
+   |
+   v
+Aggregate Table / Summary Table / Rollup
+   |
+   v
+Materialized View
+   |
+   v
+Query Rewrite
+   |
+   v
+Statistics + CBO
+```
+
+这套体系背后的主线是查询成本。
+
+业务系统擅长记录事实，但不适合反复解释海量事实。数仓分层让数据逐步变得可复用；维度建模让事实拥有稳定粒度和观察视角；OLAP 语义描述分析人员如何切分和聚合数据；预聚合与 MV 避免重复计算；Query Rewrite 与 CBO 则让数据库自动选择更便宜的执行路径。
+
+沿着这条链路再看 Doris、StarRocks、ClickHouse、Trino、Hive 和 Spark SQL，可以更清楚地理解不同系统各自承担的职责，以及它们在写入成本、查询延迟、数据新鲜度和实现复杂度之间的取舍。
 
 ## 参考资料
 
+- [Kimball Group: Four-Step Dimensional Design Process](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/four-4-step-design-process/)
+- [Kimball Group: Dimensional Modeling Techniques](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/)
+- [Kimball Group: Degenerate Dimensions](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/degenerate-dimension/)
+- [Kimball Group: Slowly Changing Dimensions, Part 2](https://www.kimballgroup.com/2008/09/slowly-changing-dimensions-part-2/)
+- [Microsoft Learn: Understand Star Schema](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema)
 - [Apache Doris: Preaggregation and Rollup](https://doris.apache.org/docs/dev/key-features/preaggregation-and-rollup/)
 - [Apache Doris: Materialized View](https://doris.apache.org/docs/4.x/query-acceleration/materialized-view/intro/)
 - [StarRocks: Synchronous Materialized View](https://docs.starrocks.io/docs/using_starrocks/Materialized_view-single_table/)
 - [StarRocks: Asynchronous Materialized Views](https://docs.starrocks.io/docs/using_starrocks/async_mv/Materialized_view/)
-- [StarRocks: Query Rewrite with Materialized Views](https://docs.starrocks.io/docs/using_starrocks/async_mv/use_cases/query_rewrite_with_materialized_views/)
 - [ClickHouse: Using Materialized Views](https://clickhouse.com/blog/using-materialized-views-in-clickhouse)
-- [Trino: Iceberg Connector - Materialized Views](https://trino.io/docs/current/connector/iceberg.html#materialized-views)
+- [ClickHouse: Getting Started - Common Issues](https://clickhouse.com/blog/common-getting-started-issues-with-clickhouse)
+- [ClickHouse: Projections as Secondary Indexes](https://clickhouse.com/blog/projections-secondary-indices)
+- [Trino: Query Optimizer](https://trino.io/docs/current/optimizer.html)
+- [Trino: Cost-Based Optimizations](https://trino.io/docs/current/optimizer/cost-based-optimizations.html)
+- [Trino: Table Statistics](https://trino.io/docs/current/optimizer/statistics.html)
+- [Trino: CREATE MATERIALIZED VIEW](https://trino.io/docs/current/sql/create-materialized-view.html)
+- [Trino: Iceberg Connector](https://trino.io/docs/current/connector/iceberg.html)

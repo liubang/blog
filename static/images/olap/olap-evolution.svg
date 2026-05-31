@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="340" viewBox="0 0 920 340">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="340" viewBox="0 0 960 340">
   <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#1e293b" stroke-width=".5"/></pattern><marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker></defs>
-  <rect width="920" height="340" fill="#020617"/><rect width="920" height="340" fill="url(#grid)"/>
+  <rect width="960" height="340" fill="#020617"/><rect width="960" height="340" fill="url(#grid)"/>
   <text x="40" y="38" fill="#fff" font-family="monospace" font-size="17" font-weight="700">现代 OLAP 预计算机制的演进</text>
-  <text x="40" y="60" fill="#94a3b8" font-family="monospace" font-size="9">From explicit multi-dimensional summaries to optimizer-driven reuse</text>
-  <g fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"><path d="M178 174H218"/><path d="M358 174H398"/><path d="M538 174H578"/><path d="M718 174H758"/></g>
+  <text x="40" y="60" fill="#94a3b8" font-family="monospace" font-size="9">From explicit summaries to optimizer-driven reuse</text>
+  <g fill="none" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"><path d="M166 174H184"/><path d="M318 174H336"/><path d="M470 174H488"/><path d="M622 174H640"/><path d="M774 174H792"/></g>
   <g font-family="monospace" text-anchor="middle">
-    <g><rect x="38" y="134" width="140" height="80" rx="6" fill="#0f172a" stroke="#22d3ee"/><text x="108" y="164" fill="#fff" font-size="11" font-weight="700">Cube</text><text x="108" y="187" fill="#94a3b8" font-size="8">多维分析空间</text></g>
-    <g><rect x="218" y="134" width="140" height="80" rx="6" fill="#0f172a" stroke="#fbbf24"/><text x="288" y="160" fill="#fff" font-size="11" font-weight="700">Aggregate</text><text x="288" y="178" fill="#fff" font-size="11" font-weight="700">Table</text><text x="288" y="198" fill="#94a3b8" font-size="8">保存汇总结果</text></g>
-    <g><rect x="398" y="134" width="140" height="80" rx="6" fill="#0f172a" stroke="#a78bfa"/><text x="468" y="164" fill="#fff" font-size="11" font-weight="700">Rollup</text><text x="468" y="187" fill="#94a3b8" font-size="8">基表物化索引</text></g>
-    <g><rect x="578" y="134" width="140" height="80" rx="6" fill="#0f172a" stroke="#34d399"/><text x="648" y="160" fill="#fff" font-size="11" font-weight="700">Materialized</text><text x="648" y="178" fill="#fff" font-size="11" font-weight="700">View</text><text x="648" y="198" fill="#94a3b8" font-size="8">SQL 描述预计算</text></g>
-    <g><rect x="758" y="134" width="140" height="80" rx="6" fill="#0f172a" stroke="#fb923c"/><text x="828" y="160" fill="#fff" font-size="11" font-weight="700">Cost Based</text><text x="828" y="178" fill="#fff" font-size="11" font-weight="700">Rewrite</text><text x="828" y="198" fill="#94a3b8" font-size="8">自动选择低成本 Plan</text></g>
-    <text x="468" y="282" fill="#94a3b8" font-size="9">表达能力增强 → 维护方式更灵活 → 用户感知更少 → 优化器责任更重</text>
+    <g><rect x="32" y="134" width="134" height="80" rx="6" fill="#0f172a" stroke="#22d3ee"/><text x="99" y="164" fill="#fff" font-size="11" font-weight="700">Cube</text><text x="99" y="187" fill="#94a3b8" font-size="8">多维分析空间</text></g>
+    <g><rect x="184" y="134" width="134" height="80" rx="6" fill="#0f172a" stroke="#fbbf24"/><text x="251" y="160" fill="#fff" font-size="11" font-weight="700">Aggregate</text><text x="251" y="178" fill="#fff" font-size="11" font-weight="700">Table</text><text x="251" y="198" fill="#94a3b8" font-size="8">保存聚合结果</text></g>
+    <g><rect x="336" y="134" width="134" height="80" rx="6" fill="#0f172a" stroke="#fbbf24"/><text x="403" y="160" fill="#fff" font-size="11" font-weight="700">Summary</text><text x="403" y="178" fill="#fff" font-size="11" font-weight="700">Table</text><text x="403" y="198" fill="#94a3b8" font-size="8">面向主题摘要</text></g>
+    <g><rect x="488" y="134" width="134" height="80" rx="6" fill="#0f172a" stroke="#a78bfa"/><text x="555" y="164" fill="#fff" font-size="11" font-weight="700">Rollup</text><text x="555" y="187" fill="#94a3b8" font-size="8">基表物化索引</text></g>
+    <g><rect x="640" y="134" width="134" height="80" rx="6" fill="#0f172a" stroke="#34d399"/><text x="707" y="160" fill="#fff" font-size="11" font-weight="700">Materialized</text><text x="707" y="178" fill="#fff" font-size="11" font-weight="700">View</text><text x="707" y="198" fill="#94a3b8" font-size="8">SQL 描述预计算</text></g>
+    <g><rect x="792" y="134" width="134" height="80" rx="6" fill="#0f172a" stroke="#fb923c"/><text x="859" y="160" fill="#fff" font-size="11" font-weight="700">Cost Based</text><text x="859" y="178" fill="#fff" font-size="11" font-weight="700">Rewrite</text><text x="859" y="198" fill="#94a3b8" font-size="8">选择低成本 Plan</text></g>
+    <text x="480" y="282" fill="#94a3b8" font-size="9">表达能力增强 → 刷新方式更灵活 → 用户感知更少 → 优化器责任更重</text>
   </g>
 </svg>
