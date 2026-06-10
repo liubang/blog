@@ -1,7 +1,7 @@
 ---
 title: Java Native Interface（三）
 description: "前面系统研究了 JNI 的相关操作，下面就来小试牛刀，做一个实际的练习。"
-categories: [应用与工具]
+categories: [语言与编译]
 tags: [Java, JNI]
 date: 2017-03-20
 authors: ["liubang"]

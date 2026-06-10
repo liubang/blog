@@ -2,7 +2,7 @@
 title: "一文讲透数据仓库与 OLAP 核心概念"
 description: "从 ODS、维度建模到 Cube、Materialized View 与 Query Rewrite，系统梳理数据仓库与 OLAP 的核心概念、数据库实现和优化器演进。"
 date: 2026-05-31
-categories: [OLAP 与数据仓库]
+categories: [存储与分布式]
 tags: [olap, data-warehouse]
 authors: ["liubang"]
 lightgallery: true

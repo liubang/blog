@@ -1,7 +1,7 @@
 ---
 title: 基于公司私有gitlab的go module实践
 description: "总结在私有 GitLab 环境中落地 Go module 时遇到的仓库、权限与版本管理问题及解决方案。"
-categories: [应用与工具]
+categories: [工具与杂谈]
 tags: [go]
 date: 2019-10-17
 authors: ["liubang"]

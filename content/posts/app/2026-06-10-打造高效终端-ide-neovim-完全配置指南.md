@@ -2,7 +2,7 @@
 title: "打造高效终端 IDE：我的 Neovim 完全配置指南"
 description: "从架构设计、插件选型、LSP 生态到调试与工作流，全面介绍一套面向多语言开发的 Neovim 现代化配置——venux。"
 date: 2026-06-10
-categories: [应用与工具]
+categories: [工具与杂谈]
 tags: [neovim, vim, ide, lsp, dap, lazy.nvim, tools]
 authors: ["liubang"]
 lightgallery: true

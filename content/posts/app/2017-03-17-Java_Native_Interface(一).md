@@ -1,7 +1,7 @@
 ---
 title: Java Native Interface（一）
 description: "作为 JNI 系列第一篇，介绍 Java Native Interface 的基本概念、作用以及入门示例。"
-categories: [应用与工具]
+categories: [语言与编译]
 tags: [Java, JNI]
 date: 2017-03-17
 authors: ["liubang"]
