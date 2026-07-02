@@ -1,7 +1,8 @@
 ---
 title: "打造高效终端 IDE：我的 Neovim 完全配置指南"
-description: "从架构设计、插件选型、LSP 生态到调试与工作流，全面介绍一套面向多语言开发的 Neovim 现代化配置——venux。"
+description: "从架构设计、插件选型、LSP 生态、自制命令面板 KeyFinder 到调试与工作流，全面介绍一套面向多语言开发的 Neovim 现代化配置——venux。"
 date: 2026-06-10
+lastmod: 2026-07-03
 categories: [工具与杂谈]
 tags: [neovim, vim, ide, lsp, snacks, lazy.nvim, tools]
 authors: ["liubang"]
@@ -29,6 +30,7 @@ lightgallery: true
 | 2026.03 | venux 命名 | 配置框架正式命名为 venux，提取独立的 UI 组件库和工具函数层 |
 | 2026.05 | treesitter 升级 | 移除 nvim-treesitter，迁移到内置 treesitter + tree-sitter-manager.nvim 的轻量方案 |
 | 2026.06 | Snacks.nvim | 核心工作流全面迁移到 Snacks.nvim：picker 替换 Telescope、dashboard 替换 alpha-nvim；格式化迁移到 conform.nvim；默认主题切换为 everforest；DAP 精简为 java 依赖 |
+| 2026.07 | KeyFinder + folio | 自研命令面板 KeyFinder（基于 Snacks.picker）；Markdown 预览迁移到自研 folio.nvim（Go 后端）；集成 venn.nvim 和 vim-diagon 绘图工具；新增 context_menu UI 组件 |
 
 > 每一次迁移都不是追逐新潮，而是对旧方案的局限有了切肤之痛。
 
@@ -62,6 +64,7 @@ nvim/
     │   ├── health.lua          # 健康检查
     │   ├── ui/                 # 自定义 UI 组件库
     │   │   ├── confirm.lua     # 确认弹窗
+    │   │   ├── context_menu.lua # 右键菜单
     │   │   ├── inputbox.lua    # 输入框
     │   │   ├── listbox.lua     # 列表选择
     │   │   ├── multi_select.lua # 多选组件
@@ -70,7 +73,9 @@ nvim/
     │       ├── util.lua        # 通用工具
     │       ├── comment.lua     # 注释生成
     │       ├── doc.lua         # 文档生成
-    │       └── fold.lua        # 代码折叠
+    │       ├── fold.lua        # 代码折叠
+    │       ├── keyfinder.lua   # 命令面板（键位与命令搜索）
+    │       └── accelerated_jk.lua # j/k 长按加速
     ├── plugins/                # 插件配置（按功能拆分）
     │   ├── lsp/                # LSP 子系统
     │   │   ├── defaults.lua    # 通用 on_attach 和 capabilities
@@ -110,6 +115,15 @@ require("lazy").setup({
   dev = {
     path = "~/workspace/liubang", -- 本地开发路径
     patterns = { "liubang" },      -- 按作者匹配本地插件
+    fallback = true,               -- 本地找不到时回退到远程
+  },
+  checker = { enabled = false },   -- 禁用自动更新检查
+  change_detection = { enabled = false },
+  ui = { border = "single" },
+  readme = {                       -- 用 README.md 自动生成 helptags
+    root = vim.fn.stdpath("state") .. "/lazy/readme",
+    files = { "README.md" },
+    skip_if_doc_exists = true,
   },
   performance = {
     rtp = {
@@ -117,7 +131,9 @@ require("lazy").setup({
       disabled_plugins = {         -- 禁用不需要的内置插件
         "netrwPlugin", "syntax", "tutor",
         "zipPlugin", "tarPlugin", "gzip",
-        "matchit", "matchparen", ...
+        "matchit", "matchparen",
+        "rplugin", "tohtml",
+        "vimball", "vimballPlugin", ...
       },
     },
   },
@@ -178,7 +194,8 @@ vim.opt.foldtext = 'v:lua.require("venux.utils.fold").foldtext()'
 
 -- 缓冲区 <Leader>b
 <Leader>bp/bn        -- 上一个/下一个缓冲区
-<Leader>bd/bD        -- 删除缓冲区
+<Leader>bf/bl        -- 第一个/最后一个缓冲区
+<Leader>bd/bD        -- 删除缓冲区（Snacks.bufdelete）
 
 -- 代码跳转 <Leader>g（LSP，走 Snacks.picker）
 <Leader>gd           -- 跳转到定义
@@ -216,8 +233,16 @@ vim.keymap.set("n", "N", "'nN'[v:searchforward]", { expr = true })
 <C-a>                -- 跳到行首
 <C-e>                -- 跳到行尾
 
+-- 系统剪贴板
+<Leader>y            -- 复制到系统剪贴板
+<Leader>p / P        -- 从系统剪贴板粘贴
+p（visual 模式）      -- 替换选区但不覆盖默认寄存器
+
 -- 快速清除搜索高亮
 <Esc><Esc>           -- 双击 Esc
+
+-- 命令面板
+<Leader>?            -- KeyFinder：搜索键位映射与命令
 ```
 
 #### 代码折叠
@@ -273,7 +298,8 @@ nvim-lspconfig (LSP 客户端配置)
     │  ├── yamlls.lua     │  ← YAML
     │  ├── texlab.lua     │  ← LaTeX
     │  ├── lemminx.lua    │  ← XML
-    │  └── flux_ls.lua    │  ← Flux
+    │  ├── flux_ls.lua    │  ← Flux
+    │  └── ty.lua         │  ← Ty
     └─────────────────────┘
 ```
 
@@ -292,6 +318,7 @@ nvim-lspconfig (LSP 客户端配置)
 | LaTeX | texlab | 双向搜索、chktex 集成 |
 | XML | lemminx | |
 | Flux | flux_ls | |
+| Ty | ty | |
 
 **基础配置**（使用 `defaults.enable(server)`，无额外参数）：
 
@@ -339,16 +366,17 @@ venux 的格式化系统在 2026.06 从 none-ls 迁移到了 [stevearc/conform.n
 
 -- 语言 → 格式化工具
 lua   → stylua
+asm   → asmfmt
 go    → gofumpt
 bzl   → buildifier
-json/css/html/js/ts/vue/yaml/markdown → prettier
+json/jsonc/css/html/js/ts/vue/yaml/markdown/graphql/handlebars/mdx/less/scss → prettier
 sh/bash/zsh → shfmt
 sql   → sql_formatter
 ```
 
 `format_on_save` 采用差异化策略：
 - **Go**：保存时先执行 `source.organizeImports` 整理 import，再格式化
-- **Lua**：保存时执行 stylua 格式化，失败则回退到 LSP formatting
+- **Lua**：保存时执行 stylua 格式化（`timeout_ms = 500`），失败则回退到 LSP formatting
 - **其他语言**：不自动格式化，按需手动触发 `<Leader>fm`（避免 prettier 等工具在不期望的场合介入）
 
 #### Linting：按需集成
@@ -360,7 +388,7 @@ bzl  → buildifier
 yaml → actionlint
 ```
 
-lint 在 `BufWritePost`、`BufReadPost`、`InsertLeave` 时自动触发，保持轻量——只在需要的地方提供 lint 反馈。
+lint 在 `BufWritePost`、`BufReadPost`、`InsertLeave` 时自动触发（通过 `NvimLint` augroup），保持轻量——只在需要的地方提供 lint 反馈。
 
 #### Java 特殊支持
 
@@ -459,10 +487,14 @@ venux 使用 [folke/flash.nvim](https://github.com/folke/flash.nvim) 替代了 h
 
 Snacks.picker 的交互细节也做了精心调校：
 
+- **Git 日志预览**：`git_log`、`git_log_file`、`git_log_line` 等 picker 保留预览面板（`hidden = {}`），方便查看每次提交的完整 diff
+- **Git diff 操作**：在 diff picker 中 `<Tab>` 暂存当前 hunk，`<C-r>` 恢复当前 hunk
+
 - **智能布局**：窗口宽度 >= 120 列时使用默认布局（左右分栏 + 预览），窄屏自动切换为垂直布局
 - **LSP 自动确认**：定义、引用、实现等 LSP 导航 picker 当结果唯一时自动跳转
 - **窗口内快捷键**：`<C-s>/<C-v>/<C-t>` 在水平/垂直/标签页分割中打开文件，`<C-j>/<C-k>` 上下导航
 - **文件搜索默认隐藏**：`find_files` 和 `grep` 默认忽略隐藏文件（`.hidden = true`）
+- **Frecency 排序**：picker 内置 frecency 算法（`frecency = true`），结合 `filename_bonus` 和 `cwd_bonus`，常用文件和当前目录下的文件会优先排在前面
 
 **自定义扩展**：
 
@@ -509,7 +541,7 @@ mini.files 的独特之处在于它不是一个"sidebar"，而是一个导航器
 
 ### 调试
 
-venux 中 DAP（Debug Adapter Protocol）模块已经精简为 nvim-java 的依赖项。由于日常调试工作不再在 Neovim 中进行，所有 DAP 的键位映射和 UI 组件（如 nvim-dap-virtual-text）已被移除，仅保留 `nvim-dap` 和 `nvim-nio` 的基础安装以满足 nvim-java 的插件依赖。
+venux 中 DAP（Debug Adapter Protocol）模块（`lua/plugins/dap/`）已经精简为 nvim-java 的依赖项。由于日常调试工作不再在 Neovim 中进行，所有 DAP 的键位映射和 UI 组件（如 nvim-dap-virtual-text）已被移除，仅保留 `nvim-dap` 和 `nvim-nio` 的基础安装。`dap/init.lua` 中明确注释："DAP is only kept as a dependency for nvim-java, keymaps and UI are intentionally omitted."
 
 如果你需要完整的 DAP 调试功能，可以参考 nvim-dap 的官方文档自行添加配置。
 
@@ -521,20 +553,22 @@ Git 是日常开发中最高频的操作之一，venux 提供了多级 Git 集�
 
 ```lua
 signs = {
-  add    = { text = "▌", show_count = true },
-  change = { text = "▌", show_count = true },
-  delete = { text = "▐", show_count = true },
+  add          = { text = "▌", show_count = true },
+  change       = { text = "▌", show_count = true },
+  delete       = { text = "▐", show_count = true },
+  topdelete    = { text = "▛", show_count = true },
+  changedelete = { text = "▚", show_count = true },
 }
 ```
 
-使用半宽块状符号而不是整行高亮，更克制、更融入编辑器风格。支持计数（`show_count = true`），多处修改的行会显示 `▌₂` 这样的标记。`diff_opts` 内置了 `patience` 算法、缩进启发式和 `linematch = 60` 的智能行匹配。
+使用半宽块状符号而不是整行高亮，更克制、更融入编辑器风格。支持计数（`show_count = true`），多处修改的行会显示 `▌₂` 这样的标记（使用 Unicode 下标数字 ₁₋₉，最多支持 9+ 行变更显示）。`diff_opts` 内置了 `patience` 算法、缩进启发式和 `linematch = 60` 的智能行匹配。`watch_gitdir.follow_files = true` 确保文件在 git 仓库间移动时持续跟踪。
 
 操作键位：
 - `<Leader>hs`：暂存光标下的 hunk
 - `<Leader>hr`：重置光标下的 hunk
 - `]h` / `[h`：在 hunks 之间跳转
 
-**Snacks.picker Git 集成**（主力）：完整的 Git 浏览体验现在由 Snacks.picker 提供。`<Leader>gl` 查看 Git 历史，`<Leader>gL` 查看当前文件的提交历史，`<Leader>gv` 以 hunks 形式浏览暂存/未暂存的 diff，`<Leader>gB` 切换分支。Snacks 的 Git picker 相比之前使用的 diffview.nvim，启动更快、UI 更一致。
+**Snacks.picker Git 集成**（主力）：完整的 Git 浏览体验现在由 Snacks.picker 提供。`<Leader>gl` 查看 Git 历史（带预览显示完整 diff），`<Leader>gL` 查看当前文件的提交历史，`<Leader>gv` 以 hunks 形式浏览暂存/未暂存的 diff（在 diff picker 中按 `<Tab>` 暂存 hunk、`<C-r>` 恢复 hunk），`<Leader>gb` 查看当前行 Git blame（通过 `Snacks.git.blame_line`），`<Leader>gB` 切换分支。Snacks 的 Git picker 相比之前使用的 diffview.nvim，启动更快、UI 更一致。
 
 **lualine 状态栏**：在状态栏显示当前分支名（`` 图标）和变更统计（diff 段显示增删行数），让你随时了解仓库状态。
 
@@ -623,6 +657,9 @@ venux 使用 LuaSnip 作为 snippet 引擎，在 `lua/plugins/snips/` 下维护�
 
 - `all.lua`：所有语言通用 snippet
 - `cpp.lua`：C++ 专属 snippet（包含常用的 class 定义、循环模板等）
+- `lua.lua`：Lua 专属 snippet（包含模块模板、函数注释等）
+
+LuaSnip 还配置了 `friendly-snippets`（VSCode 风格 snippet 集合）作为补充，通过 `loaders.from_vscode` 懒加载。
 
 #### Neogen
 
@@ -631,6 +668,22 @@ venux 使用 LuaSnip 作为 snippet 引擎，在 `lua/plugins/snips/` 下维护�
 - Lua：生成 `---@param` / `---@return` 风格的 EmmyLua 注释
 - C/C++：生成 Doxygen 风格注释
 - Go/Python/Rust 等：生成对应语言的标准文档注释
+
+#### KeyFinder：命令面板
+
+KeyFinder（`venux.utils.keyfinder`）是 venux 自研的命令面板，类似于 VS Code 的 `Ctrl+Shift+P`。它使用 Snacks.picker 作为 UI 后端，模糊搜索并展示：
+
+- **所有键位映射**：包含 Neovim 内置键位（hjkl、dd、yy、zf 等 120+ 个内置快捷键）和 venux 自定义键位，按模式（n/v/i/c/t/o）分组展示
+- **所有用户命令**：如 `:Filepath`、`:Tasks`、`:BazelBuild` 等自定义命令
+
+`<Leader>?` 或 `:KeyFinder` 打开面板，输入关键词即可匹配。选中键位后直接执行，选中命令后根据是否有参数自动填充或立即执行。这个工具对于探索和学习 Neovim 键位体系非常实用——看到陌生的快捷键不必查文档，直接在 KeyFinder 中搜索即可。
+
+#### 绘图工具
+
+venux 集成了两个 ASCII 绘图工具，满足不同场景的制图需求：
+
+- **venn.nvim**：交互式 ASCII 图表绘制，`<Leader>vv` 进入绘制模式后使用 HJKL 键在四个方向画线，在 visual 模式下按 `f`/`d`/`F` 绘制单线/双线/粗线框。适合在注释中绘制架构图、流程图
+- **vim-diagon**：将数学表达式转换为 ASCII 图表（如序列图、树状图、表格），`:Diagon` 命令启动转换，适合快速生成技术文档中的图示
 
 #### 自定义命令
 
@@ -646,6 +699,9 @@ venux 注册了一系列便利命令：
 | `:TrimWhiteSpace` | 清除文件中的行尾空白（保存时自动执行） |
 | `:DocUpdate` | 更新文档 |
 | `:Tasks` | 打开 asynctasks 任务列表（Snacks.picker 界面） |
+| `:KeyFinder` | 打开命令面板，搜索和执行键位映射与命令 |
+| `:DrawBoxToggle` | 切换 venn.nvim ASCII 绘图模式 |
+| `:Diagon` | 将数学表达式转换为 ASCII 图表 |
 | `:BazelBuild / :BazelRun / :BazelTests` | Bazel 构建相关命令 |
 
 #### 其他实用插件
@@ -653,11 +709,12 @@ venux 注册了一系列便利命令：
 - **mini.comment**：`gc` 注释/取消注释，`gcc` 注释当前行
 - **mini.surround**：`gsa` 添加包围符，`gsd` 删除包围符，`gsr` 替换包围符
 - **mini.align**：`ga` 启动对齐模式，`gA` 启动对齐预览模式
-- **vim-caser**：快速大小写转换
-- **accelerated-jk**：`j`/`k` 长按时光标移动加速（自实现，不再依赖外部插件）
-- **yank 高亮**：yank 时高亮被复制的区域（使用内置 `vim.highlight.on_yank`，不再依赖 smartyank 插件）
-- **autoclose**：自动闭合括号、引号
+- **vim-caser**：快速大小写转换（`gs` 前缀 + 模式字母），支持 MixedCase、camelCase、snake_case、dash-case 等 10+ 种命名风格
+- **accelerated-jk**：`j`/`k` 长按时光标移动加速（自实现 `venux.utils.accelerated_jk`，不再依赖外部插件）
+- **yank 高亮**：yank 时高亮被复制的区域（使用内置 `vim.highlight.on_yank`，在 `TextYankPost` autocmd 中触发，不再依赖 smartyank 插件）
+- **autoclose**：自动闭合括号、引号（使用 `m4xshen/autoclose.nvim`，精细控制每种括号的闭合行为）
 - **vim-matchup**：增强的 `%` 匹配跳转
+- **venn.nvim**：交互式 ASCII 图表绘制（`<Leader>vv` 切换模式）
 
 ### 特殊语言支持
 
@@ -681,7 +738,7 @@ venux 集成了 [tla-nvim](https://github.com/liubang/tla-nvim)，这是一个�
 
 #### Markdown
 
-- **peek.nvim**：`<Leader>mp` 在浏览器/webview 中实时预览 Markdown 文件，使用 Deno 作为运行环境
+- **folio.nvim**：自研的 Markdown 实时预览插件（Go 编译为原生二进制），`<Leader>mp` 在浏览器/webview 中预览。相比之前使用的 peek.nvim（Deno 运行时），folio.nvim 依赖更少、启动更快，且与 venux 的 UI 风格统一
 - 自动格式化：prettier 通过 conform.nvim 提供格式化
 
 ## 跨平台与 GUI 支持
@@ -712,9 +769,14 @@ end
 ```lua
 vim.g.neovide_refresh_rate = 60
 vim.g.neovide_cursor_vfx_mode = "railgun"     -- 光标拖尾特效
+vim.g.neovide_no_idle = true                   -- 空闲时不降低帧率
 vim.g.neovide_cursor_animation_length = 0.03   -- 光标动画时长
 vim.g.neovide_cursor_trail_length = 0.05       -- 拖尾长度
 vim.g.neovide_cursor_antialiasing = true       -- 光标抗锯齿
+vim.g.neovide_cursor_vfx_opacity = 200.0       -- 粒子不透明度
+vim.g.neovide_cursor_vfx_particle_lifetime = 1.2 -- 粒子生命周期
+vim.g.neovide_cursor_vfx_particle_speed = 20.0  -- 粒子速度
+vim.g.neovide_cursor_vfx_particle_density = 5.0 -- 粒子密度
 ```
 
 ## 安装与使用
@@ -773,7 +835,7 @@ venux 不是一个大而全的"发行版"（如 LazyVim、NvChad、LunarVim）�
 3. **统一流畅的搜索体验**：Snacks.picker 覆盖文件搜索、LSP 导航、Git 浏览、构建任务等所有选择场景
 4. **自定义构建集成**：Snacks + Bazel 扩展，将构建系统融入编辑器
 5. **内外一致的视觉体验**：Everforest 主题贯穿从编辑器到 picker 到状态栏的所有元素
-6. **自建 UI 组件库**：confirm、inputbox、multi_select 等可复用的 UI 模块
+6. **自建 UI 组件库**：confirm、inputbox、listbox、multi_select、context_menu 等可复用的 UI 模块；KeyFinder 命令面板（模糊搜索键位与命令）
 7. **跨平台**：macOS / Linux 无缝切换，Neovide GUI 支持
 
 配置会持续演进。如果你也对终端 IDE 感兴趣，欢迎 [Star & Fork](https://github.com/liubang/nvim)，一起交流讨论。
@@ -787,4 +849,5 @@ venux 不是一个大而全的"发行版"（如 LazyVim、NvChad、LunarVim）�
 - Snacks.nvim：<https://github.com/folke/snacks.nvim>
 - blink.cmp：<https://github.com/saghen/blink.cmp>
 - conform.nvim：<https://github.com/stevearc/conform.nvim>
+- folio.nvim（自研 Markdown 预览）：<https://github.com/liubang/folio.nvim>
 - Neovim 官方文档：<https://neovim.io/>
