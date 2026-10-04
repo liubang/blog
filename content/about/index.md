@@ -39,18 +39,6 @@ toc: false
     </div>
   </div>
 
-  <h2 class="about-section-title">近期关注</h2>
-  <div class="about-focus">
-    <a href="/minidfs/" class="about-focus-item">
-      <span>MiniDFS</span>
-      <p>一个用来拆解 HDFS 核心机制的分布式文件系统练习：NameNode、DataNode、写入 Pipeline、Lease、心跳和副本自愈。</p>
-    </a>
-    <a href="/flux/" class="about-focus-item">
-      <span>Flux Query Engine</span>
-      <p>从语法、AST、Runtime 到 Connector、Optimizer、LSP 的查询语言实现笔记。</p>
-    </a>
-  </div>
-
   <h2 class="about-section-title">项目</h2>
   <div class="about-projects">
     <a class="about-project" href="https://github.com/algo-data-platform/LaserDB" target="_blank" rel="noopener noreferrer">

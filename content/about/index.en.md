@@ -39,18 +39,6 @@ toc: false
     </div>
   </div>
 
-  <h2 class="about-section-title">Recent Focus</h2>
-  <div class="about-focus">
-    <a href="/minidfs/" class="about-focus-item">
-      <span>MiniDFS</span>
-      <p>A small distributed filesystem exercise for exploring HDFS ideas: NameNode, DataNode, write pipeline, lease, heartbeat, and replica repair.</p>
-    </a>
-    <a href="/flux/" class="about-focus-item">
-      <span>Flux Query Engine</span>
-      <p>Notes on building a query language from syntax and AST to runtime, connectors, optimizer, and language-server support.</p>
-    </a>
-  </div>
-
   <h2 class="about-section-title">Projects</h2>
   <div class="about-projects">
     <a class="about-project" href="https://github.com/algo-data-platform/LaserDB" target="_blank" rel="noopener noreferrer">

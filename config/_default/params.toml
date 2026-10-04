@@ -131,12 +131,6 @@ keepStatic = false
 copy = true
 maxShownLines = 99999
 
-[page.library]
-  [page.library.js]
-    [page.library.js.flux-highlight]
-      src = "/js/flux-highlight.js"
-      defer = true
-
 # Math (KaTeX)
 [page.math]
 enable = true
